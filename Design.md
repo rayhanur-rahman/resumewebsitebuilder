@@ -1,0 +1,10 @@
+## Resume Builder BOT
+## 1. Problem Statement
+In a competitive market, having a resume and homepage that works for you is essential. However, mistakes like typos and grammatical errors, including outdated or irrelevant information, lack of specifics, the overall decoration of the files and pages, etc might create a negative picture of you as a whole . Therefore, keeping that in mind, our plan is to create a bot that is able to put together a portfolio based on various public profiles such as LinkedIn, Google Scholar, etc and the information that is fed to the bot by the person itself. Given that, slack is a proper collaboration tool nowadays, we intend to use it as platform to chat and let the bot know of your preferences and so that it can also work on a group of closely knitted members. 
+
+## 2. Bot Description
+-   The Resume builder bot is a Slack based interactive conversational bot which simplifies the mundane (in the sense that it handles the formatting and ornamentation) task of buidling a CV and homepage.  
+-   The bot provides the user various alternatives to start their new CV/Homepage with different templates according to the user's taste.  
+-   The bot will continue with the conversation bringing out important information that it needs from the user.
+- Hence, with the necessary information, it will extract user profile information such as the publication list, work ethic, employment history, skillsets, etc from sites like LinkedIn, Google Scholar, etc. 
+- Once the bot completes its task, it will reply in Slack with a link to the homepage within which the CV is also availiable.
