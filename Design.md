@@ -76,3 +76,5 @@ if zip file, provide user with a zip file containing all the things...
 
 # 4. Design Sketches
 ## 4.1 Storyboard
+For commands `\init`, `\pause`, and `\resume`.
+![mattermost](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/taufiqBranch/Storyboard/init_pause_resume.png)
