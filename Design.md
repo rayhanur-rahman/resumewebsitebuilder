@@ -106,12 +106,12 @@ Once the bot has prepared the single file after combining the data from various 
 - The html file containing the static webpage and the pdf file of the homepage and resume must be completed
 
 ### Main Flow
-- The bot asks the users as to how it should provide the deliverables[S1]. If the user wants to use the github platform to deploy the homepage[S2], then bot warns the user of the repo naming convention and pushes the files into a github repo[S3]. Hence the bot replies with a link to the github repo.[S4]
+- The bot asks the users as to how it should provide the deliverables[S1]. If the user wants to use the github platform to deploy the homepage[S2], then bot asks for the github token for repo permissions and warns the user of the repo naming convention. Hence the bot pushes the files into a github repo[S3]. After completion of the following tasks, the bot replies with a link to the github repo.[S4]
 
 ### Subflow
 - [S1] Bot asks user if "Do you want to deploy the given files in ``github.io.?`` or do you want a zip folder containing the files?"
 - [S2] The user replies ``github.io``.
-- [S3] The bot warns the user of repo naming convention and pushes the files into a github repo.
+- [S3] The bot requires the github token from the user for authentication, and then it warns the user of the repo naming conventions. Then it pushes the files into a github repo.
 - [S4] The bot provides the link of the github repo and the homepage to the user.
 
 ### Alternate Flow
