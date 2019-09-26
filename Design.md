@@ -1,4 +1,4 @@
-# Resume Builder BOT
+# Static Resume Website Builder BOT
 ## 1. Problem Statement
 In a competitive market, having a resume and homepage that works for you is essential. However, many of us already maintain e profile in popular web services like LinkedIn, Github etc. Moreover, building a personal website is often time consuming. Therefore, keeping that in mind, our plan is to create a bot that is able to put together a personal resume like website based on various public profiles such as LinkedIn, Github, DBLP index etc and the information that is fed to the bot by the person itself through the conversation with the bot. These days, slack provides a lot of options for developers to build bots that can do such interesting thing, so using the slack bot api, one can easily resuse their information from the website and get a set of static html and css pages that will be hosted as a personal resume webpage. It will save the user from spending time and tedious work on building html and css contents from the scratch. The bottom line is, this bot will help the user build a personal resume website without writing web contents from the scratch through the usage of jekyll and importing information from Linkedin, Github etc. Once, the static webpages have been generated, then the user can modify it within his/her needs. 
 
@@ -41,8 +41,23 @@ The conversation between the user and bot must have been initiated
 - (s1) the bot asks the user like do you want to terminate or cancel the command. If the user replies no, then the bot will ignore the kill command. But if the user replies yes, the bot will ask the user whether s/he wants to save the session or not.
 
 ## 3.4 Use Case 4: Gather Personal Information from the User
+
+### Precondition
+The conversation must be initiated
+
 ### Main Flow
-- 
+- The bot will ask the user about his/her Linkedin, Github, Dblp profile links (s1)
+- For one or more of ```/skip``` reply from the user, the bot will provide a template to the user to fill out the necessary information
+- The bot will process all the information in the background and prepare one single profile information which will be presented to the user later.
+
+### Subflow
+- The bot will ask ```Your Github Profile link?```
+- The user will provide the link or type ```/skip```
+- The bot will ask ```Your Linkedin Profile link?```
+- The user will provide the link or type ```/skip```
+- The bot will ask ```Your DBLP Profile link?```
+- The user will provide the link or type ```/skip```
+
 
 ## 3.5 Use Case 5: Validate the Information from the User
 - show user the profile picture
