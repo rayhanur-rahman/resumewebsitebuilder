@@ -15,49 +15,53 @@ In a competitive market, having a resume and homepage that works for you is esse
 The user must join a slack channel and the bot must be invited to the slack channel. 
 
 ### Main Flow
-- The user should initiate coversation with the bot [S1]. The bot will reply an acknwoledgement message letting the user know that the bot has been initiated [S2].
+- The user wants to initiate coversation with the bot [S1]. The bot will reply an acknwoledgement message letting the user know that the bot has been initiated [S2].
 
 ### SubFlow
-- [S1] User says ```/init``` @bot in the direct communication channel
-- [S2] Having read the command from the user, the bot will reply with an acknowledgement and bot will start asking for relevant information
+- [S1] User says ```/init``` @bot in the direct communication channel, Slack
+- [S2] Having read the command from the user, the bot will reply with an acknowledgement "the bot has been initiated"
 
 ## 3.2 Use Case # 2: Pausing and Resuming the Conversation Session
 ### Preconditions
 The conversation between the user and bot must have been initiated
 
 ### Main Flow
-- To the user type ```/pause``` (S1)
-- The bot will reply an acknwoledgement message letting the user know that the bot has been initiated (S2)
-- When a user wants to resume a previously saved conversation, s/he should type ```/resume``` (S3)
-- The bot will be reinitiate the conversation (S4)
+- User wishes to pause the process[S1]. The bot will suspend the session as user requests to pause[S2]. When a user requests to resume the conversation[S3], the bot will reinitiate the conversation [S4].
 
 ### SubFlow
-- [S1] 
+- [S1] User types in ````pause```` @Bot to make the pause request
+- [S2] The bot responds by suspending the session and saving the progress of the conversion and the tasks
+- [S3] User types in ````resume```` @Bot to resume the conversation and restore the tasks it had completed previously
+- [S4] The bot fetches the information of the session and reinitiates the conversation from where it left off.
 
+### Alternate Flow
+- [E1] No pausing session found by bot, hence cannot resume any session
+ 
 ## 3.3 Use Case # 3: Terminating the Bot
 ### Preconditions
-The conversation between the user and bot must have been initiated
+- The conversation between the user and bot must have been initiated
 
 ### Main Flow
-- The user type ```/kill``` (S1)
-- The bot will ask the user whether s/he really wants to terminate the session or cancel it (s1)
-- The bot will reply an acknwoledgement message letting the user know that the session has been terminated or saved for later use
+- The user type wants to terminate the conversation[S1]. The bot will ask the user whether s/he really wants to terminate the session or cancel it[S2]. The bot will send an acknwoledgement message letting the user know that the session has been terminated[S3]
 
 ### Sub Flow
-- (s1) the bot asks the user like do you want to terminate or cancel the command. If the user replies no, then the bot will ignore the kill command. But if the user replies yes, the bot will ask the user whether s/he wants to save the session or not.
+- [S1] The user types in ````kill```` to terminate the conversation
+- [S2] the bot asks the user like do you want to terminate or cancel the command. If the user replies no, then the bot will ignore the kill command. But if the user replies yes, the bot will ask the user whether s/he wants to save the session or not.
+- [S3] The bot will reply that the session has been terminated. 
+
+### Alternate  Flow
+[E1] If the user replies to save the session, the bot will save the session before terminating.
 
 ## 3.4 Use Case 4: Gather Personal Information from the User
 
 ### Precondition
-The conversation must be initiated
+The conversation between the user and bot must have been initiated
 
 ### Main Flow
-- The bot will ask the user about his/her Linkedin, Github, Dblp profile links (s1)
-- For one or more of ```/skip``` reply from the user, the bot will provide a template to the user to fill out the necessary information
-- The bot will process all the information in the background and prepare one single profile information which will be presented to the user later.
+- The bot will ask the user about his/her public profiles in Linkedin, Github, Dblp profile links[S1]. If the user skips one or more questions asked by the bot, the bot will provide a template to the user to fill out the necessary information[S2]. Hence with all the information, the bot will process all the information in the background and prepare one single profile information which will be presented to the user later.[S3]
 
 ### Subflow
-- The bot will ask ```Your Github Profile link?```
+- [S1] The bot will ask ```Your Github Profile link?```
 - The user will provide the link or type ```/skip```
 - The bot will ask ```Your Linkedin Profile link?```
 - The user will provide the link or type ```/skip```
