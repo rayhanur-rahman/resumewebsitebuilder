@@ -61,12 +61,14 @@ The conversation between the user and bot must have been initiated
 - The bot will ask the user about his/her public profiles in Linkedin, Github, Dblp profile links[S1]. If the user skips one or more questions asked by the bot, the bot will provide a template to the user to fill out the necessary information[S2]. Hence with all the information, the bot will process all the information in the background and prepare one single profile information which will be presented to the user later.[S3]
 
 ### Subflow
-- [S1] The bot will ask ```Your Github Profile link?```
-- The user will provide the link or type ```/skip```
-- The bot will ask ```Your Linkedin Profile link?```
-- The user will provide the link or type ```/skip```
-- The bot will ask ```Your DBLP Profile link?```
-- The user will provide the link or type ```/skip```
+- [S1]  
+	- The bot will ask ```Your Github Profile link?```
+	- The user will provide the link or type ```/skip```
+	- The bot will ask ```Your Linkedin Profile link?```
+	- The user will provide the link or type ```/skip```
+	- The bot will ask ```Your DBLP Profile link?```
+	- The user will provide the link or type ```/skip```
+- [S2]
 
 
 ## 3.5 Use Case 5: Validate the Information from the User
