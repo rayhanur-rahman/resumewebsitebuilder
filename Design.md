@@ -40,3 +40,22 @@ The conversation between the user and bot must have been initiated
 ### Sub Flow
 - (s1) the bot asks the user like do you want to terminate or cancel the command. If the user replies no, then the bot will ignore the kill command. But if the user replies yes, the bot will ask the user whether s/he wants to save the session or not.
 
+## 3.4 Use Case 4: Gather Personal Information from the User
+### Main Flow
+- 
+
+## 3.5 Use Case 5: Validate the Information from the User
+- show user the profile picture
+- provide user with a yml file with all data
+
+## 3.6 Use Case 6: Select Homepage Look and Feel from the User Preference
+- choose templates, colors etc
+- choose whether it should be academic/industrial
+
+## 3.7 Use Case 7: Delivering the Web Contents to the User
+- github/zip
+- if github, take token from user
+    - warn user about the reposiroty naming convention
+    - push and reply with a link
+if zip file, provide user with a zip file containing all the things... 
+
