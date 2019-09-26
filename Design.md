@@ -72,11 +72,17 @@ The conversation between the user and bot must have been initiated
 - [S3] Once all the necessary information are filled, the bot will extract informaion from the public profiles, if stated by the user, or scan the file that it required the user to fill up. Hence, it will generate a single file that will hold all the information needed to build the homepage and resume.
 
 ### Alternate Flow
--[E1] If the bot is unable to extract the necessary information inspite of the links being provided, the bot will ask the user to fill up the missing information in the template file it provided.   
+- [E1] If the bot is unable to extract the necessary information inspite of the links being provided, the bot will ask the user to fill up the missing information in the template file it provided.   
 
 ## 3.5 Use Case 5: Validate the Information from the User
-- show user the profile picture
-- provide user with a yml file with all data
+Once the bot has prepared the single file after combining the data from various sources, it will ask the user to validate the information[S1]. If the user replies postively, the bot goes on with the next task[S2].
+
+### Subflow
+- [S1] The bot will display the profile picture and the single file that it has prepared by combining the data from several places. Then the bot asks the user, "Is all the information provided correct?" 
+- [S2] If the user replies "Yes", the bot will go on and render the homepage and resume as per the accumulated information 
+
+### Alternative Flow
+- [E1] If the user replies "No", the bot will provide the file and ask the user to correct the wrong information.
 
 ## 3.6 Use Case 6: Select Homepage Look and Feel from the User Preference
 - choose templates, colors etc
