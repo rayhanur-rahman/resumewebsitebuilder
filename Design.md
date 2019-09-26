@@ -68,8 +68,11 @@ The conversation between the user and bot must have been initiated
 	- The user will provide the link or type ```/skip```
 	- The bot will ask ```Your DBLP Profile link?```
 	- The user will provide the link or type ```/skip```
-- [S2]
+- [S2] Bot will generate a file that holds a template. It requires the user to fill up the necessary missing information
+- [S3] Once all the necessary information are filled, the bot will extract informaion from the public profiles, if stated by the user, or scan the file that it required the user to fill up. Hence, it will generate a single file that will hold all the information needed to build the homepage and resume.
 
+### Alternate Flow
+-[E1] If the bot is unable to extract the necessary information inspite of the links being provided, the bot will ask the user to fill up the missing information in the template file it provided.   
 
 ## 3.5 Use Case 5: Validate the Information from the User
 - show user the profile picture
