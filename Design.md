@@ -103,8 +103,18 @@ Once the bot has prepared the single file after combining the data from various 
 
 ## 3.7 Use Case 7: Delivering the Web Contents to the User
 ### Precondition 
-- if github, take token from user
-    - warn user about the reposiroty naming convention
-    - push and reply with a link
-if zip file, provide user with a zip file containing all the things... 
+- The html file containing the static webpage and the pdf file of the homepage and resume must be completed
+
+### Main Flow
+- The bot asks the users as to how it should provide the deliverables[S1]. If the user wants to use the github platform to deploy the homepage[S2], then bot warns the user of the repo naming convention and pushes the files into a github repo[S3]. Hence the bot replies with a link to the github repo.[S4]
+
+### Subflow
+- [S1] Bot asks user if "Do you want to deploy the given files in ``github.io.?`` or do you want a zip folder containing the files?
+- [S2] The user replies ``github.io``.
+- [S3] The bot warns the user of repo naming convention and pushes the files into a github repo.
+- [S4] The bot provides the link of the github repo and the homepage to the user.
+
+### Alternate Flow
+- [E1] If user answers ``zip``, the bot will just compress the files in a zip and send it to the user.
+ 
 
