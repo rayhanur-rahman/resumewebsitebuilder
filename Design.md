@@ -78,3 +78,5 @@ if zip file, provide user with a zip file containing all the things...
 ## 4.1 Storyboard
 For commands `\init`, `\pause`, and `\resume`.
 ![init_pause_resume](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/taufiqBranch/Storyboard/init_pause_resume.png)
+For commands `\kill` followed by `no` and `yes` respectively.
+![init_pause_resume](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/taufiqBranch/Storyboard/init_pause_resume.png)
