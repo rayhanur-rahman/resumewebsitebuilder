@@ -75,6 +75,10 @@ The conversation between the user and bot must have been initiated
 - [E1] If the bot is unable to extract the necessary information inspite of the links being provided, the bot will ask the user to fill up the missing information in the template file it provided.   
 
 ## 3.5 Use Case 5: Validate the Information from the User
+### Precondition
+- The bot must have prepared the combined file that contains all the relevant information
+
+### Main Flow
 Once the bot has prepared the single file after combining the data from various sources, it will ask the user to validate the information[S1]. If the user replies postively, the bot goes on with the next task[S2].
 
 ### Subflow
@@ -85,11 +89,20 @@ Once the bot has prepared the single file after combining the data from various 
 - [E1] If the user replies "No", the bot will provide the file and ask the user to correct the wrong information.
 
 ## 3.6 Use Case 6: Select Homepage Look and Feel from the User Preference
-- choose templates, colors etc
-- choose whether it should be academic/industrial
+### Precondition
+- The bot must finalize the file that contains all the relevant information
+
+### Main Flow
+- The bot interacts with the user to know about the template preferences[S1]. User selects any one of the templates[S2]. Once again, bot asks if the resume is for academic or industrial purpose[S3]. The user responds and hence the bot prepares the resume as per the preferences of the user[S4].
+
+### Subflow 
+- [S1] The bot provides a names of various templates as an option to the user
+- [S2] The user selects one of them as their preference.
+- [S3] The bot asks whether this resume is for academic or industrial purpose.
+- [S4] As per the choice of the user, the bot, with the combined file, renders the resume.
 
 ## 3.7 Use Case 7: Delivering the Web Contents to the User
-- github/zip
+### Precondition 
 - if github, take token from user
     - warn user about the reposiroty naming convention
     - push and reply with a link
