@@ -15,18 +15,25 @@ In a competitive market, having a resume and homepage that works for you is esse
 The user must join a slack channel and the bot must be invited to the slack channel. 
 
 ### Main Flow
-- The user should open a direct message window in the slack channel with the bot and type ```/init```
-- The bot will reply an acknwoledgement message letting the user know that the bot has been initiated
+- The user should initiate coversation with the bot (S1)
+- The bot will reply an acknwoledgement message letting the user know that the bot has been initiated (S2)
+
+### SubFlow
+- [S1] User says ```/init``` @bot in the direct communication channel
+- [S2] Having read the command from the user, the bot will reply with an acknowledgement and bot will start asking for relevant information
 
 ## 3.2 Use Case # 2: Pausing and Resuming the Conversation Session
 ### Preconditions
 The conversation between the user and bot must have been initiated
 
 ### Main Flow
-- The user type ```/pause```
-- The bot will reply an acknwoledgement message letting the user know that the bot has been initiated
-- When a user wants to resume a previously saved conversation, s/he should type ```/resume```
-- The bot will be reinitiate the conversation
+- The user type ```/pause``` (S1)
+- The bot will reply an acknwoledgement message letting the user know that the bot has been initiated (S2)
+- When a user wants to resume a previously saved conversation, s/he should type ```/resume``` (S3)
+- The bot will be reinitiate the conversation (S4)
+
+### SubFlow
+- [S1] 
 
 ## 3.3 Use Case # 3: Terminating the Bot
 ### Preconditions
