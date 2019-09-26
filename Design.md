@@ -111,7 +111,7 @@ Once the bot has prepared the single file after combining the data from various 
 ### Subflow
 - [S1] Bot asks user if "Do you want to deploy the given files in ``github.io.?`` or do you want a zip folder containing the files?"
 - [S2] The user replies ``github.io``.
-- [S3] The bot requires the github token from the user for authentication, and then it warns the user of the repo naming conventions. Then it pushes the files into a github repo.
+- [S3] The bot requires the github token from the user for authentication, and then it warns the user of the repo naming conventions(there must not be a repo of the same name or else the bot will fail to open a new repo). Then it pushes the files into a github repo.
 - [S4] The bot provides the link of the github repo and the homepage to the user.
 
 ### Alternate Flow
