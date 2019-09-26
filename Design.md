@@ -1,10 +1,42 @@
-## Resume Builder BOT
+# Resume Builder BOT
 ## 1. Problem Statement
 In a competitive market, having a resume and homepage that works for you is essential. However, many of us already maintain e profile in popular web services like LinkedIn, Github etc. Moreover, building a personal website is often time consuming. Therefore, keeping that in mind, our plan is to create a bot that is able to put together a personal resume like website based on various public profiles such as LinkedIn, Github, DBLP index etc and the information that is fed to the bot by the person itself through the conversation with the bot. These days, slack provides a lot of options for developers to build bots that can do such interesting thing, so using the slack bot api, one can easily resuse their information from the website and get a set of static html and css pages that will be hosted as a personal resume webpage. It will save the user from spending time and tedious work on building html and css contents from the scratch. The bottom line is, this bot will help the user build a personal resume website without writing web contents from the scratch through the usage of jekyll and importing information from Linkedin, Github etc. Once, the static webpages have been generated, then the user can modify it within his/her needs. 
 
-## 2. Bot Description
+# 2. Bot Description
 -   The Resume builder bot is a Slack based interactive conversational bot which simplifies the mundane (in the sense that it handles the formatting and ornamentation) task of buidling a resume website.  
--   The bot provides the user various alternatives to start their new CV/Homepage with different templates according to the user's taste. 
+-   The bot provides the user various alternatives to start their new resume website with different templates according to the user's taste. 
 -   The bot will continue with the conversation bringing out important information that it needs from the user.
 - Hence, with the necessary information, it will extract user profile information such as the publication list, projects, employment history, skillsets, etc from sites like LinkedIn, DBLP index, Github, etc. If a user does not maintain any profile in the aforementioned services, bot will provide a template where user can put all the information. 
 - Once the bot completes its task, it will reply in Slack with a link to the homepage within which the CV is also availiable if user opts to host the site in github.io or provide a static webpage files that can be used to publish the site in any host.
+
+# 3. Use Cases
+## 3.1 Use Case # 1: Initiating the Bot
+### Preconditions
+The user must join a slack channel and the bot must be invited to the slack channel. 
+
+### Main Flow
+- The user should open a direct message window in the slack channel with the bot and type ```/init```
+- The bot will reply an acknwoledgement message letting the user know that the bot has been initiated
+
+## 3.2 Use Case # 2: Pausing and Resuming the Conversation Session
+### Preconditions
+The conversation between the user and bot must have been initiated
+
+### Main Flow
+- The user type ```/pause```
+- The bot will reply an acknwoledgement message letting the user know that the bot has been initiated
+- When a user wants to resume a previously saved conversation, s/he should type ```/resume```
+- The bot will be reinitiate the conversation
+
+## 3.3 Use Case # 3: Terminating the Bot
+### Preconditions
+The conversation between the user and bot must have been initiated
+
+### Main Flow
+- The user type ```/kill```
+- The bot will ask the user whether s/he really wants to terminate the session or cancel it (s1)
+- The bot will reply an acknwoledgement message letting the user know that the session has been terminated or saved for later use
+
+### Sub Flow
+- (s1) the bot asks the user like do you want to terminate or cancel the command. If the user replies no, then the bot will ignore the kill command. But if the user replies yes, the bot will ask the user whether s/he wants to save the session or not.
+
