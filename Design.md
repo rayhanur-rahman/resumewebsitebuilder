@@ -15,8 +15,7 @@ In a competitive market, having a resume and homepage that works for you is esse
 The user must join a slack channel and the bot must be invited to the slack channel. 
 
 ### Main Flow
-- The user should initiate coversation with the bot (S1)
-- The bot will reply an acknwoledgement message letting the user know that the bot has been initiated (S2)
+- The user should initiate coversation with the bot [S1]. The bot will reply an acknwoledgement message letting the user know that the bot has been initiated [S2].
 
 ### SubFlow
 - [S1] User says ```/init``` @bot in the direct communication channel
@@ -27,7 +26,7 @@ The user must join a slack channel and the bot must be invited to the slack chan
 The conversation between the user and bot must have been initiated
 
 ### Main Flow
-- The user type ```/pause``` (S1)
+- To the user type ```/pause``` (S1)
 - The bot will reply an acknwoledgement message letting the user know that the bot has been initiated (S2)
 - When a user wants to resume a previously saved conversation, s/he should type ```/resume``` (S3)
 - The bot will be reinitiate the conversation (S4)
@@ -40,7 +39,7 @@ The conversation between the user and bot must have been initiated
 The conversation between the user and bot must have been initiated
 
 ### Main Flow
-- The user type ```/kill```
+- The user type ```/kill``` (S1)
 - The bot will ask the user whether s/he really wants to terminate the session or cancel it (s1)
 - The bot will reply an acknwoledgement message letting the user know that the session has been terminated or saved for later use
 
