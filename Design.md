@@ -128,4 +128,4 @@ The rest of the steps
 ![finalSteps](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/taufiqBranch/Storyboard/finalSteps.png)
 
 ## 4.2 Wireframe
-![Wirefram] (https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/master/Storyboard/Wireframe.gif)
+![Wireframe](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/master/Storyboard/Wireframe.gif)
