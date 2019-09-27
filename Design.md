@@ -74,3 +74,20 @@ The conversation must be initiated
     - push and reply with a link
 if zip file, provide user with a zip file containing all the things... 
 
+# 4. Architectural Design
+## Diagram
+The image goes here
+
+## Architectural Components Description
+Description of all the components in the architectural diagram goes here
+
+## Constraints
+
+## Additional Design/Architectural Pattern
+- Builder: The bot will build web files from user preference through a builder class which abstracts the creation of web files from the client side representation
+- Memento: The bot has to persist the conversation state through memento patterb
+- Repository: The conversation data will be saved in a repository where the bot will perform CRUD operations to manage the data.
+- Layered: The bot will take the input from the user and provide the information to another layer which will process all the background task. The bot will have no inside knowledge on how those data will be processed. 
+- Conversationists Bot: The bot will reply to the user input along with knowing the identity of the user. It will know from the user about his/her preferences and replies as well as remembers the comversation. Hence, this bot will be an conversationist bot. 
+
+
