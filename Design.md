@@ -135,7 +135,25 @@ The rest of the steps
 The image goes here
 
 ## Architectural Components Description
-Description of all the components in the architectural diagram goes here
+#### SlackBot
+Slack user interface where the user interacts with the chat bot. User can input the commands in a natural conversational language.
+
+#### Content Sources
+GitHub, LinkedIN and DBLP are the primary sources for resume content. All of these support REST API to fetch user data. Here, the server will call these APIs to get the resume content based on the metadata provided by user through SlackBot.
+
+#### User Profiles
+This is the container for user specific data. It will store data in .yml file format. After fetching data from Content Sources, the server will store it in User Profiles. If any user does not provide any link to any of the content sources, s/he will have to provide data in this .yml file. Before generating the actual resume, the server will give option to user to review the server generated user profile and edit them.
+
+#### Stoage
+The storage is required for session management and storing the templates of resume. In case user wants to pause a cv generation session, current details will be stored in a database. When the user wants to resume the previous session, all the existing data can be fetched from database to continue it. All the resumes that will be generated through our system, must follow some specific templates. These templates also need to stored in database and will be selected based on requirement from user.
+
+#### Resume Website
+It is the final output of static resume builder. Based on user preference, the server will create a github.io webpage containig the resume or will provide the webpage contents in a compressed directory.
+
+#### Server
+Server is main core component of our system. It will control conversation flow with user through SlackBot. Server will fetch user data from GitHub, LinkedIN and DBLP (if available) and will generate the user profile. In other case, it will request the user to update the user profile. After generating the user profile, it will again ask user to review it. Based on the results of review and the template requirement of the user, server will generate the resume webpage. Server will also maintain a storage for supporting session pause/resume feature and storing some templates for resume.
+
+
 
 ## Constraints
 
