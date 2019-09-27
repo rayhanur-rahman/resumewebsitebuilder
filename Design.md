@@ -132,7 +132,7 @@ The rest of the steps
 
 # 5. Architectural Design
 ## Diagram
-![Architectural Design](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/diagram/CVbot-architecture.pdf)
+![Architectural Design](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/diagram/CVbot-architecture.png)
 
 ## Architectural Components Description
 #### SlackBot
