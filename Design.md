@@ -153,9 +153,10 @@ It is the final output of static resume builder. Based on user preference, the s
 #### Server
 Server is main core component of our system. It will control conversation flow with user through SlackBot. Server will fetch user data from GitHub, LinkedIN and DBLP (if available) and will generate the user profile. In other case, it will request the user to update the user profile. After generating the user profile, it will again ask user to review it. Based on the results of review and the template requirement of the user, server will generate the resume webpage. Server will also maintain a storage for supporting session pause/resume feature and storing some templates for resume.
 
-
-
 ## Constraints
+- Slack: The user has to be a slack channel member where the bot is installed
+- Github.io Repository: If the user wants to deploy the website in Github.io page, then ```<username>.github.io``` repository must not exist before
+- LinkedIn and DBLP API: The availability and details of user profile depend on what data LinkedIn and DBLP api provides. 
 
 ## Additional Design/Architectural Pattern
 - Builder: The goal of Builder pattern is to separate the construction of a complex object from its representation so that different representations can be created from the same construction process. So we can use it to construct complex object step by step and the very last object will retrun the final object. The process of creating the objects should be generic so that it can be reused to create different representation of the same object. In our case, the bot is supposed to construct a website (complex object) from the user preference (different representations). Hence, we need to use this pattern to make our object creation process as much generic as possible so that different types of website creation is possible in the future.
