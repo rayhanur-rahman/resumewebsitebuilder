@@ -118,3 +118,11 @@ Once the bot has prepared the single file after combining the data from various 
 - [E1] If user answers ``zip``, the bot will just compress the files in a zip and send it to the user.
 
 
+# 4. Design Sketches
+## 4.1 Storyboard
+For commands `\init`, `\pause`, and `\resume`.
+![init_pause_resume](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/taufiqBranch/Storyboard/init_pause_resume.png)
+For commands `\kill` followed by `no` and `yes` respectively.
+![kill](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/taufiqBranch/Storyboard/kill.png)
+The rest of the steps
+![finalSteps](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/taufiqBranch/Storyboard/finalSteps.png)
