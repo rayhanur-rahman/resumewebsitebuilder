@@ -126,3 +126,5 @@ For commands `\kill` followed by `no` and `yes` respectively.
 ![kill](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/taufiqBranch/Storyboard/kill.png)
 The rest of the steps
 ![finalSteps](https://github.ncsu.edu/csc510-fall2019/CSC510-20/blob/taufiqBranch/Storyboard/finalSteps.png)
+
+## 4.2 Wireframe
