@@ -1,6 +1,6 @@
 # CSC510-20
 
-## Resume and Homepage Builder Bot
+## Static Resume Website Builder Bot
 
 - [Design](Design.md)
 
