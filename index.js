@@ -99,6 +99,10 @@ controller.on('bot_channel_join', function (bot, message) {
 controller.on('file_shared', function (bot, message) {
     console.log('file shared');
     console.log(message);
+    // make a rest api call to https://slack.com/api/files.info?file=FPJBZ9JK1&token=xoxb-762511540336-791388161521-MCcMRT5iwVgxP25nBk0tg0dS
+    //file=fileid
+    //token=bottoken
+
 });
 
 controller.on('message, message.channels, message.im', function (bot, message) {
@@ -107,6 +111,9 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 
 controller.hears('hello', 'direct_message', function (bot, message) {
     bot.reply(message, 'Hello!');
+
+    //https://www.mydatahack.com/uploading-and-downloading-files-in-s3-with-node-js/
+
     fs.writeFile('newfile.txt', 'Learn Node FS module', function (err) {
         if (err) throw err;
         console.log('File is created successfully.');
@@ -115,8 +122,8 @@ controller.hears('hello', 'direct_message', function (bot, message) {
     fs.readFile('newfile.txt', (err, data) => {
         if (err) throw err;
         const params = {
-            Bucket: 'cloud-cube', // pass your bucket name
-            Key: 'r00n7dz6kd7w/public/newfile.txt', // file will be saved as testBucket/contacts.csv
+            Bucket: process.env.BUCKET_NAME, // pass your bucket name
+            Key:  `${process.env.CUBE_NAME}/public/newFile.txt`, // file will be saved as testBucket/contacts.csv
             Body: JSON.stringify(data, null, 2)
         };
         s3.upload(params, function(s3Err, data) {
