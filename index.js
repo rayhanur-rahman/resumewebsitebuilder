@@ -30,6 +30,14 @@ var config = {};
 
 require('dotenv').config();
 
+const fs = require('fs');
+const AWS = require('aws-sdk');
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.CLOUDCUBE_ACCESS_KEY_ID,
+    secretAccessKey: process.env.CLOUDCUBE_SECRET_ACCESS_KEY
+});
+
 if (process.env.MONGODB_URI) {
     var BotkitStorage = require('botkit-storage-mongo');
     config = {
@@ -99,7 +107,11 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 
 controller.hears('hello', 'direct_message', function (bot, message) {
     bot.reply(message, 'Hello!');
-    console.log('hhhhhhhhhhhhh');
+    fs.readdir(testFolder, (err, files) => {
+        files.forEach(file => {
+          console.log(file);
+        });
+      });
 });
 
 
