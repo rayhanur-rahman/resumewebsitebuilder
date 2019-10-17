@@ -89,7 +89,7 @@ controller.on('bot_channel_join', function (bot, message) {
 });
 
 controller.on('message', function(bot, message){
-    bot.reply(message, 'I am still learning');\
+    bot.reply(message, 'I am still learning');
     console.log('got a message');
 });
 
