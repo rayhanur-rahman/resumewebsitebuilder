@@ -107,7 +107,7 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 
 controller.hears('hello', 'direct_message', function (bot, message) {
     bot.reply(message, 'Hello!');
-    fs.readdir(testFolder, (err, files) => {
+    fs.readdir('/', (err, files) => {
         files.forEach(file => {
           console.log(file);
         });
