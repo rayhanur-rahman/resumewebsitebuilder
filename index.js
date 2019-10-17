@@ -107,10 +107,9 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 
 controller.hears('hello', 'direct_message', function (bot, message) {
     bot.reply(message, 'Hello!');
-    fs.readdir('.', (err, files) => {
-        files.forEach(file => {
-          console.log(file);
-        });
+    fs.writeFile('newfile.txt', 'Learn Node FS module', function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
       });
 });
 
