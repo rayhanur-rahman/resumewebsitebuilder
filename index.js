@@ -116,7 +116,7 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
         if (err) {
             console.log(err)
         }
-        bot.reply(message, 'I heard you loud and clear boss.');
+        bot.reply(message, 'I heard you loud and clear');
         console.log(message);
     });
 });
