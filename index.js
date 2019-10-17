@@ -107,10 +107,24 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 
 controller.hears('hello', 'direct_message', function (bot, message) {
     bot.reply(message, 'Hello!');
-    fs.writeFile('newfile.txt', 'Learn Node FS module', function (err) {
+    // fs.writeFile('newfile.txt', 'Learn Node FS module', function (err) {
+    //     if (err) throw err;
+    //     console.log('File is created successfully.');
+    //   });
+
+
+    fs.readFile('newfile.txt', (err, data) => {
         if (err) throw err;
-        console.log('File is created successfully.');
-      });
+        const params = {
+            Bucket: 'cloud-cube', // pass your bucket name
+            Key: 'newfile.txt', // file will be saved as testBucket/contacts.csv
+            Body: JSON.stringify(data, null, 2)
+        };
+        s3.upload(params, function(s3Err, data) {
+            if (s3Err) throw s3Err
+            console.log(`File uploaded successfully at ${data.Location}`)
+        });
+     });
 });
 
 
