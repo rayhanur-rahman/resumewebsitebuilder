@@ -116,7 +116,7 @@ controller.hears('hello', 'direct_message', function (bot, message) {
         if (err) throw err;
         const params = {
             Bucket: 'cloud-cube', // pass your bucket name
-            Key: 'newfile.txt', // file will be saved as testBucket/contacts.csv
+            Key: 'r00n7dz6kd7w/public/newfile.txt', // file will be saved as testBucket/contacts.csv
             Body: JSON.stringify(data, null, 2)
         };
         s3.upload(params, function(s3Err, data) {
