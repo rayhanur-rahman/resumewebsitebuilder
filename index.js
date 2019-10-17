@@ -10,7 +10,7 @@
 
 function onInstallation(bot, installer) {
     if (installer) {
-        bot.startPrivateConversation({user: installer}, function (err, convo) {
+        bot.startPrivateConversation({ user: installer }, function (err, convo) {
             if (err) {
                 console.log(err);
             } else {
@@ -30,14 +30,14 @@ var config = {};
 
 require('dotenv').config();
 
-if (process.env.MONGOLAB_URI) {
+if (process.env.MONGODB_URI) {
     var BotkitStorage = require('botkit-storage-mongo');
     config = {
-        storage: BotkitStorage({mongoUri: process.env.MONGOLAB_URI}),
+        storage: BotkitStorage({ mongoUri: process.env.MONGODB_URI }),
     };
 } else {
     config = {
-        json_file_store: ((process.env.TOKEN)?'./db_slack_bot_ci/':'./db_slack_bot_a/'), //use a different name if an app or CI
+        json_file_store: ((process.env.TOKEN) ? './db_slack_bot_ci/' : './db_slack_bot_a/'), //use a different name if an app or CI
     };
 }
 
@@ -88,14 +88,18 @@ controller.on('bot_channel_join', function (bot, message) {
     bot.reply(message, "I'm here!")
 });
 
-controller.on('message', function(bot, message){
-    bot.reply(message, 'I am still learning');
-    console.log('got a message');
+controller.on('file_shared', function (bot, message) {
+    console.log('file shared');
+    console.log(message);
+});
+
+controller.on('message, message.channels, message.im', function (bot, message) {
+    console.log(message);
 });
 
 controller.hears('hello', 'direct_message', function (bot, message) {
     bot.reply(message, 'Hello!');
-    console.log('gggggggggggggggg');
+    console.log('hhhhhhhhhhhhh');
 });
 
 
@@ -103,15 +107,64 @@ controller.hears('hello', 'direct_message', function (bot, message) {
  * AN example of what could be:
  * Any un-handled direct mention gets a reaction and a pat response!
  */
-//controller.on('direct_message,mention,direct_mention', function (bot, message) {
-//    bot.api.reactions.add({
-//        timestamp: message.ts,
-//        channel: message.channel,
-//        name: 'robot_face',
-//    }, function (err) {
-//        if (err) {
-//            console.log(err)
-//        }
-//        bot.reply(message, 'I heard you loud and clear boss.');
-//    });
-//});
+controller.on('direct_message,mention,direct_mention', function (bot, message) {
+    bot.api.reactions.add({
+        timestamp: message.ts,
+        channel: message.channel,
+        name: 'robot_face',
+    }, function (err) {
+        if (err) {
+            console.log(err)
+        }
+        bot.reply(message, 'I heard you loud and clear boss.');
+        console.log(message);
+    });
+});
+
+controller.hears('start', 'direct_message', function (bot, message) {
+    bot.createConversation(message, function(err, convo) {
+
+        // create a path for when a user says YES
+        convo.addMessage({
+                text: 'You said yes! How wonderful.',
+        },'yes_thread');
+    
+        // create a path for when a user says NO
+        convo.addMessage({
+            text: 'You said no, that is too bad.',
+        },'no_thread');
+    
+        // create a path where neither option was matched
+        // this message has an action field, which directs botkit to go back to the `default` thread after sending this message.
+        convo.addMessage({
+            text: 'Sorry I did not understand.',
+            action: 'default',
+        },'bad_response');
+    
+        // Create a yes/no question in the default thread...
+        convo.addQuestion('Do you like cheese?', [
+            {
+                pattern: 'yes',
+                callback: function(response, convo) {
+                    convo.gotoThread('yes_thread');
+                },
+            },
+            {
+                pattern: 'no',
+                callback: function(response, convo) {
+                    convo.gotoThread('no_thread');
+                },
+            },
+            {
+                default: true,
+                callback: function(response, convo) {
+                    convo.gotoThread('bad_response');
+                },
+            }
+        ],{},'default');
+    
+        convo.activate();
+    });
+});
+
+//https://resumeslackbot.herokuapp.com/oauth
