@@ -189,6 +189,19 @@ controller.hears('start', 'direct_message', function (bot, message){
     }
 });
 
+//Extracting LinkedIn Info
+function ExtractingLinkedInInfo(response){
+    return true;
+}
+//Extracting DBLP Info
+function ExtractingDBLPInfo(response){
+    return true;
+}
+//Extracting Github Info
+function ExtractingGithubInfo(response){
+    return true;
+}
+
 controller.hears('I am ready','direct_message', function(bot, message){
     if(level===1){
         bot.createConversation(message, function(err, convo) {
@@ -199,8 +212,8 @@ controller.hears('I am ready','direct_message', function(bot, message){
         
             // create a path for when a user says NO
             convo.addMessage({
-                text: 'You said no, that is too bad.',
-            },'no_thread');
+                text: 'Great! I think I got all the information required',
+            },'Valid');
         
             // create a path where neither option was matched
             // this message has an action field, which directs botkit to go back to the `default` thread after sending this message.
@@ -209,12 +222,12 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 action: 'default',
             },'bad_response');
         
-            // Create a yes/no question in the default thread...
-            convo.addQuestion('Do you like cheese?', [
+            // Question No.1
+            convo.addQuestion('Please tell me if you have a LinkedIn account?[yes/no]', [
                 {
                     pattern: 'yes',
                     callback: function(response, convo) {
-                        convo.gotoThread('yes_thread');
+                        convo.gotoThread('yes_linkedin_thread');
                     },
                 },
                 {
@@ -230,7 +243,123 @@ controller.hears('I am ready','direct_message', function(bot, message){
                     },
                 }
             ],{},'default');
-        
+            //Question 2
+            convo.addQuestion('Great! Please provide your LinkedIn account ID.', [
+                {
+                    pattern: /.*.com/,
+                    callback: function(response, convo) {
+                        var ValidLinkedInAccount = ExtractingLinkedInInfo(response);
+                        if(ValidLinkedInAccount === true){
+                            convo.gotoThread('Ask_DBLP');
+                        } else{
+                            convo.gotoThread('yes_linkedin_thread');
+                        }
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'yes_linkedin_thread');
+            //Question No. 3
+            convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', [
+                {
+                    pattern: 'yes',
+                    callback: function(response, convo) {
+                        convo.gotoThread('yes_dblp_thread');
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'Ask_DBLP');
+            //Question No. 4 
+            convo.addQuestion('Amazing! Please provide me with the link.', [
+                {
+                    pattern: /.*.com/,
+                    callback: function(response, convo) {
+                        var ValidDBLPAccount = ExtractingDBLPInfo(response);
+                        if(ValidDBLPAccount === true){
+                            convo.gotoThread('Ask_GitHub');
+                        } else{
+                            convo.gotoThread('yes_dblp_thread');
+                        }
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'yes_dblp_thread');
+            //Question 5
+            convo.addQuestion('Awesome! Now tell me if you have a Github account?[yes/no]', [
+                {
+                    pattern: 'yes',
+                    callback: function(response, convo) {
+                        convo.gotoThread('yes_github_thread');
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'Ask_GitHub');
+            //Question 6
+            convo.addQuestion('Amazing! Please provide me with the link.', [
+                {
+                    pattern: /.*.com/,
+                    callback: function(response, convo) {
+                        var ValidGithubAccount = ExtractingGithubInfo(response);
+                        if(ValidGithubAccount === true){
+                            level++;
+                            convo.gotoThread('Valid');
+                        } else{
+                            convo.gotoThread('default');
+                        }
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'yes_github_thread');
+            //Message 7
+            
             convo.activate();
         });
     }
