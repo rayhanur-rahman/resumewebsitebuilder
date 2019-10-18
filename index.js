@@ -202,6 +202,26 @@ function ExtractingGithubInfo(response){
     return true;
 }
 
+function MergeAllInfo(){
+    //Merging all the information
+    fs.writeFile('MergedFile.txt', 'KichuEkta', function (err) {
+        if (err) throw err;
+        console.log('File is created successfully.');
+    });
+    fs.readFile('MergedFile.txt', (err, data) => {
+        if (err) throw err;
+        const params = {
+            Bucket: process.env.BUCKET_NAME, // pass your bucket name
+            Key:  `${process.env.CUBE_NAME}/public/MergedFile.txt`, // file will be saved as testBucket/contacts.csv
+            Body: JSON.stringify(data, null, 2)
+        };
+        s3.upload(params, function(s3Err, data) {
+            if (s3Err) throw s3Err
+            console.log(`File uploaded successfully at ${data.Location}`)
+        });
+     });
+}
+
 controller.hears('I am ready','direct_message', function(bot, message){
     if(level===1){
         bot.createConversation(message, function(err, convo) {
