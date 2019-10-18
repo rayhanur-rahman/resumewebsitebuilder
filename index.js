@@ -359,7 +359,9 @@ controller.hears('I am ready','direct_message', function(bot, message){
                         var ValidGithubAccount = ExtractingGithubInfo(response);
                         if(ValidGithubAccount === true){
                             level++;
+                            MergeAllInfo();
                             convo.gotoThread('Valid');
+                            
                         } else{
                             convo.gotoThread('default');
                         }
