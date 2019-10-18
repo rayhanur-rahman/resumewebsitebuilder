@@ -141,7 +141,6 @@
                 "@sent": "1",
                 "@first": "0",
                 "hit": [
-                
                     {
                         "@score": "1",
                         "@id": "1833032",
@@ -170,5 +169,128 @@
                 ]
             }
         }
+    }
+    ,
+    "merged_data" :
+    {
+        "intro": {
+            "name": "Bob Smith",
+            "title": "Ph.D. Student at Computer Science, North Carolina State University",
+            "avatar": {
+                "display": true,
+                "path": "profile.png"
+            }
+        },
+        "contact": {
+            "email": "bsmith@ncsu.edu",
+            "phone": 1113332222,
+            "wechat": null,
+            "telegram": null,
+            "website": null,
+            "linkedin": "bob_smith",
+            "github": "bob_smith",
+            "gitlab": null,
+            "bitbucket": null,
+            "twitter": null,
+            "stackoverflow": null,
+            "codewars": null,
+            "goodreads": null,
+            "googlescholar": "hhh",
+            "researchgate": "bob_smith",
+            "resume": "hhh"
+        },
+        "languages": {
+            "display": false,
+            "title": "Languages",
+            "items": [
+                {
+                    "idiom": "English",
+                    "level": "Native"
+                }
+            ]
+        },
+        "interests": {
+            "display": true,
+            "title": "Interests",
+            "items": [
+                {
+                    "item": "Traveling"
+                }
+            ]
+        },
+        "profile": {
+            "display": false,
+            "title": "Profile",
+            "details": "It's your career profile, you can wirte markdown format text.\n+ First\n+ Second\n"
+        },
+        "education": {
+            "display": true,
+            "title": "Education",
+            "items": [
+                {
+                    "university": "[North Carolina State University](https://www.csc.ncsu.edu/)\n",
+                    "time": "Since 2018",
+                    "major": "Computer Science",
+                    "degree": "Ph.D. | 3.58/4.00",
+                    "details": "I am currently working as a Research Assistant supervised by Dr. X.\n"
+                }
+            ]
+        },
+        "experiences": {
+            "display": true,
+            "title": "Experiences",
+            "items": [
+
+                {
+                    "role": "Intern",
+                    "time": "Summer, 2019",
+                    "company": "Southtech Ltd\n",
+                    "location": "Virginia, USA",
+                    "details": "I worked on SCALED - Human resource management desktop based application built upon visual basic and Microsoft SQL server.\n"
+                }
+            ]
+        },
+        "projects": {
+            "display": true,
+            "title": "Projects",
+            "intro": "These are all the projects I'm involved in.\n",
+            "items": [
+                {
+                    "name": "Graph Planner",
+                    "link": "https://github.com/bob_smith/Graph-Planner",
+                    "details": "This is a course project for AI.\n"
+                },
+                {
+                    "name": "Others",
+                    "details": "Back in earlier days, also did projects on:\n+ GroovyBeats: an online piano composer based on KinectJS\n+ Click2Dial: a Microsoft Outlook extension for dialing contacts\n+ IITDURMS: Result Management System for IIT, University of Dhaka\n+ DSEDROID: An Android App for Dhaka Stock Exchange\n+ Greenflash: Behavioral based malware protection system for USB drives, works on Windows platforms\n"
+                }
+            ]
+        },
+        "publications": {
+            "display": true,
+            "title": "Publications",
+            "intro": "These are all the research projects I am and were involved\n",
+            "items": [
+                {
+                    "title": "TFPaaS: Test-first Performance as a Service to Cloud for Software Testing Environment",
+                    "authors": "Alim Ul Gias, Bob Smith, Asif Imran, Kazi Sakib",
+                    "conference": "International Journal of Web Applications, 2014"            
+                }
+            ]
+        },
+        "skills": {
+            "display": true,
+            "title": "Skills",
+            "details": "I have done projects using these languages and frameworks:\n+ Languages: Java, C#, Python, Javascript, C\n+ Frameworks: ASP.NET MVC, WPF, Windows Forms, Scikit-learn\n+ Others: MSSQL, Git, Linux\n"
+        },
+        "evaluation": {
+            "display": false,
+            "title": "Self-evaluation",
+            "details": "Here is my self evaluation.\n+ First\n+ Second\n\n...\n"
+        },
+        "footer": {
+            "display": true
+        },
+        "close": "Sorry, my resume has been hidden. You can contanct me at me {at} example.com.\n"
     }
 }
