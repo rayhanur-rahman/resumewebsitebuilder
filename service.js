@@ -37,7 +37,7 @@ function getLinkedInProfile(userId, fieldList) {
 }
 
 function getDblpProfile(userId) {
-	const url = dblpUrl + '/search/publ/api?q==author:' + userId + ":&format=json");
+	const url = dblpUrl + '/search/publ/api?q==author:' + userId + ":&format=json";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -48,4 +48,25 @@ function getDblpProfile(userId) {
 
 	let profile_details = (await got(url, options)).body;
 	return profile_details;
+}
+
+function mergeProfiles(gitHubData, linkedinData, dblpData){
+
+
+}
+
+function conversStart(slackUserId){
+
+}
+
+function validateLevel(slackUserId, currentLevel){
+
+}
+
+function validateUserProfiles(userProfile){
+
+}
+
+function prepareWebpageContent(userProfile){
+
 }
