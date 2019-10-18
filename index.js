@@ -2,7 +2,6 @@
  * A Bot for Slack!
  */
 
-
 /**
  * Define a function for initiating a conversation on installation
  * With custom integrations, we don't have a way to find out who installed us, so we can't message them :(
@@ -117,7 +116,7 @@ controller.hears('hello', 'direct_message', function (bot, message) {
     fs.writeFile('newfile.txt', 'Learn Node FS module', function (err) {
         if (err) throw err;
         console.log('File is created successfully.');
-      });
+    });
 
     fs.readFile('newfile.txt', (err, data) => {
         if (err) throw err;
@@ -134,6 +133,64 @@ controller.hears('hello', 'direct_message', function (bot, message) {
 });
 
 
+//pushing level value 0 in db
+var level=0;
+//Start Convo
+controller.hears('start', 'direct_message', function (bot, message){
+    bot.reply(message,'Welcome');
+    bot.reply(message,'Please say I am ready when you are ready');
+    level++;
+});
+
+controller.hears('I am ready','direct_message', function(bot, message){
+    if(level===1){
+        bot.createConversation(message, function(err, convo) {
+            // create a path for when a user says YES
+            convo.addMessage({
+                    text: 'You said yes! How wonderful.',
+            },'yes_thread');
+        
+            // create a path for when a user says NO
+            convo.addMessage({
+                text: 'You said no, that is too bad.',
+            },'no_thread');
+        
+            // create a path where neither option was matched
+            // this message has an action field, which directs botkit to go back to the `default` thread after sending this message.
+            convo.addMessage({
+                text: 'Sorry I did not understand.',
+                action: 'default',
+            },'bad_response');
+        
+            // Create a yes/no question in the default thread...
+            convo.addQuestion('Do you like cheese?', [
+                {
+                    pattern: 'yes',
+                    callback: function(response, convo) {
+                        convo.gotoThread('yes_thread');
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'default');
+        
+            convo.activate();
+        });
+    }
+});
+
+
+//
 /**
  * AN example of what could be:
  * Any un-handled direct mention gets a reaction and a pat response!
@@ -152,7 +209,7 @@ controller.on('direct_message,mention,direct_mention', function (bot, message) {
     });
 });
 
-controller.hears('start', 'direct_message', function (bot, message) {
+controller.hears('start1', 'direct_message', function (bot, message) {
     bot.createConversation(message, function(err, convo) {
 
         // create a path for when a user says YES
