@@ -134,7 +134,7 @@ controller.hears('hello', 'direct_message', function (bot, message) {
 
 
 //pushing level value 0 in db
-var level = 1;
+var level = 0;
 //Start Convo
 controller.hears('start', 'direct_message', function (bot, message){
     if (level === 0) {
@@ -225,11 +225,6 @@ function MergeAllInfo(){
 controller.hears('I am ready','direct_message', function(bot, message){
     if(level===1){
         bot.createConversation(message, function(err, convo) {
-            // create a path for when a user says YES
-            convo.addMessage({
-                    text: 'You said yes! How wonderful.',
-            },'yes_thread');
-        
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
