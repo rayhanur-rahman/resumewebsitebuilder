@@ -12,8 +12,9 @@ async function example() {
     await driver.get(`${slackSpaceUrl}`);
     await driver.findElement(By.id('email')).sendKeys(loginEmail);
     await driver.findElement(By.id('password')).sendKeys(loginPassword);
-    await driver.findElement(By.class('signin_btn')).sendKeys(Keys.ENTER);
-    console.log(hello);
+    
+    
+    //console.log(hello);
 }   
 example()
     /*
