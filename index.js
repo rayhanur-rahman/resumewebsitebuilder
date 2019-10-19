@@ -6,6 +6,7 @@
  * Define a function for initiating a conversation on installation
  * With custom integrations, we don't have a way to find out who installed us, so we can't message them :(
  */
+var fileURL;
 
 function onInstallation(bot, installer) {
     if (installer) {
@@ -110,7 +111,6 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 
 controller.hears('hello', 'direct_message', function (bot, message) {
     bot.reply(message, 'Hello!');
-
     //https://www.mydatahack.com/uploading-and-downloading-files-in-s3-with-node-js/
 
     fs.writeFile('newfile.txt', 'Learn Node FS module', function (err) {
@@ -218,12 +218,14 @@ function MergeAllInfo(){
         s3.upload(params, function(s3Err, data) {
             if (s3Err) throw s3Err
             console.log(`File uploaded successfully at ${data.Location}`)
+            return data.Location;
         });
      });
 }
 
 controller.hears('I am ready','direct_message', function(bot, message){
     if(level===1){
+        
         bot.createConversation(message, function(err, convo) {
             // create a path for when a user says YES
             convo.addMessage({
@@ -233,6 +235,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
+                text: `File uploaded successfully at ${fileURL}`,
             },'Valid');
         
             // create a path where neither option was matched
@@ -244,6 +247,155 @@ controller.hears('I am ready','direct_message', function(bot, message){
         
             // Question No.1
             convo.addQuestion('Please tell me if you have a LinkedIn account?[yes/no]', [
+                {
+                    pattern: 'yes',
+                    callback: function(response, convo) {
+                        convo.gotoThread('yes_linkedin_thread');
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'default');
+            //Question 2
+            convo.addQuestion('Great! Please provide your LinkedIn account ID.', [
+                {
+                    pattern: /.*.com/,
+                    callback: function(response, convo) {
+                        var ValidLinkedInAccount = ExtractingLinkedInInfo(response);
+                        if(ValidLinkedInAccount === true){
+                            convo.gotoThread('Ask_DBLP');
+                        } else{
+                            convo.gotoThread('yes_linkedin_thread');
+                        }
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'yes_linkedin_thread');
+            //Question No. 3
+            convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', [
+                {
+                    pattern: 'yes',
+                    callback: function(response, convo) {
+                        convo.gotoThread('yes_dblp_thread');
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'Ask_DBLP');
+            //Question No. 4 
+            convo.addQuestion('Amazing! Please provide me with the link.', [
+                {
+                    pattern: /.*.com/,
+                    callback: function(response, convo) {
+                        var ValidDBLPAccount = ExtractingDBLPInfo(response);
+                        if(ValidDBLPAccount === true){
+                            convo.gotoThread('Ask_GitHub');
+                        } else{
+                            convo.gotoThread('yes_dblp_thread');
+                        }
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'yes_dblp_thread');
+            //Question 5
+            convo.addQuestion('Awesome! Now tell me if you have a Github account?[yes/no]', [
+                {
+                    pattern: 'yes',
+                    callback: function(response, convo) {
+                        convo.gotoThread('yes_github_thread');
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'Ask_GitHub');
+            //Question 6
+            convo.addQuestion('Amazing! Please provide me with the link.', [
+                {
+                    pattern: /.*.com/,
+                    callback: function(response, convo) {
+                        var ValidGithubAccount = ExtractingGithubInfo(response);
+                        if(ValidGithubAccount === true){
+                            level++;
+                            fileURL = MergeAllInfo();
+                            convo.gotoThread('Valid');
+                            
+                        } else{
+                            convo.gotoThread('default');
+                        }
+                    },
+                },
+                {
+                    pattern: 'no',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'yes_github_thread');
+            //Message 7
+            
+            convo.activate();
+        });
+    }
+});
+
+controller.hears('verify', 'direct_message', function (bot, message){
+    if (level === 2) {
+        //bot.reply(message,'Please give me the link');
+        bot.createConversation(message, function(err, convo) {
+
+            convo.addQuestion('Please give me a link', [
                 {
                     pattern: 'yes',
                     callback: function(response, convo) {
@@ -384,28 +536,72 @@ controller.hears('I am ready','direct_message', function(bot, message){
             
             convo.activate();
         });
+
+    } else {// bot replies an error message when the user is not in level 0
+        bot.createConversation(message, function(err, convo) {
+            // create a path for when a user says YES
+            convo.addMessage({
+                    text: 'Please say \'start\' to start a new session.',
+            },'yes_thread');
+        
+            // create a path for when a user says NO
+            convo.addMessage({
+                text: 'Alright',
+            },'no_thread');
+        
+            // create a path where neither option was matched
+            // this message has an action field, which directs botkit to go back to the `default` thread after sending this message.
+            convo.addMessage({
+                text: 'Sorry I did not understand.',
+                action: 'default',
+            },'bad_response');
+        
+            // Create a yes/no question in the default thread...
+            convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', [
+                {
+                    pattern: 'y',
+                    callback: function(response, convo) {
+                        convo.gotoThread('yes_thread');
+                        level = 0;
+                    },
+                    
+                },
+                {
+                    pattern: 'n',
+                    callback: function(response, convo) {
+                        convo.gotoThread('no_thread');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'default');
+        
+            convo.activate();
+        });
     }
 });
-
-
 //
 /**
  * AN example of what could be:
  * Any un-handled direct mention gets a reaction and a pat response!
  */
-controller.on('direct_message,mention,direct_mention', function (bot, message) {
-    bot.api.reactions.add({
-        timestamp: message.ts,
-        channel: message.channel,
-        name: 'robot_face',
-    }, function (err) {
-        if (err) {
-            console.log(err)
-        }
-        bot.reply(message, 'I heard you loud and clear......');
-        console.log(message);
-    });
-});
+// controller.on('direct_message,mention,direct_mention', function (bot, message) {
+//     bot.api.reactions.add({
+//         timestamp: message.ts,
+//         channel: message.channel,
+//         name: 'robot_face',
+//     }, function (err) {
+//         if (err) {
+//             console.log(err)
+//         }
+//         bot.reply(message, 'I heard you loud and clear......');
+//         console.log(message);
+//     });
+// });
 
 controller.hears('start1', 'direct_message', function (bot, message) {
     bot.createConversation(message, function(err, convo) {
