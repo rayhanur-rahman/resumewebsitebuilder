@@ -139,12 +139,11 @@ controller.hears('hello', 'direct_message', function (bot, message) {
 
 
 //pushing level value 0 in db
-var level = 1;
+var level = 0;
 //Start Convo
 controller.hears('start', 'direct_message', function (bot, message){
     if (level === 0) {
-        bot.reply(message,'Welcome!');
-        bot.reply(message,'Please say \'I am ready\' when you are ready');
+        bot.reply(message,'Welcome! Please say \'I am ready\' when you are ready');
         level++;
     } else {// bot replies an error message when the user is not in level 0
         bot.createConversation(message, function(err, convo) {
@@ -232,7 +231,9 @@ function getGithubToken(){
 function getGithubRepoName(){
     return userGithubRepoName;
 }
-
+function uploadZippedCV(){
+    return true;
+}
 function MergeAllInfo(){
     //Merging all the information
     fs.writeFile('MergedFile.txt', 'KichuEkta', function (err) {
@@ -454,30 +455,22 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 }
             ],{},'default');
 
-            convo.addMessage({
-                text: 'Data verified. Do you want your CV in Github.io or in zipped format?',
-            },'valid');
-            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?', [
-                {
-                    pattern: 'github',
-                    callback: function(response, convo) {
+            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?',function(response,convo) {
+                if (response.text === 'github'){
+                    convo.gotoThread('github_thread_token');
+                } else if (response.text === 'zip') {
+                    if (uploadZippedCV()) {
+                        convo.gotoThread('zipped_CV_uploaded');
+                        //convo.gotoThread('session_terminated');
+                    }else{
                         
-                        convo.gotoThread('github_thread_token');
-                    },
-                },
-                {
-                    pattern: 'zip',
-                    callback: function(response, convo) {
-                        convo.gotoThread('zip_thread');
-                    },
-                },
-                {
-                    default: true,
-                    callback: function(response, convo) {
-                        convo.gotoThread('bad_at_valid2');
-                    },
+                    }
+                    
+                    
+                } else {
+                    convo.gotoThread('bad_at_valid2');
                 }
-            ],{},'valid2');
+              },{},'valid2');
             convo.addQuestion('Token?', [
                 {
                     pattern: /.*/,
@@ -513,6 +506,10 @@ controller.hears('verify', 'direct_message', function (bot, message){
                     },
                 }
             ],{},'github_thread_repoName');
+            convo.addMessage({
+                text: 'Thanks. The zipped CV has been uploaded successfully',
+                action: 'terminate_session2',
+            },'zipped_CV_uploaded');
             convo.addMessage({
                 text: 'Sorry the repo could not be created. Make sure you provide valid token and repo name',
                 action: 'github_thread_token',
