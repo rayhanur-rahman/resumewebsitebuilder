@@ -257,8 +257,8 @@ function MergeAllInfo(){
      });
 }
 
-function verifyYMLdata(){
-    return true;
+function verifyYMLContent(){
+    return false;
 }
 
 
@@ -267,10 +267,6 @@ controller.hears('I am ready','direct_message', function(bot, message){
     if(level===1){
         
         bot.createConversation(message, function(err, convo) {
-            // create a path for when a user says YES
-            convo.addMessage({
-                    text: 'You said yes! How wonderful.',
-            },'yes_thread');
         
             // create a path for when a user says NO
             convo.addMessage({
@@ -434,15 +430,17 @@ controller.hears('verify', 'direct_message', function (bot, message){
     if (level === 2) {
         //bot.reply(message,'Please give me the link');
         bot.createConversation(message, function(err, convo) {
-            convo.addQuestion('Please give me a link', [
+            convo.addQuestion('Please give me a link of the yml file', [
                 {
                     pattern: /.*.yml/,
                     callback: function(response, convo) {
                         
-                        //bot.reply ('Thanks. Verifying...')
-                        if (verifyYMLdata()) {
+                        //verifyYMLContent() verifies the yml content. return false if the yml data have errors
+                        if (verifyYMLContent()) {
                             //bot.reply('Data verified. Do you your CV in Github or zipped format?');
                             convo.gotoThread('valid2');
+                        }else {
+                            convo.gotoThread('invalid_YML_content');
                         }
                         
                     },
@@ -552,9 +550,13 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 action: 'terminate_session2',
             },'bad_at_terminate_session2');
             convo.addMessage({
-                text: 'Sorry I did not understand',
+                text: 'Sorry, maybe you did not upload a yml file',
                 action: 'default',
             },'bad_at_default');
+            convo.addMessage({
+                text: 'Sorry, maybe the fields in the .yml file are not correctly filled up',
+                action: 'default',
+            },'invalid_YML_content');
             convo.activate();
         });
 
