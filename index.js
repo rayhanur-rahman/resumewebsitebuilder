@@ -258,9 +258,12 @@ function MergeAllInfo(){
 }
 
 function verifyYMLContent(){
-    return false;
+    return true;
 }
 
+function uploadEmptyTemplate(){
+
+}
 
 
 controller.hears('I am ready','direct_message', function(bot, message){
@@ -292,7 +295,8 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: 'no',
                     callback: function(response, convo) {
-                        convo.gotoThread('no_thread');
+                        uploadEmptyTemplate();
+                        convo.gotoThread('no_linkedin_thread');
                     },
                 },
                 {
@@ -333,7 +337,8 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: 'no',
                     callback: function(response, convo) {
-                        convo.gotoThread('no_thread');
+                        uploadEmptyTemplate();
+                        convo.gotoThread('no_DBLP_thread');
                     },
                 },
                 {
@@ -380,7 +385,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: 'no',
                     callback: function(response, convo) {
-                        convo.gotoThread('no_thread');
+                        convo.gotoThread('no_github_thread');
                     },
                 },
                 {
@@ -420,7 +425,64 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 }
             ],{},'yes_github_thread');
             //Message 7
-            
+            convo.addQuestion('Please fill up this template and upload', [
+                {
+                    pattern: /.*.yml/,
+                    callback: function(response, convo) {
+                        
+                        convo.gotoThread('Ask_DBLP');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_at_no_linkedin_thread');
+                    },
+                }
+            ],{},'no_linkedin_thread');
+            convo.addQuestion('Please fill up this template and upload', [
+                {
+                    pattern: /.*.yml/,
+                    callback: function(response, convo) {
+                        
+                        convo.gotoThread('Ask_GitHub');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_at_no_DBLP_thread');
+                    },
+                }
+            ],{},'no_DBLP_thread');
+            convo.addQuestion('Please fill up this template and upload', [
+                {
+                    pattern: /.*.yml/,
+                    callback: function(response, convo) {
+                        level++;
+                        console.log(level);
+                        convo.gotoThread('Valid');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_at_no_github_thread');
+                    },
+                }
+            ],{},'no_github_thread');
+            convo.addMessage({
+                text: 'Sorry, maybe you did not upload a yml file',
+                action: 'no_linkedin_thread',
+            },'bad_at_no_linkedin_thread');
+            convo.addMessage({
+                text: 'Sorry, maybe you did not upload a yml file',
+                action: 'no_DBLP_thread',
+            },'bad_at_no_DBLP_thread');
+            convo.addMessage({
+                text: 'Sorry, maybe you did not upload a yml file',
+                action: 'no_github_thread',
+            },'bad_at_no_github_thread');
             convo.activate();
         });
     }
