@@ -6,7 +6,12 @@
  * Define a function for initiating a conversation on installation
  * With custom integrations, we don't have a way to find out who installed us, so we can't message them :(
  */
+//after bot processes all the data, this is where the yml file is stored
 var fileURL;
+// after bot asks for token, this is where token is stored
+var userGithubToken;
+// after bot asks for repo name, this is where repo name is stored
+var userGithubRepoName;
 
 function onInstallation(bot, installer) {
     if (installer) {
@@ -139,7 +144,7 @@ var level = 1;
 controller.hears('start', 'direct_message', function (bot, message){
     if (level === 0) {
         bot.reply(message,'Welcome!');
-        bot.reply(message,'Please say I am ready when you are ready');
+        bot.reply(message,'Please say \'I am ready\' when you are ready');
         level++;
     } else {// bot replies an error message when the user is not in level 0
         bot.createConversation(message, function(err, convo) {
@@ -201,6 +206,32 @@ function ExtractingDBLPInfo(response){
 function ExtractingGithubInfo(response){
     return true;
 }
+// If invalid (token | repoName) return false
+function createRepoForUser() {
+    //console.log(getGithubRepoName());
+    //console.log(getGithubToken());
+    return true;
+}
+function setFileURL(URL){
+    fileURL = URL;
+    //console.log(fileURL)
+}
+function setGithubtoken(token){
+    userGithubToken = token;
+}
+function setRepoName(repoName){
+    userGithubRepoName = repoName;
+}
+function getFileURL(){
+    //console.log(fileURL);
+    return fileURL;
+}
+function getGithubToken(){
+    return userGithubToken;
+}
+function getGithubRepoName(){
+    return userGithubRepoName;
+}
 
 function MergeAllInfo(){
     //Merging all the information
@@ -219,8 +250,8 @@ function MergeAllInfo(){
             if (s3Err) throw s3Err
             console.log(`File uploaded successfully at ${data.Location}`)
             fileURL = data.Location;
-            //console.log(fileURL);
-            return fileURL;
+            setFileURL(data.Location);
+            return data.Location;
         });
      });
 }
@@ -228,6 +259,8 @@ function MergeAllInfo(){
 function verifyYMLdata(){
     return true;
 }
+
+
 
 controller.hears('I am ready','direct_message', function(bot, message){
     if(level===1){
@@ -241,7 +274,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
-                text: 'File uploaded successfully at '+ fileURL,
+                text: `File uploaded successfully at `+ getFileURL(),
             },'Valid');
         
             // create a path where neither option was matched
@@ -368,8 +401,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                         var ValidGithubAccount = ExtractingGithubInfo(response);
                         if(ValidGithubAccount === true){
                             level++;
-                            fileURL = MergeAllInfo();
-                            console.log(fileURL);
+                            MergeAllInfo();
                             convo.gotoThread('Valid');
                             
                         } else{
@@ -409,70 +441,123 @@ controller.hears('verify', 'direct_message', function (bot, message){
                         //bot.reply ('Thanks. Verifying...')
                         if (verifyYMLdata()) {
                             //bot.reply('Data verified. Do you your CV in Github or zipped format?');
-                            convo.gotoThread('valid');
+                            convo.gotoThread('valid2');
                         }
                         
                     },
                 },
                 {
-                    pattern: 'no',
-                    callback: function(response, convo) {
-                        convo.gotoThread('no_thread');
-                    },
-                },
-                {
                     default: true,
                     callback: function(response, convo) {
-                        convo.gotoThread('bad_response');
+                        convo.gotoThread('bad_at_default');
                     },
                 }
             ],{},'default');
-            // convo.addQuestion('Please give me a link', [
-            //     {
-            //         pattern: /.*.com/,
-            //         callback: function(response, convo) {
-            //             bot.reply('Thanks for the link');
-            //             convo.gotoThread('valid_yml_from_user');
-            //         },
-            //     },
-            //     {
-            //         default: true,
-            //         callback: function(response, convo) {
-            //             convo.gotoThread('bad_response');
-            //         },
-            //     }
-            // ],{},'default');
-            // convo.addMessage({
-            //     text: 'Sorry I did not understand.',
-            //     action: 'default',
-            // },'bad_response');
-            // convo.addMessage({
-            //     text: 'Sorry I did not understand.',
-            //     action: 'default',
-            // },'valid_yml_from_user');
+
             convo.addMessage({
                 text: 'Data verified. Do you want your CV in Github.io or in zipped format?',
             },'valid');
-            convo.addQuestion('Thank you. Verifying...', [
+            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?', [
                 {
-                    
+                    pattern: 'github',
                     callback: function(response, convo) {
+                        
+                        convo.gotoThread('github_thread_token');
                     },
                 },
                 {
-                    pattern: 'no',
+                    pattern: 'zip',
                     callback: function(response, convo) {
-                        convo.gotoThread('no_thread');
+                        convo.gotoThread('zip_thread');
                     },
                 },
                 {
                     default: true,
                     callback: function(response, convo) {
-                        convo.gotoThread('bad_response');
+                        convo.gotoThread('bad_at_valid2');
                     },
                 }
-            ],{},'valid_yml');
-            
+            ],{},'valid2');
+            convo.addQuestion('Token?', [
+                {
+                    pattern: /.*/,
+                    callback: function(response, convo) {
+                        setGithubtoken(response.match.input);
+                        convo.gotoThread('github_thread_repoName');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_at_token');
+                    },
+                }
+            ],{},'github_thread_token');
+            convo.addQuestion('Repo name?', [
+                {
+                    pattern: /.*/,
+                    callback: function(response, convo) {
+                        // This will create the cv repository for the user
+                        setRepoName(response.match.input);
+                        if (createRepoForUser()) {
+                            convo.gotoThread('repoCreated');
+                        }else {
+                            convo.gotoThread('bad_at_repoCreation');
+                        }
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_at_repoName');
+                    },
+                }
+            ],{},'github_thread_repoName');
+            convo.addMessage({
+                text: 'Sorry the repo could not be created. Make sure you provide valid token and repo name',
+                action: 'github_thread_token',
+            },'bad_at_repoCreation');
+            convo.addMessage({
+                text: 'Sorry I did not understand.',
+                action: 'github_thread_token',
+            },'bad_at_token');
+            convo.addMessage({
+                text: 'Sorry I did not understand.',
+                action: 'github_thread_repoName',
+            },'bad_at_repoName');
+            convo.addMessage({
+                text: 'Sorry I did not understand.',
+                action: 'valid2',
+            },'bad_at_valid2');
+            convo.addMessage({
+                text: 'Sorry I did not understand.',
+                action: 'valid2',
+            },'bad_at_valid2');
+            convo.addMessage({
+                text: 'Repo Created at ',//here will be the github.io link
+                action: 'terminate_session2',
+            },'repoCreated');
+            convo.addMessage({
+                text: 'session terminated! You can say \'start\' to create a new session',
+            },'session_terminated');
+            convo.addQuestion('Please say \'terminate\' to terminate the session',function(response,convo) {
+                if (response.text === 'terminate'){
+                    level = 0;
+                    convo.gotoThread('session_terminated');
+                } else {
+                    convo.gotoThread('bad_at_terminate_session2');
+                }
+                
+          
+              },{},'terminate_session2');
+            convo.addMessage({
+                text: 'Sorry I did not understand',
+                action: 'terminate_session2',
+            },'bad_at_terminate_session2');
+            convo.addMessage({
+                text: 'Sorry I did not understand',
+                action: 'default',
+            },'bad_at_default');
             convo.activate();
         });
 
@@ -528,19 +613,19 @@ controller.hears('verify', 'direct_message', function (bot, message){
  * AN example of what could be:
  * Any un-handled direct mention gets a reaction and a pat response!
  */
-// controller.on('direct_message,mention,direct_mention', function (bot, message) {
-//     bot.api.reactions.add({
-//         timestamp: message.ts,
-//         channel: message.channel,
-//         name: 'robot_face',
-//     }, function (err) {
-//         if (err) {
-//             console.log(err)
-//         }
-//         bot.reply(message, 'I heard you loud and clear......');
-//         console.log(message);
-//     });
-// });
+controller.on('direct_message,mention,direct_mention', function (bot, message) {
+    bot.api.reactions.add({
+        timestamp: message.ts,
+        channel: message.channel,
+        name: 'robot_face',
+    }, function (err) {
+        if (err) {
+            console.log(err)
+        }
+        bot.reply(message, 'Sorry I did not understand. You can start a new session by saying \'start\'');
+        console.log(message);
+    });
+});
 
 controller.hears('start1', 'direct_message', function (bot, message) {
     bot.createConversation(message, function(err, convo) {
