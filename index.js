@@ -300,7 +300,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 }
             ],{},'Ask_DBLP');
             //Question No. 4 
-            convo.addQuestion('Amazing! Please provide me with the link.', [
+            convo.addQuestion('Amazing! Please provide me with the DBLP link.', [
                 {
                     pattern: /.*.com/,
                     callback: function(response, convo) {
@@ -347,7 +347,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 }
             ],{},'Ask_GitHub');
             //Question 6
-            convo.addQuestion('Amazing! Please provide me with the link.', [
+            convo.addQuestion('Amazing! Please provide me with Github link.', [
                 {
                     pattern: /.*.com/,
                     callback: function(response, convo) {

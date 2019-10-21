@@ -1,4 +1,7 @@
 const puppeteer = require('puppeteer')
+var chai   = require('chai');
+var assert = chai.assert,
+    expect = chai.expect;
 
 require('dotenv').config();
 
@@ -21,7 +24,7 @@ async function login(browser, url) {
   return page;
 }
 async function OpenBotChannel(page){
-  await page.goto(`${slackSpaceUrl}/messages/DNEF6M30V`,{waitUntil: 'networkidle0'});
+  await page.goto(`${slackSpaceUrl}/messages/DPJ0ZN02J`,{waitUntil: 'networkidle0'});
   return page;
 }
 
@@ -36,10 +39,60 @@ async function postMessage(page, msg)
   await page.keyboard.press('Enter');
 }
 
-function delay(timeout) {
+async function delay(timeout) {
   return new Promise((resolve) => {
     setTimeout(resolve, timeout);
   });
+}
+
+var level=0;
+
+async function ExtractPageInfo(page,msg){
+  await page.keyboard.type(msg);
+  await page.keyboard.press('Enter');
+  await delay(4000);
+
+  const title1 = await page.$x("//span[@class='c-message__body' and @data-qa='message-text']");
+  let messages = await page.evaluate(span => span.textContent, title1[title1.length-1]);
+  await console.log(messages)
+  return messages;
+}
+
+async function UseCase1(page){
+  //UseCase 1
+  var messages = await ExtractPageInfo(page, "start");
+  if(messages==='Welcome!'|| messages=== 'Please say I am ready when you are ready'){
+    level++;
+    console.log(level)
+  }else if("messages === A session is already going on. Do you want to start a new session [y/n]?"){
+    await page.keyboard.type("y");
+    await delay(6000);
+    messages= await ExtractPageInfo(page, "start");
+  }
+  return page;
+}
+
+async function UseCase2(page){
+  var messages = await ExtractPageInfo(page, "I am ready");
+  if(messages === 'Please tell me if you have a LinkedIn account?[yes/no]'){
+    messages = await ExtractPageInfo(page, "yes");
+
+    if (messages === 'Great! Please provide your LinkedIn account ID.'){
+      messages = await ExtractPageInfo(page, "saad.com");
+      if(messages === 'Awesome! Now tell me if you have a DBLP account?[yes/no]'){
+        messages = await ExtractPageInfo(page, 'yes');
+        if(messages === 'Amazing! Please provide me with the DBLP link.'){
+          messages = await ExtractPageInfo(page, 'saad.com');
+          if(messages === 'Awesome! Now tell me if you have a Github account?[yes/no]'){
+            messages = await ExtractPageInfo(page, 'yes');
+            if(messages === 'Amazing! Please provide me with Github link.'){
+              messages = await ExtractPageInfo(page, 'saad.com');
+            }
+          }
+        }
+      }
+    }
+  }  
 }
 
 (async () => {
@@ -49,31 +102,27 @@ function delay(timeout) {
   //Go to chatting page with bot
   page = await OpenBotChannel(page);
   //Chatting with bot
-  await page.keyboard.type("Hello");
-  await page.keyboard.press('Enter');
+  //await page.keyboard.type("Hello");
+  //await page.keyboard.press('Enter');
   //await postMessage(page, "start");
   //const example = await page.evaluate(element => {
   //  return element.textContent;
   //}, 
   //Delay for waiting for page to render
-  await delay(4000);
-  const title = await page.$x("//span[@class='c-message__body' and @data-qa='message-text']");
+  //await delay(4000);
+  //const title = await page.$x("//span[@class='c-message__body' and @data-qa='message-text']");
 
-  for(var i=0; i<title.length; i++){
-    let messages = await page.evaluate(span => span.textContent, title[i]);
-    console.log(messages); 
-  }
-  //UseCase 1
-  await page.keyboard.type("start");
-  await delay(4000);
-
-  const title1 = await page.$x("//span[@class='c-message__body' and @data-qa='message-text']");
-
-  let messages = await page.evaluate(span => span.textContent, title1[title1.length-1]);
-   
+  //for(var i=0; i<title.length; i++){
+  //  let messages = await page.evaluate(span => span.textContent, title[i]);
+  //  console.log(messages); 
+  //}
   
-
-
+  page = await UseCase1(page);
+  if(level===1){
+    page = await UseCase2(page);
+  } else {
+    await console.log("Did not expect this convo! Failed at Level1");
+  }
     // const html = await page.content(); // serialized HTML of page DOM.
   // browser.close();
 })()
