@@ -192,83 +192,9 @@ controller.hears('start', 'direct_message', function (bot, message){
         });
     }
 });
-
-//Extracting LinkedIn Info
-function ExtractingLinkedInInfo(response){
-    return true;
-}
-//Extracting DBLP Info
-function ExtractingDBLPInfo(response){
-    return true;
-}
-//Extracting Github Info
-function ExtractingGithubInfo(response){
-    return true;
-}
-// If invalid (token | repoName) return false
-function createRepoForUser() {
-    //console.log(getGithubRepoName());
-    //console.log(getGithubToken());
-    return true;
-}
-function setFileURL(URL){
-   service.fileURL = URL;
-    //console.log(fileURL)
-}
-function setGithubtoken(token){
-    service.userGithubToken = token;
-}
-function setRepoName(repoName){
-    service.userGithubRepoName = repoName;
-}
-function getFileURL(){
-    //console.log(fileURL);
-    returnservice.fileURL;
-}
-function getGithubToken(){
-    return service.userGithubToken;
-}
-function getGithubRepoName(){
-    return service.userGithubRepoName;
-}
-function uploadZippedCV(){
-    return true;
-}
-function mergeAllInfo(){
-    //Merging all the information
-    fs.writeFile('MergedFile.txt', 'KichuEkta', function (err) {
-        if (err) throw err;
-        console.log('File is created successfully.');
-    });
-    fs.readFile('MergedFile.txt', (err, data) => {
-        if (err) throw err;
-        const params = {
-            Bucket: process.env.BUCKET_NAME, // pass your bucket name
-            Key:  `${process.env.CUBE_NAME}/public/MergedFile.txt`, // file will be saved as testBucket/contacts.csv
-            Body: JSON.stringify(data, null, 2)
-        };
-        s3.upload(params, function(s3Err, data) {
-            if (s3Err) throw s3Err
-            console.log(`File uploaded successfully at ${data.Location}`)
-           service.fileURL = data.Location;
-            service.setFileURL(data.Location);
-            return data.Location;
-        });
-     });
-}
-
-function verifyYMLContent(){
-    return true;
-}
-
-function uploadEmptyTemplate(){
-
-}
-
-
+//Service level 1
 controller.hears('I am ready','direct_message', function(bot, message){
     if(service.level===1){
-        
         bot.createConversation(message, function(err, convo) {
             // create a path for when a user says NO
             convo.addMessage({
@@ -310,8 +236,23 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: /.*.com/,
                     callback: function(response, convo) {
-                        var ValidLinkedInAccount = service.ExtractingLinkedInInfo(response);
-                        if(ValidLinkedInAccount === true){
+                        service.setLinkedInId(response);
+                        convo.gotoThread('Ask_token_LinkedIn');
+                    },
+                },
+                {
+                    default: true,
+                    callback: function(response, convo) {
+                        convo.gotoThread('bad_response');
+                    },
+                }
+            ],{},'yes_linkedin_thread');
+            convo.addQuestion('Great! Please provide your LinkedIn account token', [
+                {
+                    pattern: /.*/,
+                    callback: function(response, convo) {
+                        service.setLinkedInToken(response);
+                        if(service.ExtractingLinkedInInfo(service.getLinkedInId(), service.getLinkedInToken())){
                             convo.gotoThread('Ask_DBLP');
                         } else{
                             convo.gotoThread('yes_linkedin_thread');
@@ -324,7 +265,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'yes_linkedin_thread');
+            ],{},'Ask_token_LinkedIn');
             //Question No. 3
             convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', [
                 {
@@ -350,7 +291,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             //Question No. 4 
             convo.addQuestion('Amazing! Please provide me with the DBLP link.', [
                 {
-                    pattern: /.*.com/,
+                    pattern: /.*/,
                     callback: function(response, convo) {
                         var ValidDBLPAccount = service.ExtractingDBLPInfo(response);
                         if(ValidDBLPAccount === true){

@@ -14,6 +14,10 @@ var userGithubToken;
 
 // After the bot asks for repo name, this is where repo name is stored
 var userGithubRepoName;
+//After the bot asks for LinkedIn accountID, this is where acc ID is stored
+var userLinkedInId;
+//After the bot asks for LinkedIn token, this is where token is stored
+var userLinkedInToken;
 
 // There are three levels. 0-2
 // 0: starts with 'start'
@@ -22,7 +26,7 @@ var userGithubRepoName;
 var level = 0;
 
 //Extracting LinkedIn Info; return false if failed
-function ExtractingLinkedInInfo(response) {
+function ExtractingLinkedInInfo(ID,token) {
     return true;
 }
 
@@ -65,6 +69,22 @@ function setGithubtoken( token ) {
 // to this function to set the global var userGithubRepoName
 function setRepoName( repoName ) {
     userGithubRepoName = repoName;
+}
+
+function setLinkedInToken( token ){
+    userLinkedInToken = token;
+}
+
+function getLinkedInToken() {
+    return userLinkedInToken;
+}
+
+function setLinkedInId ( Id ){
+    userLinkedInId = Id;
+}
+
+function getLinkedInId (){
+     return userLinkedInId;
 }
 
 // getter function; not needed as the var userGithubToken is global
@@ -141,6 +161,10 @@ module.exports = {
     getGithubRepoName: getGithubRepoName,
     uploadZippedCV: uploadZippedCV,
     uploadEmptyTemplate: uploadEmptyTemplate,
+    getLinkedInToken: getLinkedInToken,
+    getLinkedInId: getLinkedInId,
+    setLinkedInToken: setLinkedInToken,
+    setLinkedInId: setLinkedInId,
     fs: fs,
     AWS: AWS,
     s3: s3
