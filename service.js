@@ -6,7 +6,7 @@ const linkedinUrl = "https://api.linkedin.com/v2";
 const dblpUrl = "https://dblp.org"
 
 async function getGitRepos(userName) {
-	const url = gitHubUrl + '/users/' + userName + "/repos";
+	const url = gitHubUrl + "/users/" + userName + "/repos";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -27,8 +27,7 @@ async function getLinkedInProfile(userId, fieldList) {
 		method: 'GET',
 		headers: {
 			"content-type": "application/json",
-            "Authorization": token,
-            "Accept" : "X-RestLi-Protocol-Version:2.0.0"
+            "Authorization": token
 		},
 		json: true
 	};
@@ -54,6 +53,7 @@ async function getDblpProfile(userId) {
 function getGitData(userName){
 	let repo_data = getGitRepos(userName);
 	// convert the full data from github to the specific items
+	console.log(repo_data)
 	return repo_data;
 
 }
