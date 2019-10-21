@@ -30,12 +30,19 @@
     "botbuilder-adapter-slack": "^1.0.4",
     "botkit": "0.7.0",
     "botkit-storage-mongo": "^1.0.2",
+    "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
+<<<<<<< HEAD
     "got": "^9.6.0",
     "mocha": "^6.2.2",
     "mockery": "^2.1.0",
     "mongodb": "^1.4.39",
     "nock": "^11.4.0"
+=======
+    "mongodb": "^1.4.39",
+    "puppeteer": "^1.20.0",
+    "selenium-webdriver": "^4.0.0-alpha.5"
+>>>>>>> 9dca43428c8eb2762eba5e661cdd56673f45c4b5
   }
 }
