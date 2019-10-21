@@ -54,20 +54,23 @@ async function ExtractPageInfo(page,msg){
 
   const title1 = await page.$x("//span[@class='c-message__body' and @data-qa='message-text']");
   let messages = await page.evaluate(span => span.textContent, title1[title1.length-1]);
-  await console.log(messages)
+  console.log(messages)
   return messages;
 }
 
 async function UseCase1(page){
   //UseCase 1
   var messages = await ExtractPageInfo(page, "start");
-  if(messages==='Welcome!'|| messages=== 'Please say I am ready when you are ready'){
+  console.log("Message: "+messages);
+  if(messages.includes(' ready')){
     level++;
-    console.log(level)
-  }else if("messages === A session is already going on. Do you want to start a new session [y/n]?"){
+    console.log(level);
+  } else if(messages === "A session is already going on. Do you want to start a new session [y/n]?"){
+    console.log("new session");
     await page.keyboard.type("y");
+    await page.keyboard.press('Enter');      
     await delay(6000);
-    messages= await ExtractPageInfo(page, "start");
+    await UseCase1(page);
   }
   return page;
 }
@@ -87,12 +90,32 @@ async function UseCase2(page){
             messages = await ExtractPageInfo(page, 'yes');
             if(messages === 'Amazing! Please provide me with Github link.'){
               messages = await ExtractPageInfo(page, 'saad.com');
+              if(messages.includes('File uploaded successfully')){
+                level++;
+              }
             }
           }
         }
       }
     }
-  }  
+  }
+  return page;  
+}
+
+async function UseCase3(page){
+  var messages = await ExtractPageInfo(page, "verify");
+  if(messages === 'Please give me a link of the yml file'){
+    messages = await ExtractPageInfo(page, "hello.yml");
+    if(messages === 'Data verified. Do you want your CV in Github.io or in zipped format?'){
+      messages = await ExtractPageInfo(page, "zip");
+      if(messages.includes(" terminate")){
+        messages = await ExtractPageInfo(page, "terminate");
+        level = 0;
+      }
+    }
+  }
+  
+
 }
 
 (async () => {
@@ -118,11 +141,22 @@ async function UseCase2(page){
   //}
   
   page = await UseCase1(page);
+  console.log("passed")
   if(level===1){
     page = await UseCase2(page);
   } else {
-    await console.log("Did not expect this convo! Failed at Level1");
+    console.log("Did not expect this convo! Failed at Level1");
   }
+
+  if(level===2){
+    page = await UseCase3(page);
+    if(level===0){
+      console.log("Happy Path successful!");
+    }
+  }else {
+    console.log("Did not expect this convo! Failed at Level2");
+  }
+
     // const html = await page.content(); // serialized HTML of page DOM.
   // browser.close();
 })()
