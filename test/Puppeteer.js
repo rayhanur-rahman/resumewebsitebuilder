@@ -79,19 +79,21 @@ async function UseCase2(page){
   var messages = await ExtractPageInfo(page, "I am ready");
   if(messages === 'Please tell me if you have a LinkedIn account?[yes/no]'){
     messages = await ExtractPageInfo(page, "yes");
-
     if (messages === 'Great! Please provide your LinkedIn account ID.'){
       messages = await ExtractPageInfo(page, "saad.com");
-      if(messages === 'Awesome! Now tell me if you have a DBLP account?[yes/no]'){
-        messages = await ExtractPageInfo(page, 'yes');
-        if(messages === 'Amazing! Please provide me with the DBLP link.'){
-          messages = await ExtractPageInfo(page, 'saad.com');
-          if(messages === 'Awesome! Now tell me if you have a Github account?[yes/no]'){
-            messages = await ExtractPageInfo(page, 'yes');
-            if(messages === 'Amazing! Please provide me with Github link.'){
-              messages = await ExtractPageInfo(page, 'saad.com');
-              if(messages.includes('File uploaded successfully')){
-                level++;
+      if(messages === 'Great! Please provide your LinkedIn account token'){
+        messages = await ExtractPageInfo(page, 'adjhsgjadhgdsjf');
+        if(messages === 'Awesome! Now tell me if you have a DBLP account?[yes/no]'){
+          messages = await ExtractPageInfo(page, 'yes');
+          if(messages === 'Amazing! Please provide me with the DBLP link.'){
+            messages = await ExtractPageInfo(page, 'saad.com');
+            if(messages === 'Awesome! Now tell me if you have a Github account?[yes/no]'){
+              messages = await ExtractPageInfo(page, 'yes');
+              if(messages === 'Amazing! Please provide me with Github link.'){
+                messages = await ExtractPageInfo(page, 'saad.com');
+                if(messages.includes('File uploaded successfully')){
+                  level++;
+                }
               }
             }
           }
