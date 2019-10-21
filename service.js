@@ -64,7 +64,10 @@ function getFileURL() {
 function setGithubtoken( token ) {
     userGithubToken = token;
 }
-
+//Once the session is terminated, all the data relevant to the session will be deleted
+function deleteAllData(){
+    return true;
+}
 // When asked for a repo name, the text of the user's reply is taken and passed
 // to this function to set the global var userGithubRepoName
 function setRepoName( repoName ) {

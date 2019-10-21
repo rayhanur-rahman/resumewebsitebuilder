@@ -459,14 +459,9 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 if (response.text === 'github'){
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
-                    if (service.uploadZippedCV()) {
-                        convo.gotoThread('zipped_CV_uploaded');
+                    service.uploadZippedCV();
+                    convo.gotoThread('zipped_CV_uploaded');
                         //convo.gotoThread('session_terminated');
-                    }else{
-                        
-                    }
-                    
-                    
                 } else {
                     convo.gotoThread('bad_at_valid2');
                 }
@@ -540,6 +535,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
             convo.addQuestion('Please say \'terminate\' to terminate the session',function(response,convo) {
                 if (response.text === 'terminate'){
                     service.level = 0;
+                    service.deleteAllData();
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_at_terminate_session2');
