@@ -38,7 +38,7 @@ async function postMessage(page, msg)
   await page.keyboard.type( msg );
   await page.keyboard.press('Enter');
 }
-
+//Delaying the function
 async function delay(timeout) {
   return new Promise((resolve) => {
     setTimeout(resolve, timeout);
@@ -46,7 +46,7 @@ async function delay(timeout) {
 }
 
 var level=0;
-
+//Extracting Page information
 async function ExtractPageInfo(page,msg){
   await page.keyboard.type(msg);
   await page.keyboard.press('Enter');
@@ -57,7 +57,7 @@ async function ExtractPageInfo(page,msg){
   console.log(messages)
   return messages;
 }
-
+//Test for UseCase1
 async function UseCase1(page){
   //UseCase 1
   var messages = await ExtractPageInfo(page, "start");
@@ -74,7 +74,7 @@ async function UseCase1(page){
   }
   return page;
 }
-
+//Test for UseCase2
 async function UseCase2(page){
   var messages = await ExtractPageInfo(page, "I am ready");
   if(messages === 'Please tell me if you have a LinkedIn account?[yes/no]'){
@@ -101,20 +101,32 @@ async function UseCase2(page){
   }
   return page;  
 }
-
+//Test for UseCase3
 async function UseCase3(page){
   var messages = await ExtractPageInfo(page, "verify");
   if(messages === 'Please give me a link of the yml file'){
     messages = await ExtractPageInfo(page, "hello.yml");
     if(messages === 'Data verified. Do you want your CV in Github.io or in zipped format?'){
-      messages = await ExtractPageInfo(page, "zip");
+      var randomNumberBetween0and1 = Math.floor(Math.random() * 2);
+      if(randomNumberBetween0and1===1){
+        messages = await ExtractPageInfo(page, "zip");
+      } else{ //alternate path
+        messages = await ExtractPageInfo(page,"github");
+      }
+      if(messages === 'Token?' && randomNumberBetween0and1===0){
+        messages = await ExtractPageInfo(page,'sadghadgfsfd');
+        if(messages === 'Repo name?'){
+          messages = await ExtractPageInfo(page,'HelloWorld');
+        }
+      }
+
       if(messages.includes(" terminate")){
         messages = await ExtractPageInfo(page, "terminate");
         level = 0;
       }
     }
   }
-  
+  return page;
 
 }
 
