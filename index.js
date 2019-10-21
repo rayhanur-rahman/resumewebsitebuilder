@@ -140,8 +140,6 @@ controller.hears('hello', 'direct_message', function (bot, message) {
 });
 
 
-//pushing service.level value 0 in db
-//var service.level = 0;
 //Start Convo
 controller.hears('start', 'direct_message', function (bot, message){
     if (service.level === 0) {
@@ -272,7 +270,6 @@ controller.hears('I am ready','direct_message', function(bot, message){
     if(service.level===1){
         
         bot.createConversation(message, function(err, convo) {
-        
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
@@ -351,7 +348,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 }
             ],{},'Ask_DBLP');
             //Question No. 4 
-            convo.addQuestion('Amazing! Please provide me with the link.', [
+            convo.addQuestion('Amazing! Please provide me with the DBLP link.', [
                 {
                     pattern: /.*.com/,
                     callback: function(response, convo) {
@@ -398,7 +395,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 }
             ],{},'Ask_GitHub');
             //Question 6
-            convo.addQuestion('Amazing! Please provide me with the link.', [
+            convo.addQuestion('Amazing! Please provide me with Github link.', [
                 {
                     pattern: /.*.com/,
                     callback: function(response, convo) {
