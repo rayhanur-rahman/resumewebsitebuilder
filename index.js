@@ -7,11 +7,6 @@
  * With custom integrations, we don't have a way to find out who installed us, so we can't message them :(
  */
 //after bot processes all the data, this is where the yml file is stored
-var fileURL;
-// after bot asks for token, this is where token is stored
-var userGithubToken;
-// after bot asks for repo name, this is where repo name is stored
-var userGithubRepoName;
 
 var service = require('./service-mock.js');
 

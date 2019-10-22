@@ -11,19 +11,6 @@ const s3 = new AWS.S3({
     secretAccessKey: process.env.CLOUDCUBE_SECRET_ACCESS_KEY
 });
 
-// After the bot processes all the data, this is where the yml file is stored
-var fileURL;
-
-// After the bot asks for token, this is where token is stored
-var userGithubToken;
-
-// After the bot asks for repo name, this is where repo name is stored
-var userGithubRepoName;
-//After the bot asks for LinkedIn accountID, this is where acc ID is stored
-var userLinkedInId;
-//After the bot asks for LinkedIn token, this is where token is stored
-var userLinkedInToken;
-
 // There are three levels. 0-2
 // 0: starts with 'start'
 // 1: starts with 'I am ready'
@@ -112,14 +99,12 @@ function ExtractingGithubInfo(userId, response) {
 }
 
 // If invalid (userGithubToken | userGithubRepoName) return false
-function createRepoForUser(user) {
-    //console.log(getGithubRepoName());
-    //console.log(getGithubToken());
+function createRepoForUser(userId) {
     return true;
 }
 
 // this function does not work for now
-function setFileURL( URL ) {
+function setFileURL( url ) {
     sessionData.fileURL = URL;
     //console.log(fileURL)
 }
@@ -179,11 +164,18 @@ function getGithubRepoName() {
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
 function uploadZippedCV(user) {
-    return getZippedContent(user);
-}
-
-function getZippedContent(user){
-    return mock_data.zippedLink;
+    new Transfer('./site-mock.zip')
+        .upload()
+        .then(function (link) { 
+            console.log(`File uploaded successfully at ${link}`); 
+            sessionData.fileURL = link;
+            setFileURL(sessionData.fileURL);
+            return sessionData.fileURL;
+        })
+        .catch(function (err) { 
+            console.log(err);
+            return 'null';
+         })
 }
 
 // This function verifies the yml content of the file uploaded by the user
@@ -204,13 +196,9 @@ function uploadEmptyTemplate(){
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
 function mergeAllInfo(userId){
-    //Merging all the information
-    fs.writeFile('MergedFile.txt', 'KichuEkta', function (err) {
-        if (err) throw err;
-        console.log('File is created successfully.');
-    });
+    
 
-    new Transfer('./MergedFile.txt')
+    new Transfer('./user-mock-data.yml')
         .upload()
         .then(function (link) { 
             console.log(`File uploaded successfully at ${link}`); 
@@ -226,9 +214,6 @@ function mergeAllInfo(userId){
 module.exports = {
     mergeAllInfo: mergeAllInfo,
     verifyYMLContent: verifyYMLContent,
-    fileURL: fileURL,
-    userGithubToken: userGithubToken,
-    userGithubRepoName: userGithubRepoName,
     ExtractingLinkedInInfo: ExtractingLinkedInInfo,
     ExtractingDBLPInfo: ExtractingDBLPInfo,
     ExtractingGithubInfo: ExtractingGithubInfo,
