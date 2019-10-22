@@ -207,7 +207,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
-                text: `File uploaded successfully at `+ service.getFileURL(),
+                text: `File uploaded successfully at + ${service.getFileURL()}`,
             },'Valid');
         
             // create a path where neither option was matched
@@ -327,17 +327,14 @@ controller.hears('I am ready','direct_message', function(bot, message){
             convo.addQuestion('Awesome! Now tell me if you have a Github account?[yes/no]', [
                 {
                     pattern: 'yes',
-                    callback: function(response, convo) {
-                        if(service.noLinkedInFlag || service.noDblpFlag || service.noGithubFlag){
-                            convo.gotoThread('no_github_thread');
-                        } else{    
-                            convo.gotoThread('yes_github_thread');
-                        }
+                    callback: function(response, convo) {    
+                        convo.gotoThread('yes_github_thread');
                     },
                 },
                 {
                     pattern: 'no',
                     callback: function(response, convo) {
+                        service.noGithubFlag=true;
                         convo.gotoThread('no_github_thread');
                     },
                 },
@@ -354,10 +351,16 @@ controller.hears('I am ready','direct_message', function(bot, message){
                     pattern: /.*.com/,
                     callback: function(response, convo) {
                         var ValidGithubAccount = service.ExtractingGithubInfo(response);
+                        
                         if(ValidGithubAccount === true){
-                            service.level++;
-                            service.mergeAllInfo();
-                            convo.gotoThread('Valid');
+                            if(service.noLinkedInFlag || service.noDblpFlag || service.noGithubFlag){
+                                service.mergeAllInfo();
+                                convo.gotoThread('no_github_thread');
+                            } else{
+                                service.level++;
+                                service.mergeAllInfo();
+                                convo.gotoThread('Valid');
+                            }
                             
                         } else{
                             convo.gotoThread('default');
@@ -413,7 +416,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                     pattern: /.*.yml/,
                     callback: function(response, convo) {
                         service.level++;
-                        console.log(service.level);
+                        //console.log(service.level);
                         convo.gotoThread('Valid');
                     },
                 },

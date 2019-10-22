@@ -38,7 +38,7 @@ const dblpUrl = "https://dblp.org"
 
 //Extracting LinkedIn Info; return false if failed
 function ExtractingLinkedInInfo(ID,token) {
-	const url = linkedinUrl + '/people/' + userId + "?fields=" + fieldList;
+	const url = linkedinUrl + '/people/' + "?fields=";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -54,7 +54,7 @@ function ExtractingLinkedInInfo(ID,token) {
 
 //Extracting DBLP Info; return false if failed
 function ExtractingDBLPInfo(response) {
-	const url = dblpUrl + '/search/publ/api?q==author:' + userId + ":&format=json";
+	const url = dblpUrl + '/search/publ/api?q==author:'+ ":&format=json";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -70,7 +70,7 @@ function ExtractingDBLPInfo(response) {
 //Extracting Github Info; return false if failed
 function ExtractingGithubInfo(response) {
 
-	const url = gitHubUrl + "/users/" + userName + "/repos";
+	const url = gitHubUrl + "/users/" + "/repos";
 	const options = {
 		method: 'GET',
 		headers: {
