@@ -3,6 +3,7 @@ const AWS = require('aws-sdk');
 const http_request  = require('request');
 const mock_data = require('./mock_data.json');
 const Transfer = require('transfer-sh')
+const toy = require('./toy.js')
 
 
 require('dotenv').config();
@@ -66,18 +67,12 @@ function ExtractingLinkedInInfo(userId,token) {
 }
 
 //Extracting DBLP Info; return false if failed
-//TODO nockify
-function ExtractingDBLPInfo(userId, response) {
-	const url = dblpUrl + '/search/publ/api?q==author:' + response + ":&format=json";
-	const options = {
-		method: 'GET',
-		headers: {
-			"content-type": "application/json"
-		},
-		json: true
-	};
 
-	let profile_details = ( http_request(url, options)).body;
+function ExtractingDBLPInfo(userId, response) {
+    nock("https://dblp.org")
+    .persist()
+    .get("/search/publ/api?q==author:bob_smith:&format=json")
+    .reply(200, JSON.stringify(mock_data.dblp_profile) );
     return true;
 }
 
