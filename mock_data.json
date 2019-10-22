@@ -1,4 +1,6 @@
 {
+    "linkedId": "bob",
+    "zippedLink": "www.xyz.com/cvsite.zip",
     "starterResponse": {
         "userId": "mhaque3",
         "levelCompleted": 1

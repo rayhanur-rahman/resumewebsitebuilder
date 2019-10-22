@@ -1,6 +1,7 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const http_request  = require('request');
+const mock_data = require('./mock_data.json');
 
 require('dotenv').config();
 const s3 = new AWS.S3({
@@ -27,31 +28,37 @@ var userLinkedInToken;
 // 2: starts with 'verify'
 var level = 0;
 
+var sessionData = {
+    level: 0,
+    user: ''
+}
+
+
 const token = "token " + "YOUR TOKEN";
 const gitHubUrl = "https://api.github.com";
 const linkedinUrl = "https://api.linkedin.com/v2";
 const dblpUrl = "https://dblp.org"
 
 function setLevel(level, userId){
-	// set level value in db
+	sessionData.level = level;
 }
 
 function getLevel(userId){
-	// get level data from db
+	return sessionData.level;
 }
 
 function incrementLevel(userId){
-	//increment the level in db
+	sessionData.level++;
 }
 
 function setUser(userId){
-	return true;
+    sessionData.user = userId;
 }
 
-
 //Extracting LinkedIn Info; return false if failed
-function ExtractingLinkedInInfo(ID,token) {
-	const url = linkedinUrl + '/people/' + userId + "?fields=" + fieldList;
+//TODO nockify
+function ExtractingLinkedInInfo(userId,token) {
+	const url = linkedinUrl + '/people/' + userId + "?fields=" + token;
 	const options = {
 		method: 'GET',
 		headers: {
@@ -66,8 +73,9 @@ function ExtractingLinkedInInfo(ID,token) {
 }
 
 //Extracting DBLP Info; return false if failed
+//TODO nockify
 function ExtractingDBLPInfo(response) {
-	const url = dblpUrl + '/search/publ/api?q==author:' + userId + ":&format=json";
+	const url = dblpUrl + '/search/publ/api?q==author:' + response + ":&format=json";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -83,7 +91,7 @@ function ExtractingDBLPInfo(response) {
 //Extracting Github Info; return false if failed
 function ExtractingGithubInfo(response) {
 
-	const url = gitHubUrl + "/users/" + userName + "/repos";
+	const url = gitHubUrl + "/users/" + response + "/repos";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -98,7 +106,7 @@ function ExtractingGithubInfo(response) {
 }
 
 // If invalid (userGithubToken | userGithubRepoName) return false
-function createRepoForUser() {
+function createRepoForUser(user) {
     //console.log(getGithubRepoName());
     //console.log(getGithubToken());
     return true;
@@ -139,8 +147,13 @@ function getLinkedInToken() {
     return userLinkedInToken;
 }
 
-function setLinkedInId ( Id ){
-    userLinkedInId = Id;
+function setLinkedInId ( link ){
+    userLinkedInId = parseLinkedInIdFromUrl(link);
+}
+
+function parseLinkedInIdFromUrl(link) {
+    console.log(mock_data.linkedId);
+    return mock_data.linkedId;
 }
 
 function getLinkedInId (){
@@ -159,14 +172,20 @@ function getGithubRepoName() {
 
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
-function uploadZippedCV() {
-    return true;
+function uploadZippedCV(user) {
+    return link = getZippedContent(user);
+}
+
+function getZippedContent(user){
+    return mock_data.zippedLink;
 }
 
 // This function verifies the yml content of the file uploaded by the user
 // Return false if the content is inconsistent with the data obtained from the links or
 // submitted earlier by the user
-function verifyYMLContent(){
+function verifyYMLContent(url){
+    // check if the link contains a yml file
+    // check if the yml files contains required attributes
     return true;
 }
 
@@ -227,9 +246,12 @@ module.exports = {
 	setLinkedInId: setLinkedInId,
     fs: fs,
     AWS: AWS,
-	s3: s3,
-	setLevel: setLevel,
+    s3: s3,
+    setLevel: setLevel,
 	getLevel: getLevel,
-	incrementLevel: incrementLevel
+    incrementLevel: incrementLevel,
+    sessionData: sessionData,
+    setUser: setUser,
+    deleteAllData: deleteAllData
 };
 
