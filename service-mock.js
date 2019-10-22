@@ -4,6 +4,7 @@ const http_request  = require('request');
 const mock_data = require('./mock_data.json');
 const Transfer = require('transfer-sh')
 const toy = require('./toy.js')
+const nock = require("nock");
 
 
 require('dotenv').config();
@@ -79,13 +80,20 @@ function ExtractingLinkedInInfo(userId,token) {
     return true;
 }
 
+
+function getUserIdFromDBLPLink(userLink){
+    return mock_data.dblpId;
+}
 //Extracting DBLP Info; return false if failed
 
 function ExtractingDBLPInfo(userId, response) {
     nock("https://dblp.org")
     .persist()
     .get("/search/publ/api?q==author:bob_smith:&format=json")
-    .reply(200, JSON.stringify(mock_data.dblp_profile) );
+    .reply(200, mock_data.dblp_profile);
+
+    var profile_data = toy.getDblpData(getUserIdFromDBLPLink(response));
+    console.log(profile_data);
     return true;
 }
 

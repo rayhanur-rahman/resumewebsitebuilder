@@ -1,5 +1,6 @@
 {
     "linkedId": "bob",
+    "dblpId" : "bob_smith",
     "zippedLink": "www.xyz.com/cvsite.zip",
     "starterResponse": {
         "userId": "mhaque3",

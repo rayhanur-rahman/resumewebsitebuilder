@@ -1,4 +1,10 @@
 var Transfer = require('transfer-sh')
+const http_request  = require('got');
+
+const token = "token " + "YOUR TOKEN";
+const gitHubUrl = "https://api.github.com";
+const linkedinUrl = "https://api.linkedin.com/v2";
+const dblpUrl = "https://dblp.org"
  
 /* Encrypt and Upload */
 //upload 
@@ -19,8 +25,8 @@ const request = http.get("https://transfer.sh/DotXl/bot.yml", function(response)
 });
 
 
-function getDblpData(userName){
-  const url = dblpUrl + '/search/publ/api?q==author:' + response + ":&format=json";
+async function getDblpData(userName){
+  const url = dblpUrl + '/search/publ/api?q==author:' + userName + ":&format=json";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -29,7 +35,8 @@ function getDblpData(userName){
 		json: true
 	};
 
-  let profile_details = ( http_request(url, options)).body;
+  let profile_details = (await http_request(url, options)).body;
+  console.log(profile_details);
   return profile_details;
 }
 
