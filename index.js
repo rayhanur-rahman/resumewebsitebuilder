@@ -137,7 +137,6 @@ controller.hears('start', 'direct_message', function (bot, message){
                     pattern: 'y',
                     callback: function(response, convo) {
                         convo.gotoThread('yes_thread');
-                        service.level = 0;
                         service.setLevel(0, convo.context.user);
                     },
                     
@@ -167,7 +166,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
-                text: `File uploaded successfully at `+ service.getFileURL(),
+                text: `File uploaded successfully at `+ service.getFileURL(convo.context.user),
             },'Valid');
         
             // create a path where neither option was matched
@@ -206,7 +205,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                     pattern: /.*.com/,
                     callback: function(response, convo) {
                         //TODO fix linkedin, github, dblp link regex
-                        service.setLinkedInId(response);
+                        service.setLinkedInId(convo.context.user, response);
                         convo.gotoThread('Ask_token_LinkedIn');
                     },
                 },
@@ -221,8 +220,8 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: /.*/,
                     callback: function(response, convo) {
-                        service.setLinkedInToken(response);
-                        if(service.ExtractingLinkedInInfo(service.getLinkedInId(), service.getLinkedInToken())){
+                        service.setLinkedInToken(convo.context.user, response);
+                        if(service.ExtractingLinkedInInfo(service.getLinkedInId(convo.context.user), service.getLinkedInToken(convo.context.user))){
                             convo.gotoThread('Ask_DBLP');
                         } else{
                             convo.gotoThread('yes_linkedin_thread');
@@ -264,7 +263,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: /.*/,
                     callback: function(response, convo) {
-                        if( service.ExtractingDBLPInfo(response) ){
+                        if( service.ExtractingDBLPInfo(convo.context.user, response) ){
                             convo.gotoThread('Ask_GitHub');
                         } else{
                             convo.gotoThread('yes_dblp_thread');
@@ -310,9 +309,9 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: /.*.com/,
                     callback: function(response, convo) {
-                        if(service.ExtractingGithubInfo(response)){
+                        if(service.ExtractingGithubInfo(convo.context.user, response)){
                             service.incrementLevel(convo.context.user);
-                            service.mergeAllInfo();
+                            service.mergeAllInfo(convo.context.user);
                             convo.gotoThread('Valid');
                             
                         } else{
@@ -439,7 +438,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 {
                     pattern: /.*/,
                     callback: function(response, convo) {
-                        service.setGithubtoken(response.match.input);
+                        service.setGithubtoken(convo.context.user, response.match.input);
                         convo.gotoThread('github_thread_repoName');
                     },
                 },
@@ -455,7 +454,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                     pattern: /.*/,
                     callback: function(response, convo) {
                         // This will create the cv repository for the user
-                        service.setRepoName(response.match.input);
+                        service.setRepoName(convo.context.user, response.match.input);
                         if (service.createRepoForUser(convo.context.user)) {
                             convo.gotoThread('repoCreated');
                         }else {
@@ -503,7 +502,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
             },'session_terminated');
             convo.addQuestion('Please say \'terminate\' to terminate the session',function(response,convo) {
                 if (response.text === 'terminate'){
-                    service.level = 0;
+                    service.setLevel(0, convo.context.user);
                     service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {

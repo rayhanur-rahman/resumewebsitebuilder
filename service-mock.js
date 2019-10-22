@@ -28,11 +28,15 @@ var userLinkedInToken;
 // 0: starts with 'start'
 // 1: starts with 'I am ready'
 // 2: starts with 'verify'
-var level = 0;
 
 var sessionData = {
     level: 0,
-    user: ''
+    user: '',
+    fileURL: '',
+    userGithubToken: '',
+    userGithubRepoName: '',
+    userLinkedInId: '',
+    userLinkedInToken: ''
 }
 
 
@@ -76,7 +80,7 @@ function ExtractingLinkedInInfo(userId,token) {
 
 //Extracting DBLP Info; return false if failed
 //TODO nockify
-function ExtractingDBLPInfo(response) {
+function ExtractingDBLPInfo(userId, response) {
 	const url = dblpUrl + '/search/publ/api?q==author:' + response + ":&format=json";
 	const options = {
 		method: 'GET',
@@ -91,7 +95,7 @@ function ExtractingDBLPInfo(response) {
 }
 
 //Extracting Github Info; return false if failed
-function ExtractingGithubInfo(response) {
+function ExtractingGithubInfo(userId, response) {
 
 	const url = gitHubUrl + "/users/" + response + "/repos";
 	const options = {
@@ -116,20 +120,20 @@ function createRepoForUser(user) {
 
 // this function does not work for now
 function setFileURL( URL ) {
-    fileURL = URL;
+    sessionData.fileURL = URL;
     //console.log(fileURL)
 }
 
 // this function does not work for now
-function getFileURL() {
+function getFileURL(userId) {
     //console.log(fileURL);
-    return fileURL;
+    return sessionData.fileURL;
 }
 
 // When asked for a token, the text of the user's reply is taken and passed
 // to this function to set the global var userGithubToken
-function setGithubtoken( token ) {
-    userGithubToken = token;
+function setGithubtoken( userId, token ) {
+    sessionData.userGithubToken = token;
 }
 //Once the session is terminated, all the data relevant to the session will be deleted
 function deleteAllData(){
@@ -137,20 +141,20 @@ function deleteAllData(){
 }
 // When asked for a repo name, the text of the user's reply is taken and passed
 // to this function to set the global var userGithubRepoName
-function setRepoName( repoName ) {
-    userGithubRepoName = repoName;
+function setRepoName( userId, repoName ) {
+    sessionData.userGithubRepoName = repoName;
 }
 
-function setLinkedInToken( token ){
-    userLinkedInToken = token;
+function setLinkedInToken( userId, token ){
+    sessionData.userLinkedInToken = token;
 }
 
-function getLinkedInToken() {
-    return userLinkedInToken;
+function getLinkedInToken(userId) {
+    return sessionData.userLinkedInToken;
 }
 
-function setLinkedInId ( link ){
-    userLinkedInId = parseLinkedInIdFromUrl(link);
+function setLinkedInId (userId, link ){
+    sessionData.userLinkedInId = parseLinkedInIdFromUrl(link);
 }
 
 function parseLinkedInIdFromUrl(link) {
@@ -158,24 +162,24 @@ function parseLinkedInIdFromUrl(link) {
     return mock_data.linkedId;
 }
 
-function getLinkedInId (){
-     return userLinkedInId;
+function getLinkedInId (userId){
+     return sessionData.userLinkedInId;
 }
 
 // getter function; not needed as the var userGithubToken is global
 function getGithubToken() {
-    return userGithubToken;
+    return sessionData.userGithubToken;
 }
 
 // getter function; not needed as the var userGithubRepoName is global
 function getGithubRepoName() {
-    return userGithubRepoName;
+    return sessionData.userGithubRepoName;
 }
 
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
 function uploadZippedCV(user) {
-    return link = getZippedContent(user);
+    return getZippedContent(user);
 }
 
 function getZippedContent(user){
@@ -199,7 +203,7 @@ function uploadEmptyTemplate(){
 
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
-function mergeAllInfo(){
+function mergeAllInfo(userId){
     //Merging all the information
     fs.writeFile('MergedFile.txt', 'KichuEkta', function (err) {
         if (err) throw err;
@@ -210,9 +214,9 @@ function mergeAllInfo(){
         .upload()
         .then(function (link) { 
             console.log(`File uploaded successfully at ${link}`); 
-            fileURL = link;
-            setFileURL(fileURL);
-            return fileURL;
+            sessionData.fileURL = link;
+            setFileURL(sessionData.fileURL);
+            return sessionData.fileURL;
         })
         .catch(function (err) { console.log(err) })
 }
