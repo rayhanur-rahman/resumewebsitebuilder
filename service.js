@@ -1,5 +1,7 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
+const http_request  = require('request');
+
 require('dotenv').config();
 const s3 = new AWS.S3({
     accessKeyId: process.env.CLOUDCUBE_ACCESS_KEY_ID,
@@ -25,8 +27,6 @@ var userLinkedInToken;
 // 2: starts with 'verify'
 var level = 0;
 
-const got  = require('got');
-
 const token = "token " + "YOUR TOKEN";
 const gitHubUrl = "https://api.github.com";
 const linkedinUrl = "https://api.linkedin.com/v2";
@@ -44,7 +44,7 @@ function ExtractingLinkedInInfo(ID,token) {
 		json: true
 	};
 
-	let profile_details = (await got(url, options)).body;
+	let profile_details = ( http_request(url, options)).body;
     return true;
 }
 
@@ -59,7 +59,7 @@ function ExtractingDBLPInfo(response) {
 		json: true
 	};
 
-	let profile_details = (await got(url, options)).body;
+	let profile_details = (http_request(url, options)).body;
     return true;
 }
 
@@ -76,7 +76,7 @@ function ExtractingGithubInfo(response) {
 		json: true
 	};
 
-	let repos = (await got(url, options)).body;
+	let repos = (http_request(url, options)).body;
     return true;
 }
 
