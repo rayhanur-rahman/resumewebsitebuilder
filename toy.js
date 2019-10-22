@@ -13,7 +13,7 @@ new Transfer('./bot.yml')
 const http = require('https');
 const fs = require('fs');
 
-const file = fs.createWriteStream("/home/rr/file.yml");
+const file = fs.createWriteStream("file.yml");
 const request = http.get("https://transfer.sh/DotXl/bot.yml", function(response) {
   response.pipe(file);
 });
