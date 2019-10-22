@@ -163,6 +163,9 @@ controller.hears('start', 'direct_message', function (bot, message){
                 text: 'Sorry I did not understand.',
                 action: 'default',
             },'bad_response');
+            convo.addMessage({
+                text: 'session terminated! You can say \'start\' to create a new session',
+            },'session_terminated');
         
             // Create a yes/no question in the default thread...
             convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', [
@@ -181,13 +184,18 @@ controller.hears('start', 'direct_message', function (bot, message){
                     },
                 },
                 {
+                    pattern: 'terminate',
+                    callback: function(response, convo) {
+                        convo.gotoThread('session_terminated');
+                    },
+                },
+                {
                     default: true,
                     callback: function(response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
             ],{},'default');
-        
             convo.activate();
         });
     }
@@ -220,8 +228,8 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: 'no',
                     callback: function(response, convo) {
-                        service.uploadEmptyTemplate();
-                        convo.gotoThread('no_linkedin_thread');
+                        service.noLinkedInFlag=true;
+                        convo.gotoThread('Ask_DBLP');
                     },
                 },
                 {
@@ -277,8 +285,9 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: 'no',
                     callback: function(response, convo) {
-                        service.uploadEmptyTemplate();
-                        convo.gotoThread('no_DBLP_thread');
+                        //console.log("Gello!");
+                        service.noDblpFlag = true;
+                        convo.gotoThread('Ask_GitHub');
                     },
                 },
                 {
@@ -319,7 +328,11 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: 'yes',
                     callback: function(response, convo) {
-                        convo.gotoThread('yes_github_thread');
+                        if(service.noLinkedInFlag || service.noDblpFlag || service.noGithubFlag){
+                            convo.gotoThread('no_github_thread');
+                        } else{    
+                            convo.gotoThread('yes_github_thread');
+                        }
                     },
                 },
                 {
@@ -395,7 +408,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                     },
                 }
             ],{},'no_DBLP_thread');
-            convo.addQuestion('Please fill up this template and upload', [
+            convo.addQuestion('I see that you have several information missing that I require. Please fill up this template and upload', [
                 {
                     pattern: /.*.yml/,
                     callback: function(response, convo) {
@@ -455,7 +468,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 }
             ],{},'default');
 
-            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?',function(response,convo) {
+            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?[github/zip]',function(response,convo) {
                 if (response.text === 'github'){
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {

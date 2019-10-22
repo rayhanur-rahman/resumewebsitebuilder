@@ -27,6 +27,10 @@ var userLinkedInToken;
 // 2: starts with 'verify'
 var level = 0;
 
+var noGithubFlag=false;
+var noLinkedInFlag=false;
+var noDblpFlag=false;
+
 const token = "token " + "YOUR TOKEN";
 const gitHubUrl = "https://api.github.com";
 const linkedinUrl = "https://api.linkedin.com/v2";
@@ -187,6 +191,7 @@ function mergeAllInfo(){
 //module.exports.verifyYMLContent = verifyYMLContent;
 
 module.exports = {
+    deleteAllData: deleteAllData,
     mergeAllInfo: mergeAllInfo,
     verifyYMLContent: verifyYMLContent,
     fileURL: fileURL,
