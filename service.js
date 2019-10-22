@@ -1,6 +1,7 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const http_request  = require('request');
+const Transfer = require('transfer-sh')
 
 require('dotenv').config();
 const s3 = new AWS.S3({
@@ -167,25 +168,15 @@ function uploadEmptyTemplate(){
 // and put them in yml file
 function mergeAllInfo(){
     //Merging all the information
-    fs.writeFile('MergedFile.txt', 'KichuEkta', function (err) {
-        if (err) throw err;
-        console.log('File is created successfully.');
-    });
-    fs.readFile('MergedFile.txt', (err, data) => {
-        if (err) throw err;
-        const params = {
-            Bucket: process.env.BUCKET_NAME, // pass your bucket name
-            Key:  `${process.env.CUBE_NAME}/public/MergedFile.txt`, // file will be saved as testBucket/contacts.csv
-            Body: JSON.stringify(data, null, 2)
-        };
-        s3.upload(params, function(s3Err, data) {
-            if (s3Err) throw s3Err
-            console.log(`File uploaded successfully at ${data.Location}`)
-            fileURL = data.Location;
-            setFileURL(data.Location);
-            return data.Location;
-        });
-     });
+
+    new Transfer('./user-mock-data.yml')
+        .upload()
+        .then(function (link) { 
+            console.log(`File uploaded successfully at ${link}`); 
+            fileURL = link;
+            return fileURL;
+        })
+        .catch(function (err) { console.log(err) })
 }
 
 //module.exports.verifyYMLContent = verifyYMLContent;

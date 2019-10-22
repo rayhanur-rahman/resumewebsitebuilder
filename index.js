@@ -207,7 +207,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
-                text: `File uploaded successfully at + ${service.getFileURL()}`,
+                text: `File uploaded successfully at + ${service.getFileURL()}. Please type in 'verify'`,
             },'Valid');
         
             // create a path where neither option was matched
@@ -242,7 +242,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             //Question 2
             convo.addQuestion('Great! Please provide your LinkedIn account ID.', [
                 {
-                    pattern: /.*.com/,
+                    pattern: /.*/,
                     callback: function(response, convo) {
                         service.setLinkedInId(response);
                         convo.gotoThread('Ask_token_LinkedIn');
@@ -348,7 +348,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             //Question 6
             convo.addQuestion('Amazing! Please provide me with Github link.', [
                 {
-                    pattern: /.*.com/,
+                    pattern: /.*/,
                     callback: function(response, convo) {
                         var ValidGithubAccount = service.ExtractingGithubInfo(response);
                         
