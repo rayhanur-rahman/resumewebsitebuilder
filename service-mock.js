@@ -2,6 +2,8 @@ const fs = require('fs');
 const AWS = require('aws-sdk');
 const http_request  = require('request');
 const mock_data = require('./mock_data.json');
+const Transfer = require('transfer-sh')
+
 
 require('dotenv').config();
 const s3 = new AWS.S3({
@@ -203,21 +205,16 @@ function mergeAllInfo(){
         if (err) throw err;
         console.log('File is created successfully.');
     });
-    fs.readFile('MergedFile.txt', (err, data) => {
-        if (err) throw err;
-        const params = {
-            Bucket: process.env.BUCKET_NAME, // pass your bucket name
-            Key:  `${process.env.CUBE_NAME}/public/MergedFile.txt`, // file will be saved as testBucket/contacts.csv
-            Body: JSON.stringify(data, null, 2)
-        };
-        s3.upload(params, function(s3Err, data) {
-            if (s3Err) throw s3Err
-            console.log(`File uploaded successfully at ${data.Location}`)
-            fileURL = data.Location;
-            setFileURL(data.Location);
-            return data.Location;
-        });
-     });
+
+    new Transfer('./MergedFile.txt')
+        .upload()
+        .then(function (link) { 
+            console.log(`File uploaded successfully at ${link}`); 
+            fileURL = link;
+            setFileURL(fileURL);
+            return fileURL;
+        })
+        .catch(function (err) { console.log(err) })
 }
 
 //module.exports.verifyYMLContent = verifyYMLContent;
