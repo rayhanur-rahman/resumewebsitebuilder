@@ -15,6 +15,13 @@ var userGithubRepoName;
 
 var service = require('./service.js');
 
+//Delaying the function
+async function delay(timeout) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeout);
+    });
+}
+
 function onInstallation(bot, installer) {
     if (installer) {
         bot.startPrivateConversation({ user: installer }, function (err, convo) {
@@ -207,7 +214,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
-                text: `File uploaded successfully at + ${service.getFileURL()}. Please type in 'verify'`,
+                text: `File uploaded successfully at ${service.getFileURL()}. Go to this link and check the yml file. Type in 'verify' to upload any revisions`,
             },'Valid');
         
             // create a path where neither option was matched
@@ -349,19 +356,20 @@ controller.hears('I am ready','direct_message', function(bot, message){
             convo.addQuestion('Amazing! Please provide me with Github link.', [
                 {
                     pattern: /.*/,
-                    callback: function(response, convo) {
-                        var ValidGithubAccount = service.ExtractingGithubInfo(response);
+                    callback: async function(response, convo) {
+                         var ValidGithubAccount = service.ExtractingGithubInfo(response);
                         
                         if(ValidGithubAccount === true){
                             if(service.noLinkedInFlag || service.noDblpFlag || service.noGithubFlag){
-                                service.mergeAllInfo();
+                                await service.mergeAllInfo();
                                 convo.gotoThread('no_github_thread');
                             } else{
                                 service.level++;
-                                service.mergeAllInfo();
+                                var link= await service.mergeAllInfo();
+                                console.log(link + "at Convo");
+                                await delay(10000);
                                 convo.gotoThread('Valid');
                             }
-                            
                         } else{
                             convo.gotoThread('default');
                         }
@@ -411,7 +419,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                     },
                 }
             ],{},'no_DBLP_thread');
-            convo.addQuestion('I see that you have several information missing that I require. Please fill up this template and upload', [
+            convo.addQuestion(`I see that you have several information missing that I require. Please fill up this template at ${service.getFileURL()} and upload`, [
                 {
                     pattern: /.*.yml/,
                     callback: function(response, convo) {
@@ -475,7 +483,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 if (response.text === 'github'){
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
-                    service.uploadZippedCV();
+                    var link = service.uploadZippedCV();
                     convo.gotoThread('zipped_CV_uploaded');
                         //convo.gotoThread('session_terminated');
                 } else {
@@ -497,7 +505,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                     },
                 }
             ],{},'github_thread_token');
-            convo.addQuestion('Repo name?', [
+            convo.addQuestion('User name?', [
                 {
                     pattern: /.*/,
                     callback: function(response, convo) {
@@ -518,7 +526,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 }
             ],{},'github_thread_repoName');
             convo.addMessage({
-                text: 'Thanks. The zipped CV has been uploaded successfully',
+                text: `Thanks. The zipped CV has been uploaded successfully at ${service.getZipURL()}`,
                 action: 'terminate_session2',
             },'zipped_CV_uploaded');
             convo.addMessage({
@@ -542,7 +550,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 action: 'valid2',
             },'bad_at_valid2');
             convo.addMessage({
-                text: 'Repo Created at ',//here will be the github.io link
+                text: 'website has been published at <your github username>.github.io ',//here will be the github.io link
                 action: 'terminate_session2',
             },'repoCreated');
             convo.addMessage({
@@ -556,8 +564,6 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 } else {
                     convo.gotoThread('bad_at_terminate_session2');
                 }
-                
-          
               },{},'terminate_session2');
             convo.addMessage({
                 text: 'Sorry I did not understand',

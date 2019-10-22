@@ -1,7 +1,8 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const http_request  = require('request');
-const Transfer = require('transfer-sh')
+const Transfer = require('transfer-sh');
+const mock_data = require('./mock_data.json');
 
 require('dotenv').config();
 const s3 = new AWS.S3({
@@ -11,6 +12,8 @@ const s3 = new AWS.S3({
 
 // After the bot processes all the data, this is where the yml file is stored
 var fileURL;
+//After the bot 
+var ZipUrl;
 
 // After the bot asks for token, this is where token is stored
 var userGithubToken;
@@ -98,10 +101,13 @@ function setFileURL( URL ) {
     //console.log(fileURL)
 }
 
+function getZipURL(){
+    return mock_data.zipurl;
+}
+
 // this function does not work for now
 function getFileURL() {
-    //console.log(fileURL);
-    return fileURL;
+    return mock_data.fileurl;
 }
 
 // When asked for a token, the text of the user's reply is taken and passed
@@ -147,8 +153,15 @@ function getGithubRepoName() {
 
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
-function uploadZippedCV() {
-    return true;
+ async function uploadZippedCV() {
+    await new Transfer('./user-mock-data.zip')
+        .upload()
+        .then(function (link) { 
+            console.log(`File uploaded successfully at ${link}`); 
+            ZipUrl = link;
+            return ZipUrl;
+        })
+        .catch(function (err) { console.log(err) })
 }
 
 // This function verifies the yml content of the file uploaded by the user
@@ -166,14 +179,15 @@ function uploadEmptyTemplate(){
 
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
-function mergeAllInfo(){
+async function mergeAllInfo(){
     //Merging all the information
 
-    new Transfer('./user-mock-data.yml')
+    await new Transfer('./user-mock-data.yml')
         .upload()
         .then(function (link) { 
             console.log(`File uploaded successfully at ${link}`); 
             fileURL = link;
+            console.log("print in function: "+fileURL);
             return fileURL;
         })
         .catch(function (err) { console.log(err) })
@@ -186,6 +200,7 @@ module.exports = {
     mergeAllInfo: mergeAllInfo,
     verifyYMLContent: verifyYMLContent,
     fileURL: fileURL,
+    ZipUrl:ZipUrl,
     userGithubToken: userGithubToken,
     userGithubRepoName: userGithubRepoName,
     ExtractingLinkedInInfo: ExtractingLinkedInInfo,
@@ -206,6 +221,7 @@ module.exports = {
 	setLinkedInId: setLinkedInId,
     fs: fs,
     AWS: AWS,
-    s3: s3
+    s3: s3,
+    getZipURL: getZipURL
 };
 
