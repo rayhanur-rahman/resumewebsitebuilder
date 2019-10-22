@@ -28,11 +28,7 @@ var sessionData = {
     userLinkedInToken: ''
 }
 
-
-const token = "token " + "YOUR TOKEN";
-const gitHubUrl = "https://api.github.com";
-const linkedinUrl = "https://api.linkedin.com/v2";
-const dblpUrl = "https://dblp.org"
+var gitHubToken = ""
 
 function setLevel(level, userId){
 	sessionData.level = level;
@@ -51,19 +47,21 @@ function setUser(userId){
 }
 
 //Extracting LinkedIn Info; return false if failed
-//TODO nockify
-function ExtractingLinkedInInfo(userId,token) {
-	const url = linkedinUrl + '/people/' + userId + "?fields=" + token;
-	const options = {
-		method: 'GET',
-		headers: {
-			"content-type": "application/json",
-            "Authorization": token
-		},
-		json: true
-	};
 
-	let profile_details = ( http_request(url, options)).body;
+function ExtractingLinkedInInfo(userId, token) {
+
+    var fields = "education,projects,skill";
+    nock("https://api.linkedin.com/v2",{
+        reqheaders: {
+          'Authorization': token
+        },
+      })
+    .persist()
+    .get("/people/bob?fields="+fields)
+    .reply(200, JSON.stringify(mock_data.linkedInProfile));
+
+    var profile_data = toy.getLinkedInData(userId, token, fields);
+    // Need to store profile_data in db with corresponding userId
     return true;
 }
 
@@ -71,33 +69,39 @@ function ExtractingLinkedInInfo(userId,token) {
 function getUserIdFromDBLPLink(userLink){
     return mock_data.dblpId;
 }
+
+function getUserIdFromGitHubLink(userLink){
+    return mock_data.gitHubId;
+}
 //Extracting DBLP Info; return false if failed
 
 function ExtractingDBLPInfo(userId, response) {
     nock("https://dblp.org")
     .persist()
     .get("/search/publ/api?q==author:bob_smith:&format=json")
-    .reply(200, mock_data.dblp_profile);
+    .reply(200, JSON.stringify(mock_data.dblp_profile));
 
     var profile_data = toy.getDblpData(getUserIdFromDBLPLink(response));
-    console.log(profile_data);
+    // Need to store profile_data in db with corresponding userId
     return true;
 }
 
 //Extracting Github Info; return false if failed
 function ExtractingGithubInfo(userId, response) {
 
-	const url = gitHubUrl + "/users/" + response + "/repos";
-	const options = {
-		method: 'GET',
-		headers: {
-			"content-type": "application/json",
-			"Authorization": token
-		},
-		json: true
-	};
+    nock("https://api.github.com",{
+        reqheaders: {
+          'Authorization': gitHubToken
+        },
+      })
+      
+    .persist()
+    .get("/users/bob_smith/repos")
+    .reply(200, JSON.stringify(mock_data.gitRepos));
 
-	let repos = ( http_request(url, options)).body;
+    var profile_data = toy.getGitHubData(getUserIdFromGitHubLink(response), gitHubToken);
+
+    // Need to store profile_data in db with corresponding userId
     return true;
 }
 
