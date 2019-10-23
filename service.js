@@ -200,8 +200,7 @@ function uploadEmptyTemplate() {
 // and put them in yml file
 async function mergeAllInfo() {
     //Merging all the information
-
-    await new Transfer('./user-mock-data.yml')
+new Transfer('./user-mock-data.yml')
         .upload()
         .then(function (link) {
             console.log(`File uploaded successfully at ${link}`);

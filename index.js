@@ -415,8 +415,8 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                         //verifyYMLContent() verifies the yml content. return false if the yml data have errors
                         if (service.verifyYMLContent(response)) {
                             //bot.reply('Data verified. Do you your CV in Github or zipped format?');
-                            convo.gotoThread('valid2');
-                        } else {
+                            convo.gotoThread('Template_Choice');
+                        }else {
                             convo.gotoThread('invalid_YML_content');
                         }
 
@@ -430,8 +430,19 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                 }
             ], {}, 'default');
 
-            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?[github/zip]', function (response, convo) {
-                if (response.text === 'github') {
+            convo.addQuestion('Data verified. Do you want your CV in industrial or academic format?[i/a]',function(response,convo) {
+                if (response.text === 'i'){
+                    convo.gotoThread('valid2');
+                } else if (response.text === 'a') {
+                    convo.gotoThread('valid2');
+                        //convo.gotoThread('session_terminated');
+                } else {
+                    convo.gotoThread('Template_Choice');
+                }
+              },{},'Template_Choice');
+
+            convo.addQuestion('Do you want your CV in Github.io or in zipped format?[github/zip].',function(response,convo) {
+                if (response.text === 'github'){
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
                     var link = service.uploadZippedCV(convo.context.user);
