@@ -1,6 +1,8 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
 const http_request  = require('request');
+const Transfer = require('transfer-sh');
+const mock_data = require('./mock_data.json');
 
 require('dotenv').config();
 const s3 = new AWS.S3({
@@ -10,6 +12,8 @@ const s3 = new AWS.S3({
 
 // After the bot processes all the data, this is where the yml file is stored
 var fileURL;
+//After the bot 
+var ZipUrl;
 
 // After the bot asks for token, this is where token is stored
 var userGithubToken;
@@ -26,6 +30,10 @@ var userLinkedInToken;
 // 1: starts with 'I am ready'
 // 2: starts with 'verify'
 var level = 0;
+
+var noGithubFlag=false;
+var noLinkedInFlag=false;
+var noDblpFlag=false;
 
 const token = "token " + "YOUR TOKEN";
 const gitHubUrl = "https://api.github.com";
@@ -51,7 +59,7 @@ function setUser(userId){
 
 //Extracting LinkedIn Info; return false if failed
 function ExtractingLinkedInInfo(ID,token) {
-	const url = linkedinUrl + '/people/' + userId + "?fields=" + fieldList;
+	const url = linkedinUrl + '/people/' + "?fields=";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -67,7 +75,7 @@ function ExtractingLinkedInInfo(ID,token) {
 
 //Extracting DBLP Info; return false if failed
 function ExtractingDBLPInfo(response) {
-	const url = dblpUrl + '/search/publ/api?q==author:' + userId + ":&format=json";
+	const url = dblpUrl + '/search/publ/api?q==author:'+ ":&format=json";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -83,7 +91,7 @@ function ExtractingDBLPInfo(response) {
 //Extracting Github Info; return false if failed
 function ExtractingGithubInfo(response) {
 
-	const url = gitHubUrl + "/users/" + userName + "/repos";
+	const url = gitHubUrl + "/users/" + "/repos";
 	const options = {
 		method: 'GET',
 		headers: {
@@ -110,10 +118,13 @@ function setFileURL( URL ) {
     //console.log(fileURL)
 }
 
+function getZipURL(){
+    return mock_data.zipurl;
+}
+
 // this function does not work for now
 function getFileURL() {
-    //console.log(fileURL);
-    return fileURL;
+    return mock_data.fileurl;
 }
 
 // When asked for a token, the text of the user's reply is taken and passed
@@ -159,8 +170,15 @@ function getGithubRepoName() {
 
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
-function uploadZippedCV() {
-    return true;
+ async function uploadZippedCV() {
+    await new Transfer('./user-mock-data.zip')
+        .upload()
+        .then(function (link) { 
+            console.log(`File uploaded successfully at ${link}`); 
+            ZipUrl = link;
+            return ZipUrl;
+        })
+        .catch(function (err) { console.log(err) })
 }
 
 // This function verifies the yml content of the file uploaded by the user
@@ -178,35 +196,28 @@ function uploadEmptyTemplate(){
 
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
-function mergeAllInfo(){
+async function mergeAllInfo(){
     //Merging all the information
-    fs.writeFile('MergedFile.txt', 'KichuEkta', function (err) {
-        if (err) throw err;
-        console.log('File is created successfully.');
-    });
-    fs.readFile('MergedFile.txt', (err, data) => {
-        if (err) throw err;
-        const params = {
-            Bucket: process.env.BUCKET_NAME, // pass your bucket name
-            Key:  `${process.env.CUBE_NAME}/public/MergedFile.txt`, // file will be saved as testBucket/contacts.csv
-            Body: JSON.stringify(data, null, 2)
-        };
-        s3.upload(params, function(s3Err, data) {
-            if (s3Err) throw s3Err
-            console.log(`File uploaded successfully at ${data.Location}`)
-            fileURL = data.Location;
-            setFileURL(data.Location);
-            return data.Location;
-        });
-     });
+
+    await new Transfer('./user-mock-data.yml')
+        .upload()
+        .then(function (link) { 
+            console.log(`File uploaded successfully at ${link}`); 
+            fileURL = link;
+            console.log("print in function: "+fileURL);
+            return fileURL;
+        })
+        .catch(function (err) { console.log(err) })
 }
 
 //module.exports.verifyYMLContent = verifyYMLContent;
 
 module.exports = {
+    deleteAllData: deleteAllData,
     mergeAllInfo: mergeAllInfo,
     verifyYMLContent: verifyYMLContent,
     fileURL: fileURL,
+    ZipUrl:ZipUrl,
     userGithubToken: userGithubToken,
     userGithubRepoName: userGithubRepoName,
     ExtractingLinkedInInfo: ExtractingLinkedInInfo,
@@ -230,6 +241,7 @@ module.exports = {
 	s3: s3,
 	setLevel: setLevel,
 	getLevel: getLevel,
-	incrementLevel: incrementLevel
+	incrementLevel: incrementLevel,
+    getZipURL: getZipURL
 };
 

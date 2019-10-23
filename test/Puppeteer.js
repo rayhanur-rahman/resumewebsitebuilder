@@ -7,7 +7,14 @@ require('dotenv').config();
 
 const loginEmail = process.env.SLACK_EMAIL;
 const loginPassword = process.env.SLACK_PWD;
-const slackSpaceUrl = 'https://northcarolina-s8o7157.slack.com' 
+const slackSpaceUrl = 'https://northcarolina-s8o7157.slack.com';
+
+//Level of Conversation
+var level=0;
+//No github link
+var noGithubLink=false;
+var noLinkedInLink=false;
+var noDblpLink=false;
 
 async function login(browser, url) {
   const page = await browser.newPage();
@@ -45,7 +52,6 @@ async function delay(timeout) {
   });
 }
 
-var level=0;
 //Extracting Page information
 async function ExtractPageInfo(page,msg){
   await page.keyboard.type(msg);
@@ -78,28 +84,61 @@ async function UseCase1(page){
 async function UseCase2(page){
   var messages = await ExtractPageInfo(page, "I am ready");
   if(messages === 'Please tell me if you have a LinkedIn account?[yes/no]'){
-    messages = await ExtractPageInfo(page, "yes");
-    if (messages === 'Great! Please provide your LinkedIn account ID.'){
-      messages = await ExtractPageInfo(page, "saad.com");
-      if(messages === 'Great! Please provide your LinkedIn account token'){
-        messages = await ExtractPageInfo(page, 'adjhsgjadhgdsjf');
-        if(messages === 'Awesome! Now tell me if you have a DBLP account?[yes/no]'){
-          messages = await ExtractPageInfo(page, 'yes');
-          if(messages === 'Amazing! Please provide me with the DBLP link.'){
-            messages = await ExtractPageInfo(page, 'saad.com');
-            if(messages === 'Awesome! Now tell me if you have a Github account?[yes/no]'){
-              messages = await ExtractPageInfo(page, 'yes');
-              if(messages === 'Amazing! Please provide me with Github link.'){
-                messages = await ExtractPageInfo(page, 'saad.com');
-                if(messages.includes('File uploaded successfully')){
-                  level++;
-                }
-              }
-            }
-          }
+    var LrandomNumberBetween0and1 = Math.floor(Math.random() * 2);
+    if(LrandomNumberBetween0and1===1){
+      messages = await ExtractPageInfo(page, "yes");
+    }else{
+      noLinkedInLink=true;
+      messages = await ExtractPageInfo(page, "no");
+    }
+    if(noLinkedInLink===false){
+      if (messages === 'Great! Please provide your LinkedIn account ID.'){
+        messages = await ExtractPageInfo(page, "https://www.linkedin.com/in/saad-abrar-5744b060/");
+        if(messages === 'Great! Please provide your LinkedIn account token'){
+          messages = await ExtractPageInfo(page, 'adjhsgj2343jf');
         }
       }
     }
+    if(messages === 'Awesome! Now tell me if you have a DBLP account?[yes/no]'){
+        var DrandomNumberBetween0and1 = Math.floor(Math.random() * 2);
+        if(DrandomNumberBetween0and1===1){
+          messages = await ExtractPageInfo(page, "yes");
+        }else{
+          noDblpLink=true;
+          messages = await ExtractPageInfo(page, "no");
+        }
+        if (noDblpLink === false){
+          if(messages === 'Amazing! Please provide me with the DBLP link.'){
+            messages = await ExtractPageInfo(page, 'https://dblp.uni-trier.de/pers/hd/r/Rahman:Rayhanur');
+          }
+        }
+        if(messages === 'Awesome! Now tell me if you have a Github account?[yes/no]'){
+          var GrandomNumberBetween0and1 = Math.floor(Math.random() * 2);
+          //messages = await ExtractPageInfo(page, 'yes');
+          if(GrandomNumberBetween0and1===1){
+            messages = await ExtractPageInfo(page, "yes");
+          } else{
+            noGithubLink=true;
+            messages = await ExtractPageInfo(page, "no");
+          }
+          if(noGithubLink === false){
+            if(messages === 'Amazing! Please provide me with Github link.'){
+              messages = await ExtractPageInfo(page, 'https://github.ncsu.edu/sabrar');
+            }
+          }
+          if(noGithubLink || noLinkedInLink|| noDblpLink){
+            if(messages === 'I see that you have several information missing that I require. Please fill up this template and upload'){
+              messages = await ExtractPageInfo(page, 'https://transfer.sh/gIusU/data.yml');
+            }
+          }
+          if(messages.includes('File uploaded successfully')){
+            level++;
+          }
+        }
+          
+        
+      }
+    
   }
   return page;  
 }
@@ -107,8 +146,8 @@ async function UseCase2(page){
 async function UseCase3(page){
   var messages = await ExtractPageInfo(page, "verify");
   if(messages === 'Please give me a link of the yml file'){
-    messages = await ExtractPageInfo(page, "hello.yml");
-    if(messages === 'Data verified. Do you want your CV in Github.io or in zipped format?'){
+    messages = await ExtractPageInfo(page, "https://transfer.sh/fHtrT/data.yml");
+    if(messages === 'Data verified. Do you want your CV in Github.io or in zipped format?[github/zip]'){
       var randomNumberBetween0and1 = Math.floor(Math.random() * 2);
       if(randomNumberBetween0and1===1){
         messages = await ExtractPageInfo(page, "zip");
@@ -118,7 +157,7 @@ async function UseCase3(page){
       if(messages === 'Token?' && randomNumberBetween0and1===0){
         messages = await ExtractPageInfo(page,'sadghadgfsfd');
         if(messages === 'Repo name?'){
-          messages = await ExtractPageInfo(page,'HelloWorld');
+          messages = await ExtractPageInfo(page,'Resume');
         }
       }
 
@@ -165,7 +204,7 @@ async function UseCase3(page){
   if(level===2){
     page = await UseCase3(page);
     if(level===0){
-      console.log("Happy Path successful!");
+      console.log("Path successful!");
     }
   }else {
     console.log("Did not expect this convo! Failed at Level2");

@@ -5,6 +5,7 @@ const mock_data = require('./mock_data.json');
 const Transfer = require('transfer-sh')
 const toy = require('./toy.js')
 const nock = require("nock");
+require('dotenv').config();
 
 
 require('dotenv').config();
@@ -25,10 +26,37 @@ var sessionData = {
     userGithubToken: '',
     userGithubRepoName: '',
     userLinkedInId: '',
-    userLinkedInToken: ''
+    userLinkedInToken: '',
+    noLinkedInFlag: false,
+    noDblpFlag: false,
+    noGithubFlag: false
 }
 
-var gitHubToken = ""
+var gitHubToken = process.env.GITHUB_TOKEN;
+
+function setNoLinkedFlag(userId, value){
+    sessionData.noLinkedInFlag = value;
+}
+
+function getNoLinkedFlag(userId){
+    return sessionData.noLinkedInFlag;
+}
+
+function setNoDBLPFlag(userId, value){
+    sessionData.noDblpFlag = value;
+}
+
+function getNoDBLPFlag(userId){
+    return sessionData.noDblpFlag;
+}
+
+function setNoGithubFlag(userId, value){
+    sessionData.noDblpFlag = value;
+}
+
+function getNoGithubFlag(userId){
+    return sessionData.noDblpFlag;
+}
 
 function setLevel(level, userId){
 	sessionData.level = level;
@@ -44,6 +72,15 @@ function incrementLevel(userId){
 
 function setUser(userId){
     sessionData.user = userId;
+}
+
+function getZipURL(){
+    return mock_data.zipurl;
+}
+
+// this function does not work for now
+function getFileURL() {
+    return mock_data.fileurl;
 }
 
 //Extracting LinkedIn Info; return false if failed
@@ -119,7 +156,7 @@ function setFileURL( url ) {
 // this function does not work for now
 function getFileURL(userId) {
     //console.log(fileURL);
-    return sessionData.fileURL;
+    return mock_data.fileurl;
 }
 
 // When asked for a token, the text of the user's reply is taken and passed
@@ -202,7 +239,7 @@ function uploadEmptyTemplate(){
 
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
-function mergeAllInfo(userId){
+async function mergeAllInfo(userId){
     
 
     new Transfer('./user-mock-data.yml')
@@ -245,6 +282,14 @@ module.exports = {
     incrementLevel: incrementLevel,
     sessionData: sessionData,
     setUser: setUser,
-    deleteAllData: deleteAllData
+    deleteAllData: deleteAllData,
+    setNoLinkedFlag: setNoLinkedFlag,
+    getNoLinkedFlag: getNoLinkedFlag,
+    setNoDBLPFlag: setNoDBLPFlag,
+    getNoDBLPFlag: getNoDBLPFlag,
+    setNoGithubFlag: setNoGithubFlag,
+    getNoGithubFlag: getNoGithubFlag,
+    getZipURL: getZipURL,
+    getFileURL: getFileURL
 };
 

@@ -10,6 +10,13 @@
 
 var service = require('./service-mock.js');
 
+//Delaying the function
+async function delay(timeout) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeout);
+    });
+}
+
 function onInstallation(bot, installer) {
     if (installer) {
         bot.startPrivateConversation({ user: installer }, function (err, convo) {
@@ -125,6 +132,9 @@ controller.hears('start', 'direct_message', function (bot, message){
                 text: 'Sorry I did not understand.',
                 action: 'default',
             },'bad_response');
+            convo.addMessage({
+                text: 'session terminated! You can say \'start\' to create a new session',
+            },'session_terminated');
         
             // Create a yes/no question in the default thread...
             convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', [
@@ -143,13 +153,18 @@ controller.hears('start', 'direct_message', function (bot, message){
                     },
                 },
                 {
+                    pattern: 'terminate',
+                    callback: function(response, convo) {
+                        convo.gotoThread('session_terminated');
+                    },
+                },
+                {
                     default: true,
                     callback: function(response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
             ],{},'default');
-        
             convo.activate();
         });
     }
@@ -161,7 +176,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
-                text: `File uploaded successfully at `+ service.getFileURL(convo.context.user),
+                text: `File uploaded successfully at ${service.getFileURL(convo.context.user)}. Go to this link and check the yml file. Type in 'verify' to upload any revisions`,
             },'Valid');
         
             // create a path where neither option was matched
@@ -182,9 +197,8 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: 'no',
                     callback: function(response, convo) {
-                        //TODO what is it? the conversation  should redirect to asking dblp/github to user
-                        //service.uploadEmptyTemplate();
-                        convo.gotoThread('no_linkedin_thread');
+                        service.setNoLinkedFlag(convo.context.user, true)
+                        convo.gotoThread('Ask_DBLP');
                     },
                 },
                 {
@@ -197,7 +211,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
             //Question 2
             convo.addQuestion('Great! Please provide your LinkedIn account ID.', [
                 {
-                    pattern: /.*.com/,
+                    pattern: /.*/,
                     callback: function(response, convo) {
                         //TODO fix linkedin, github, dblp link regex
                         service.setLinkedInId(convo.context.user, response);
@@ -241,9 +255,8 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 {
                     pattern: 'no',
                     callback: function(response, convo) {
-                        //TODO 
-                        // service.uploadEmptyTemplate();
-                        convo.gotoThread('no_DBLP_thread');
+                        service.setNoDBLPFlag(convo.context.user, true);
+                        convo.gotoThread('Ask_GitHub');
                     },
                 },
                 {
@@ -282,13 +295,14 @@ controller.hears('I am ready','direct_message', function(bot, message){
             convo.addQuestion('Awesome! Now tell me if you have a Github account?[yes/no]', [
                 {
                     pattern: 'yes',
-                    callback: function(response, convo) {
+                    callback: function(response, convo) {    
                         convo.gotoThread('yes_github_thread');
                     },
                 },
                 {
                     pattern: 'no',
                     callback: function(response, convo) {
+                        service.noGithubFlag=true;
                         convo.gotoThread('no_github_thread');
                     },
                 },
@@ -302,13 +316,20 @@ controller.hears('I am ready','direct_message', function(bot, message){
             //Question 6
             convo.addQuestion('Amazing! Please provide me with Github link.', [
                 {
-                    pattern: /.*.com/,
-                    callback: function(response, convo) {
-                        if(service.ExtractingGithubInfo(convo.context.user, response)){
-                            service.incrementLevel(convo.context.user);
-                            service.mergeAllInfo(convo.context.user);
-                            convo.gotoThread('Valid');
-                            
+                    pattern: /.*/,
+                    callback: async function(response, convo) {
+                         var ValidGithubAccount = service.ExtractingGithubInfo(convo.context.user, response);
+                        
+                        if(ValidGithubAccount === true){
+                            if(service.getNoLinkedFlag(convo.context.user) || service.getNoDBLPFlag(convo.context.user) || service.getNoGithubFlag(convo.context.user)){
+                                await service.mergeAllInfo(convo.context.user);
+                                convo.gotoThread('no_github_thread');
+                            } else{
+                                service.incrementLevel(convo.context.user);
+                                var link = await service.mergeAllInfo(convo.context.user);
+                                console.log(link + "at Convo");
+                                convo.gotoThread('Valid');
+                            }
                         } else{
                             convo.gotoThread('default');
                         }
@@ -358,7 +379,7 @@ controller.hears('I am ready','direct_message', function(bot, message){
                     },
                 }
             ],{},'no_DBLP_thread');
-            convo.addQuestion('Please fill up this template and upload', [
+            convo.addQuestion(`I see that you have several information missing that I require. Please fill up this template at ${service.getFileURL()} and upload`, [
                 {
                     pattern: /.*.yml/,
                     callback: function(response, convo) {
@@ -417,7 +438,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 }
             ],{},'default');
 
-            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?',function(response,convo) {
+            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?[github/zip]',function(response,convo) {
                 if (response.text === 'github'){
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
@@ -465,7 +486,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 }
             ],{},'github_thread_repoName');
             convo.addMessage({
-                text: 'Thanks. The zipped CV has been uploaded successfully',
+                text: `Thanks. The zipped CV has been uploaded successfully at ${service.getZipURL()}`,
                 action: 'terminate_session2',
             },'zipped_CV_uploaded');
             convo.addMessage({
@@ -489,7 +510,7 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 action: 'valid2',
             },'bad_at_valid2');
             convo.addMessage({
-                text: 'Repo Created at ',//here will be the github.io link
+                text: 'website has been published at <your github username>.github.io ',//here will be the github.io link
                 action: 'terminate_session2',
             },'repoCreated');
             convo.addMessage({
@@ -503,8 +524,6 @@ controller.hears('verify', 'direct_message', function (bot, message){
                 } else {
                     convo.gotoThread('bad_at_terminate_session2');
                 }
-                
-          
               },{},'terminate_session2');
             convo.addMessage({
                 text: 'Sorry I did not understand',
