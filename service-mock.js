@@ -3,7 +3,7 @@ const AWS = require('aws-sdk');
 const http_request  = require('request');
 const mock_data = require('./mock_data.json');
 const Transfer = require('transfer-sh')
-const toy = require('./toy.js')
+const toy = require('./util.js')
 const nock = require("nock");
 require('dotenv').config();
 
