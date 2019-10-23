@@ -1,6 +1,6 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
-const http_request  = require('request');
+const http_request = require('request');
 const mock_data = require('./mock_data.json');
 const Transfer = require('transfer-sh')
 const toy = require('./toy.js')
@@ -34,47 +34,47 @@ var sessionData = {
 
 var gitHubToken = process.env.GITHUB_TOKEN;
 
-function setNoLinkedFlag(userId, value){
+function setNoLinkedFlag(userId, value) {
     sessionData.noLinkedInFlag = value;
 }
 
-function getNoLinkedFlag(userId){
+function getNoLinkedFlag(userId) {
     return sessionData.noLinkedInFlag;
 }
 
-function setNoDBLPFlag(userId, value){
+function setNoDBLPFlag(userId, value) {
     sessionData.noDblpFlag = value;
 }
 
-function getNoDBLPFlag(userId){
+function getNoDBLPFlag(userId) {
     return sessionData.noDblpFlag;
 }
 
-function setNoGithubFlag(userId, value){
+function setNoGithubFlag(userId, value) {
     sessionData.noDblpFlag = value;
 }
 
-function getNoGithubFlag(userId){
+function getNoGithubFlag(userId) {
     return sessionData.noDblpFlag;
 }
 
-function setLevel(level, userId){
-	sessionData.level = level;
+function setLevel(level, userId) {
+    sessionData.level = level;
 }
 
-function getLevel(userId){
-	return sessionData.level;
+function getLevel(userId) {
+    return sessionData.level;
 }
 
-function incrementLevel(userId){
-	sessionData.level++;
+function incrementLevel(userId) {
+    sessionData.level++;
 }
 
-function setUser(userId){
+function setUser(userId) {
     sessionData.user = userId;
 }
 
-function getZipURL(){
+function getZipURL() {
     return mock_data.zipurl;
 }
 
@@ -88,14 +88,14 @@ function getFileURL() {
 function ExtractingLinkedInInfo(userId, token) {
 
     var fields = "education,projects,skill";
-    nock("https://api.linkedin.com/v2",{
-        reqheaders: {
-          'Authorization': token
-        },
-      })
-    .persist()
-    .get("/people/bob?fields="+fields)
-    .reply(200, JSON.stringify(mock_data.linkedInProfile));
+    nock("https://api.linkedin.com/v2", {
+            reqheaders: {
+                'Authorization': token
+            },
+        })
+        .persist()
+        .get("/people/bob?fields=" + fields)
+        .reply(200, JSON.stringify(mock_data.linkedInProfile));
 
     var profile_data = toy.getLinkedInData(userId, token, fields);
     // Need to store profile_data in db with corresponding userId
@@ -103,20 +103,20 @@ function ExtractingLinkedInInfo(userId, token) {
 }
 
 
-function getUserIdFromDBLPLink(userLink){
+function getUserIdFromDBLPLink(userLink) {
     return mock_data.dblpId;
 }
 
-function getUserIdFromGitHubLink(userLink){
+function getUserIdFromGitHubLink(userLink) {
     return mock_data.gitHubId;
 }
 //Extracting DBLP Info; return false if failed
 
 function ExtractingDBLPInfo(userId, response) {
     nock("https://dblp.org")
-    .persist()
-    .get("/search/publ/api?q==author:bob_smith:&format=json")
-    .reply(200, JSON.stringify(mock_data.dblp_profile));
+        .persist()
+        .get("/search/publ/api?q==author:bob_smith:&format=json")
+        .reply(200, JSON.stringify(mock_data.dblp_profile));
 
     var profile_data = toy.getDblpData(getUserIdFromDBLPLink(response));
     // Need to store profile_data in db with corresponding userId
@@ -126,15 +126,15 @@ function ExtractingDBLPInfo(userId, response) {
 //Extracting Github Info; return false if failed
 function ExtractingGithubInfo(userId, response) {
 
-    nock("https://api.github.com",{
-        reqheaders: {
-          'Authorization': gitHubToken
-        },
-      })
-      
-    .persist()
-    .get("/users/bob_smith/repos")
-    .reply(200, JSON.stringify(mock_data.gitRepos));
+    nock("https://api.github.com", {
+            reqheaders: {
+                'Authorization': gitHubToken
+            },
+        })
+
+        .persist()
+        .get("/users/bob_smith/repos")
+        .reply(200, JSON.stringify(mock_data.gitRepos));
 
     var profile_data = toy.getGitHubData(getUserIdFromGitHubLink(response), gitHubToken);
 
@@ -148,7 +148,7 @@ function createRepoForUser(userId) {
 }
 
 // this function does not work for now
-function setFileURL( url ) {
+function setFileURL(url) {
     sessionData.fileURL = URL;
     //console.log(fileURL)
 }
@@ -161,20 +161,20 @@ function getFileURL(userId) {
 
 // When asked for a token, the text of the user's reply is taken and passed
 // to this function to set the global var userGithubToken
-function setGithubtoken( userId, token ) {
+function setGithubtoken(userId, token) {
     sessionData.userGithubToken = token;
 }
 //Once the session is terminated, all the data relevant to the session will be deleted
-function deleteAllData(){
+function deleteAllData() {
     return true;
 }
 // When asked for a repo name, the text of the user's reply is taken and passed
 // to this function to set the global var userGithubRepoName
-function setRepoName( userId, repoName ) {
+function setRepoName(userId, repoName) {
     sessionData.userGithubRepoName = repoName;
 }
 
-function setLinkedInToken( userId, token ){
+function setLinkedInToken(userId, token) {
     sessionData.userLinkedInToken = token;
 }
 
@@ -182,7 +182,7 @@ function getLinkedInToken(userId) {
     return sessionData.userLinkedInToken;
 }
 
-function setLinkedInId (userId, link ){
+function setLinkedInId(userId, link) {
     sessionData.userLinkedInId = parseLinkedInIdFromUrl(link);
 }
 
@@ -191,8 +191,8 @@ function parseLinkedInIdFromUrl(link) {
     return mock_data.linkedId;
 }
 
-function getLinkedInId (userId){
-     return sessionData.userLinkedInId;
+function getLinkedInId(userId) {
+    return sessionData.userLinkedInId;
 }
 
 // getter function; not needed as the var userGithubToken is global
@@ -210,22 +210,22 @@ function getGithubRepoName() {
 function uploadZippedCV(user) {
     new Transfer('./site-mock.zip')
         .upload()
-        .then(function (link) { 
-            console.log(`File uploaded successfully at ${link}`); 
+        .then(function (link) {
+            console.log(`File uploaded successfully at ${link}`);
             sessionData.fileURL = link;
             setFileURL(sessionData.fileURL);
             return sessionData.fileURL;
         })
-        .catch(function (err) { 
+        .catch(function (err) {
             console.log(err);
             return 'null';
-         })
+        })
 }
 
 // This function verifies the yml content of the file uploaded by the user
 // Return false if the content is inconsistent with the data obtained from the links or
 // submitted earlier by the user
-function verifyYMLContent(url){
+function verifyYMLContent(url) {
     // check if the link contains a yml file
     // check if the yml files contains required attributes
     return true;
@@ -233,24 +233,26 @@ function verifyYMLContent(url){
 
 // This function uploads an empty template for the user to fill in when they don't have
 // one or any links
-function uploadEmptyTemplate(){
+function uploadEmptyTemplate() {
 
 }
 
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
-async function mergeAllInfo(userId){
-    
+async function mergeAllInfo(userId) {
+
 
     new Transfer('./user-mock-data.yml')
         .upload()
-        .then(function (link) { 
-            console.log(`File uploaded successfully at ${link}`); 
+        .then(function (link) {
+            console.log(`File uploaded successfully at ${link}`);
             sessionData.fileURL = link;
             setFileURL(sessionData.fileURL);
             return sessionData.fileURL;
         })
-        .catch(function (err) { console.log(err) })
+        .catch(function (err) {
+            console.log(err)
+        })
 }
 
 //module.exports.verifyYMLContent = verifyYMLContent;
@@ -273,12 +275,12 @@ module.exports = {
     getLinkedInToken: getLinkedInToken,
     getLinkedInId: getLinkedInId,
     setLinkedInToken: setLinkedInToken,
-	setLinkedInId: setLinkedInId,
+    setLinkedInId: setLinkedInId,
     fs: fs,
     AWS: AWS,
     s3: s3,
     setLevel: setLevel,
-	getLevel: getLevel,
+    getLevel: getLevel,
     incrementLevel: incrementLevel,
     sessionData: sessionData,
     setUser: setUser,
@@ -292,4 +294,3 @@ module.exports = {
     getZipURL: getZipURL,
     getFileURL: getFileURL
 };
-

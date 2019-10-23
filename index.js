@@ -13,13 +13,15 @@ var service = require('./service-mock.js');
 //Delaying the function
 async function delay(timeout) {
     return new Promise((resolve) => {
-      setTimeout(resolve, timeout);
+        setTimeout(resolve, timeout);
     });
 }
 
 function onInstallation(bot, installer) {
     if (installer) {
-        bot.startPrivateConversation({ user: installer }, function (err, convo) {
+        bot.startPrivateConversation({
+            user: installer
+        }, function (err, convo) {
             if (err) {
                 console.log(err);
             } else {
@@ -50,7 +52,9 @@ const s3 = new AWS.S3({
 if (process.env.MONGODB_URI) {
     var BotkitStorage = require('botkit-storage-mongo');
     config = {
-        storage: BotkitStorage({ mongoUri: process.env.MONGODB_URI }),
+        storage: BotkitStorage({
+            mongoUri: process.env.MONGODB_URI
+        }),
     };
 } else {
     config = {
@@ -106,113 +110,110 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 });
 
 //Start Convo
-controller.hears('start', 'direct_message', function (bot, message){
+controller.hears('start', 'direct_message', function (bot, message) {
 
     service.setUser(message.user);
     console.log(message.user);
 
     if (service.getLevel(message.user) === 0) {
-        bot.reply(message,'Welcome! Please say \'I am ready\' when you are ready');
+        bot.reply(message, 'Welcome! Please say \'I am ready\' when you are ready');
         service.incrementLevel(message.user);
-    } else {// bot replies an error message when the user is not in service.level 0
-        bot.createConversation(message, function(err, convo) {
+    } else { // bot replies an error message when the user is not in service.level 0
+        bot.createConversation(message, function (err, convo) {
             // create a path for when a user says YES
             convo.addMessage({
-                    text: 'Please say \'start\' to start a new session.',
-            },'yes_thread');
-        
+                text: 'Please say \'start\' to start a new session.',
+            }, 'yes_thread');
+
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Alright',
-            },'no_thread');
-        
+            }, 'no_thread');
+
             // create a path where neither option was matched
             // this message has an action field, which directs botkit to go back to the `default` thread after sending this message.
             convo.addMessage({
                 text: 'Sorry I did not understand.',
                 action: 'default',
-            },'bad_response');
+            }, 'bad_response');
             convo.addMessage({
                 text: 'session terminated! You can say \'start\' to create a new session',
-            },'session_terminated');
-        
+            }, 'session_terminated');
+
             // Create a yes/no question in the default thread...
-            convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', [
-                {
+            convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', [{
                     pattern: 'y',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('yes_thread');
                         service.setLevel(0, convo.context.user);
                     },
-                    
+
                 },
                 {
                     pattern: 'n',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('no_thread');
                     },
                 },
                 {
                     pattern: 'terminate',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('session_terminated');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'default');
+            ], {}, 'default');
             convo.activate();
         });
     }
 });
 //Service level 1
-controller.hears('I am ready','direct_message', function(bot, message){
-    if(service.getLevel(message.user) ===1){
-        bot.createConversation(message, function(err, convo) {
+controller.hears('I am ready', 'direct_message', function (bot, message) {
+    if (service.getLevel(message.user) === 1) {
+        bot.createConversation(message, function (err, convo) {
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
                 text: `File uploaded successfully at ${service.getFileURL(convo.context.user)}. Go to this link and check the yml file. Type in 'verify' to upload any revisions`,
-            },'Valid');
-        
+            }, 'Valid');
+
             // create a path where neither option was matched
             // this message has an action field, which directs botkit to go back to the `default` thread after sending this message.
             convo.addMessage({
                 text: 'Sorry I did not understand.',
                 action: 'default',
-            },'bad_response');
-        
+            }, 'bad_response');
+
             // Question No.1
-            convo.addQuestion('Please tell me if you have a LinkedIn account?[yes/no]', [
-                {
+            convo.addQuestion('Please tell me if you have a LinkedIn account?[yes/no]', [{
                     pattern: 'yes',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('yes_linkedin_thread');
                     },
                 },
                 {
                     pattern: 'no',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         service.setNoLinkedFlag(convo.context.user, true)
                         convo.gotoThread('Ask_DBLP');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'default');
+            ], {}, 'default');
             //Question 2
-            convo.addQuestion('Great! Please provide your LinkedIn account ID.', [
-                {
+            convo.addQuestion('Great! Please provide your LinkedIn account ID.', [{
                     pattern: /.*/,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         //TODO fix linkedin, github, dblp link regex
                         service.setLinkedInId(convo.context.user, response);
                         convo.gotoThread('Ask_token_LinkedIn');
@@ -220,369 +221,357 @@ controller.hears('I am ready','direct_message', function(bot, message){
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'yes_linkedin_thread');
-            convo.addQuestion('Great! Please provide your LinkedIn account token', [
-                {
+            ], {}, 'yes_linkedin_thread');
+            convo.addQuestion('Great! Please provide your LinkedIn account token', [{
                     pattern: /.*/,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         service.setLinkedInToken(convo.context.user, response);
-                        if(service.ExtractingLinkedInInfo(service.getLinkedInId(convo.context.user), service.getLinkedInToken(convo.context.user))){
+                        if (service.ExtractingLinkedInInfo(service.getLinkedInId(convo.context.user), service.getLinkedInToken(convo.context.user))) {
                             convo.gotoThread('Ask_DBLP');
-                        } else{
+                        } else {
                             convo.gotoThread('yes_linkedin_thread');
                         }
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'Ask_token_LinkedIn');
+            ], {}, 'Ask_token_LinkedIn');
             //Question No. 3
-            convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', [
-                {
+            convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', [{
                     pattern: 'yes',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('yes_dblp_thread');
                     },
                 },
                 {
                     pattern: 'no',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         service.setNoDBLPFlag(convo.context.user, true);
                         convo.gotoThread('Ask_GitHub');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'Ask_DBLP');
+            ], {}, 'Ask_DBLP');
             //Question No. 4 
-            convo.addQuestion('Amazing! Please provide me with the DBLP link.', [
-                {
+            convo.addQuestion('Amazing! Please provide me with the DBLP link.', [{
                     pattern: /.*/,
-                    callback: function(response, convo) {
-                        if( service.ExtractingDBLPInfo(convo.context.user, response) ){
+                    callback: function (response, convo) {
+                        if (service.ExtractingDBLPInfo(convo.context.user, response)) {
                             convo.gotoThread('Ask_GitHub');
-                        } else{
+                        } else {
                             convo.gotoThread('yes_dblp_thread');
                         }
                     },
                 },
                 {
                     pattern: 'no',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('no_thread');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'yes_dblp_thread');
+            ], {}, 'yes_dblp_thread');
             //Question 5
-            convo.addQuestion('Awesome! Now tell me if you have a Github account?[yes/no]', [
-                {
+            convo.addQuestion('Awesome! Now tell me if you have a Github account?[yes/no]', [{
                     pattern: 'yes',
-                    callback: function(response, convo) {    
+                    callback: function (response, convo) {
                         convo.gotoThread('yes_github_thread');
                     },
                 },
                 {
                     pattern: 'no',
-                    callback: function(response, convo) {
-                        service.noGithubFlag=true;
+                    callback: function (response, convo) {
+                        service.noGithubFlag = true;
                         convo.gotoThread('no_github_thread');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'Ask_GitHub');
+            ], {}, 'Ask_GitHub');
             //Question 6
-            convo.addQuestion('Amazing! Please provide me with Github link.', [
-                {
+            convo.addQuestion('Amazing! Please provide me with Github link.', [{
                     pattern: /.*/,
-                    callback: async function(response, convo) {
-                         var ValidGithubAccount = service.ExtractingGithubInfo(convo.context.user, response);
-                        
-                        if(ValidGithubAccount === true){
-                            if(service.getNoLinkedFlag(convo.context.user) || service.getNoDBLPFlag(convo.context.user) || service.getNoGithubFlag(convo.context.user)){
+                    callback: async function (response, convo) {
+                        var ValidGithubAccount = service.ExtractingGithubInfo(convo.context.user, response);
+
+                        if (ValidGithubAccount === true) {
+                            if (service.getNoLinkedFlag(convo.context.user) || service.getNoDBLPFlag(convo.context.user) || service.getNoGithubFlag(convo.context.user)) {
                                 await service.mergeAllInfo(convo.context.user);
                                 convo.gotoThread('no_github_thread');
-                            } else{
+                            } else {
                                 service.incrementLevel(convo.context.user);
                                 var link = await service.mergeAllInfo(convo.context.user);
                                 console.log(link + "at Convo");
                                 convo.gotoThread('Valid');
                             }
-                        } else{
+                        } else {
                             convo.gotoThread('default');
                         }
                     },
                 },
                 {
                     pattern: 'no',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('no_thread');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'yes_github_thread');
+            ], {}, 'yes_github_thread');
             //Message 7
-            convo.addQuestion('Please fill up this template and upload', [
-                {
+            convo.addQuestion('Please fill up this template and upload', [{
                     pattern: /.*.yml/,
-                    callback: function(response, convo) {
-                        
+                    callback: function (response, convo) {
+
                         convo.gotoThread('Ask_DBLP');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_at_no_linkedin_thread');
                     },
                 }
-            ],{},'no_linkedin_thread');
-            convo.addQuestion('Please fill up this template and upload', [
-                {
+            ], {}, 'no_linkedin_thread');
+            convo.addQuestion('Please fill up this template and upload', [{
                     pattern: /.*.yml/,
-                    callback: function(response, convo) {
-                        
+                    callback: function (response, convo) {
+
                         convo.gotoThread('Ask_GitHub');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_at_no_DBLP_thread');
                     },
                 }
-            ],{},'no_DBLP_thread');
-            convo.addQuestion(`I see that you have several information missing that I require. Please fill up this template at ${service.getFileURL()} and upload`, [
-                {
+            ], {}, 'no_DBLP_thread');
+            convo.addQuestion(`I see that you have several information missing that I require. Please fill up this template at ${service.getFileURL()} and upload`, [{
                     pattern: /.*.yml/,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         service.incrementLevel(convo.context.user);
                         convo.gotoThread('Valid');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_at_no_github_thread');
                     },
                 }
-            ],{},'no_github_thread');
+            ], {}, 'no_github_thread');
             convo.addMessage({
                 text: 'Sorry, maybe you did not upload a yml file',
                 action: 'no_linkedin_thread',
-            },'bad_at_no_linkedin_thread');
+            }, 'bad_at_no_linkedin_thread');
             convo.addMessage({
                 text: 'Sorry, maybe you did not upload a yml file',
                 action: 'no_DBLP_thread',
-            },'bad_at_no_DBLP_thread');
+            }, 'bad_at_no_DBLP_thread');
             convo.addMessage({
                 text: 'Sorry, maybe you did not upload a yml file',
                 action: 'no_github_thread',
-            },'bad_at_no_github_thread');
+            }, 'bad_at_no_github_thread');
             convo.activate();
         });
     }
 });
 
-controller.hears('verify', 'direct_message', function (bot, message){
+controller.hears('verify', 'direct_message', function (bot, message) {
     if (service.getLevel(message.user) === 2) {
         //bot.reply(message,'Please give me the link');
-        bot.createConversation(message, function(err, convo) {
-            convo.addQuestion('Please give me a link of the yml file', [
-                {
+        bot.createConversation(message, function (err, convo) {
+            convo.addQuestion('Please give me a link of the yml file', [{
                     pattern: /.*.yml/,
-                    callback: function(response, convo) {
-                        
+                    callback: function (response, convo) {
+
                         //verifyYMLContent() verifies the yml content. return false if the yml data have errors
                         if (service.verifyYMLContent(response)) {
                             //bot.reply('Data verified. Do you your CV in Github or zipped format?');
                             convo.gotoThread('valid2');
-                        }else {
+                        } else {
                             convo.gotoThread('invalid_YML_content');
                         }
-                        
+
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_at_default');
                     },
                 }
-            ],{},'default');
+            ], {}, 'default');
 
-            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?[github/zip]',function(response,convo) {
-                if (response.text === 'github'){
+            convo.addQuestion('Data verified. Do you want your CV in Github.io or in zipped format?[github/zip]', function (response, convo) {
+                if (response.text === 'github') {
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
                     var link = service.uploadZippedCV(convo.context.user);
                     //TODO where is the dummy link for zipped file? dummy link is in the link variable. mention it somehow
                     convo.gotoThread('zipped_CV_uploaded');
-                        //convo.gotoThread('session_terminated');
+                    //convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_at_valid2');
                 }
-              },{},'valid2');
-            convo.addQuestion('Token?', [
-                {
+            }, {}, 'valid2');
+            convo.addQuestion('Token?', [{
                     pattern: /.*/,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         service.setGithubtoken(convo.context.user, response.match.input);
                         convo.gotoThread('github_thread_repoName');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_at_token');
                     },
                 }
-            ],{},'github_thread_token');
-            convo.addQuestion('User name?', [
-                {
+            ], {}, 'github_thread_token');
+            convo.addQuestion('User name?', [{
                     pattern: /.*/,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         // This will create the cv repository for the user
                         service.setRepoName(convo.context.user, response.match.input);
                         if (service.createRepoForUser(convo.context.user)) {
                             convo.gotoThread('repoCreated');
-                        }else {
+                        } else {
                             convo.gotoThread('bad_at_repoCreation');
                         }
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_at_repoName');
                     },
                 }
-            ],{},'github_thread_repoName');
+            ], {}, 'github_thread_repoName');
             convo.addMessage({
                 text: `Thanks. The zipped CV has been uploaded successfully at ${service.getZipURL()}`,
                 action: 'terminate_session2',
-            },'zipped_CV_uploaded');
+            }, 'zipped_CV_uploaded');
             convo.addMessage({
                 text: 'Sorry the repo could not be created. Make sure you provide valid token and repo name',
                 action: 'github_thread_token',
-            },'bad_at_repoCreation');
+            }, 'bad_at_repoCreation');
             convo.addMessage({
                 text: 'Sorry I did not understand.',
                 action: 'github_thread_token',
-            },'bad_at_token');
+            }, 'bad_at_token');
             convo.addMessage({
                 text: 'Sorry I did not understand.',
                 action: 'github_thread_repoName',
-            },'bad_at_repoName');
+            }, 'bad_at_repoName');
             convo.addMessage({
                 text: 'Sorry I did not understand.',
                 action: 'valid2',
-            },'bad_at_valid2');
+            }, 'bad_at_valid2');
             convo.addMessage({
                 text: 'Sorry I did not understand.',
                 action: 'valid2',
-            },'bad_at_valid2');
+            }, 'bad_at_valid2');
             convo.addMessage({
-                text: 'website has been published at <your github username>.github.io ',//here will be the github.io link
+                text: 'website has been published at <your github username>.github.io ', //here will be the github.io link
                 action: 'terminate_session2',
-            },'repoCreated');
+            }, 'repoCreated');
             convo.addMessage({
                 text: 'session terminated! You can say \'start\' to create a new session',
-            },'session_terminated');
-            convo.addQuestion('Please say \'terminate\' to terminate the session',function(response,convo) {
-                if (response.text === 'terminate'){
+            }, 'session_terminated');
+            convo.addQuestion('Please say \'terminate\' to terminate the session', function (response, convo) {
+                if (response.text === 'terminate') {
                     service.setLevel(0, convo.context.user);
                     service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_at_terminate_session2');
                 }
-              },{},'terminate_session2');
+            }, {}, 'terminate_session2');
             convo.addMessage({
                 text: 'Sorry I did not understand',
                 action: 'terminate_session2',
-            },'bad_at_terminate_session2');
+            }, 'bad_at_terminate_session2');
             convo.addMessage({
                 text: 'Sorry, maybe you did not upload a yml file',
                 action: 'default',
-            },'bad_at_default');
+            }, 'bad_at_default');
             convo.addMessage({
                 text: 'Sorry, maybe the fields in the .yml file are not correctly filled up',
                 action: 'default',
-            },'invalid_YML_content');
+            }, 'invalid_YML_content');
             convo.activate();
         });
 
-    } else {// bot replies an error message when the user is not in service.level 0
-        bot.createConversation(message, function(err, convo) {
+    } else { // bot replies an error message when the user is not in service.level 0
+        bot.createConversation(message, function (err, convo) {
             // create a path for when a user says YES
             convo.addMessage({
-                    text: 'Please say \'start\' to start a new session.',
-            },'yes_thread');
-        
+                text: 'Please say \'start\' to start a new session.',
+            }, 'yes_thread');
+
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Alright',
-            },'no_thread');
-        
+            }, 'no_thread');
+
             // create a path where neither option was matched
             // this message has an action field, which directs botkit to go back to the `default` thread after sending this message.
             convo.addMessage({
                 text: 'Sorry I did not understand.',
                 action: 'default',
-            },'bad_response');
-        
+            }, 'bad_response');
+
             // Create a yes/no question in the default thread...
-            convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', [
-                {
+            convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', [{
                     pattern: 'y',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('yes_thread');
                         service.setLevel(0, convo.context.user);
                     },
-                    
+
                 },
                 {
                     pattern: 'n',
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('no_thread');
                     },
                 },
                 {
                     default: true,
-                    callback: function(response, convo) {
+                    callback: function (response, convo) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ],{},'default');
-        
+            ], {}, 'default');
+
             convo.activate();
         });
     }
