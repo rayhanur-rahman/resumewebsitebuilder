@@ -50,7 +50,7 @@ The user must be in the state S[2-1] \(use case 1\) to be able to continue.
 		- The user replies "yes". The bot replies "Amazing! Please provide me with the link" and the user gives a valid link. 
 		- The user replies "no". The bot continues to the next question.	
 - [S2] The bot replies "I see that you have several information missing that I require. Please fill up this template at http://... and upload"
-	- [S2-1] The user fills in the black template and move to use case 3.
+	- [S2-1] The user fills in the blank template and move to use case 3.
 - [S3] The bot replies "File uploaded successfully at http://..."
 	- [S3-1] The user downloads the .yml file, verify whether the data is correct and move  to use case 3. 
 
