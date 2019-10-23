@@ -1,4 +1,5 @@
-
+## Bot Integration
+We have used [botkit-ai](https://botkit.ai) and nodejs to build our bot for slack platform. 
 
 ## Use Cases Refinement
 Based on the feedback from our design milestone and initial implementation, the use cases for the bot have been improved.
@@ -88,3 +89,16 @@ At any point, the user can terminate a session. This option is independent of an
 #### SubFlow
 - [S1] The user says "terminate".
 - [S2] The bot replies "session terminated! You can say \'start\' to create a new session".
+
+## Automation Testing
+We have used [Puppeteer](https://github.com/GoogleChrome/puppeteer) to build our selenium tests. Those test cases can be found in ```test/Puppeteer.js```
+
+## Mocking Infrastructure 
+We have used ```nock``` to mock the service calls that uses http requests. We have also used mock functions and data that can be found in ```service-mock.js``` and ```mock_data.json```. We have also wrote a few unit test cases using ```mocha``` and the code can be found in ```test/unit_tests.js```.
+
+## Installation
+To run, type ```npm start```. But you will need to use https tunelling, collect tokens from bots and oauth redirection urls. So, unless these things are collected, the bot won't work.
+To run the unit test cases, type ```npm test```.
+
+## Screencast
+

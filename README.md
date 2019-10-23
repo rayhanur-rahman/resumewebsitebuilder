@@ -2,7 +2,8 @@
 
 ## Static Resume Website Builder Bot
 
-- [Design](Design.md)
+- [Design](milestone1/Design.md)
+- [Bot](milestone2/BOT.md)
 
 ## Team Members
 - Saad Mohammad Abrar(sabrar)
