@@ -101,4 +101,12 @@ To run, type ```npm start```. But you will need to use https tunelling, collect 
 To run the unit test cases, type ```npm test```.
 
 ## Screencast
+The screencasts of the bot working and interacting via browser automation is provided. 
 
+The happy path screencast is provided in the link: https://drive.google.com/open?id=1eYSI-jP74kJPBot-TAtZqaz4kGxxwJZF.
+
+One alternative path for use case 1 is provided in the link: https://drive.google.com/open?id=16X5PCgXezzqPZ9zxipRyiLUjP1CITaPa.
+
+One alternative path for use case 2 is provided in the link: https://drive.google.com/open?id=1ir0wLWpSJtr0V_BCRJKzslRWNhNlIxOh.
+
+One alternative path for use case 3 is provided in the link: https://drive.google.com/open?id=1lbiA18p08ky4t2GtMvDrv5i2d0k1UYtv.
