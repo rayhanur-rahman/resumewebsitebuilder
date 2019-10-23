@@ -85,6 +85,7 @@ async function UseCase2(page){
   var messages = await ExtractPageInfo(page, "I am ready");
   if(messages === 'Please tell me if you have a LinkedIn account?[yes/no]'){
     var LrandomNumberBetween0and1 = Math.floor(Math.random() * 2);
+    LrandomNumberBetween0and1=1;
     if(LrandomNumberBetween0and1===1){
       messages = await ExtractPageInfo(page, "yes");
     }else{
@@ -101,6 +102,7 @@ async function UseCase2(page){
     }
     if(messages === 'Awesome! Now tell me if you have a DBLP account?[yes/no]'){
         var DrandomNumberBetween0and1 = Math.floor(Math.random() * 2);
+        DrandomNumberBetween0and1=1;
         if(DrandomNumberBetween0and1===1){
           messages = await ExtractPageInfo(page, "yes");
         }else{
@@ -112,8 +114,9 @@ async function UseCase2(page){
             messages = await ExtractPageInfo(page, 'https://dblp.uni-trier.de/pers/hd/r/Rahman:Rayhanur');
           }
         }
-        if(messages === 'Awesome! Now tell me if you have a Github account?[yes/no]'){
+        if(messages === 'Awesome! Now tell me if you have a Github account?[yes/no]'|| messages.includes('clutter')){
           var GrandomNumberBetween0and1 = Math.floor(Math.random() * 2);
+          //GrandomNumberBetween0and1=1;
           //messages = await ExtractPageInfo(page, 'yes');
           if(GrandomNumberBetween0and1===1){
             messages = await ExtractPageInfo(page, "yes");
@@ -127,7 +130,8 @@ async function UseCase2(page){
             }
           }
           if(noGithubLink || noLinkedInLink|| noDblpLink){
-            if(messages === 'I see that you have several information missing that I require. Please fill up this template and upload'){
+            console.log("Hello: Eikhane "+ messages);
+            if(messages.includes('several information missing')){
               messages = await ExtractPageInfo(page, 'https://transfer.sh/gIusU/data.yml');
             }
           }
@@ -135,10 +139,7 @@ async function UseCase2(page){
             level++;
           }
         }
-          
-        
       }
-    
   }
   return page;  
 }
@@ -147,20 +148,23 @@ async function UseCase3(page){
   var messages = await ExtractPageInfo(page, "verify");
   if(messages === 'Please give me a link of the yml file'){
     messages = await ExtractPageInfo(page, "https://transfer.sh/fHtrT/data.yml");
-    if(messages === 'Data verified. Do you want your CV in Github.io or in zipped format?[github/zip]'){
-      var randomNumberBetween0and1 = Math.floor(Math.random() * 2);
-      if(randomNumberBetween0and1===1){
-        messages = await ExtractPageInfo(page, "zip");
-      } else{ //alternate path
-        messages = await ExtractPageInfo(page,"github");
-      }
-      if(messages === 'Token?' && randomNumberBetween0and1===0){
-        messages = await ExtractPageInfo(page,'sadghadgfsfd');
-        if(messages === 'Repo name?'){
-          messages = await ExtractPageInfo(page,'Resume');
+    if(messages === 'Data verified. Do you want your CV in industrial or academic format?[i/a]'){
+      messages = await ExtractPageInfo(page, "i");
+      if(messages === 'Do you want your CV in Github.io or in zipped format?[github/zip].'){
+        var randomNumberBetween0and1 = Math.floor(Math.random() * 2);
+        randomNumberBetween0and1=0;
+        if(randomNumberBetween0and1===1){
+          messages = await ExtractPageInfo(page, "zip");
+        } else{ //alternate path
+          messages = await ExtractPageInfo(page,"github");
+        }
+        if(messages === 'Token?' && randomNumberBetween0and1===0){
+          messages = await ExtractPageInfo(page,'sadghad23412jhsasfd');
+          if(messages === 'User name?'){
+            messages = await ExtractPageInfo(page,'sabrar');
+          }
         }
       }
-
       if(messages.includes(" terminate")){
         messages = await ExtractPageInfo(page, "terminate");
         level = 0;

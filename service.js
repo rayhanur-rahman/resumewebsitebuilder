@@ -179,10 +179,9 @@ function uploadEmptyTemplate(){
 
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
-async function mergeAllInfo(){
+function mergeAllInfo(){
     //Merging all the information
-
-    await new Transfer('./user-mock-data.yml')
+new Transfer('./user-mock-data.yml')
         .upload()
         .then(function (link) { 
             console.log(`File uploaded successfully at ${link}`); 
