@@ -62,7 +62,7 @@ controller.hears('start', 'direct_message', function (bot, message) {
     if (service.getLevel(message.user) === 0) {
         bot.reply(message, 'Welcome! Please say \'I am ready\' when you are ready');
         service.incrementLevel(message.user);
-    } else { 
+    } else {
         bot.createConversation(message, function (err, convo) {
             convo.addMessage({
                 text: 'Please say \'start\' to start a new session.',
@@ -238,8 +238,10 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                 },
                 {
                     pattern: 'no',
-                    callback: function (response, convo) {
+                    callback: async function (response, convo) {
                         service.noGithubFlag = true;
+                        var link = await service.mergeAllInfo(convo.context.user);
+                        convo.setVar('link', link);
                         convo.gotoThread('no_github_thread');
                     },
                 },
@@ -357,7 +359,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                         if (service.verifyYMLContent(response)) {
                             //bot.reply('Data verified. Do you your CV in Github or zipped format?');
                             convo.gotoThread('Template_Choice');
-                        }else {
+                        } else {
                             convo.gotoThread('invalid_YML_content');
                         }
 
@@ -371,19 +373,19 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                 }
             ], {}, 'default');
 
-            convo.addQuestion('Data verified. Do you want your CV in industrial or academic format?[i/a]',function(response,convo) {
-                if (response.text === 'i'){
+            convo.addQuestion('Data verified. Do you want your CV in industrial or academic format?[i/a]', function (response, convo) {
+                if (response.text === 'i') {
                     convo.gotoThread('valid2');
                 } else if (response.text === 'a') {
                     convo.gotoThread('valid2');
-                        //convo.gotoThread('session_terminated');
+                    //convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('Template_Choice');
                 }
-              },{},'Template_Choice');
+            }, {}, 'Template_Choice');
 
-            convo.addQuestion('Do you want your CV in Github.io or in zipped format?[github/zip].',async function(response,convo) {
-                if (response.text === 'github'){
+            convo.addQuestion('Do you want your CV in Github.io or in zipped format?[github/zip].', async function (response, convo) {
+                if (response.text === 'github') {
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
                     var link = await service.uploadZippedCV(convo.context.user);
@@ -486,18 +488,18 @@ controller.hears('verify', 'direct_message', function (bot, message) {
 
 
 
-            convo.on('end',function(convo) {
+            convo.on('end', function (convo) {
                 console.log(convo.status);
 
-                if (convo.status=='completed') {
-                  // do something useful with the users responses
-                  console.log('edned well');
-              
+                if (convo.status == 'completed') {
+                    // do something useful with the users responses
+                    console.log('edned well');
+
                 } else {
                     console.log('ended bad');
-                                }
-              
-              });
+                }
+
+            });
 
 
             convo.activate();
