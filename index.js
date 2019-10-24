@@ -1,21 +1,4 @@
-/**
- * A Bot for Slack!
- */
-
-/**
- * Define a function for initiating a conversation on installation
- * With custom integrations, we don't have a way to find out who installed us, so we can't message them :(
- */
-//after bot processes all the data, this is where the yml file is stored
-
 var service = require('./service-mock.js');
-
-//Delaying the function
-async function delay(timeout) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, timeout);
-    });
-}
 
 function onInstallation(bot, installer) {
     if (installer) {
@@ -32,22 +15,8 @@ function onInstallation(bot, installer) {
     }
 }
 
-
-/**
- * Configure the persistence options
- */
-
 var config = {};
-
 require('dotenv').config();
-
-const fs = require('fs');
-const AWS = require('aws-sdk');
-
-const s3 = new AWS.S3({
-    accessKeyId: process.env.CLOUDCUBE_ACCESS_KEY_ID,
-    secretAccessKey: process.env.CLOUDCUBE_SECRET_ACCESS_KEY
-});
 
 if (process.env.MONGODB_URI) {
     var BotkitStorage = require('botkit-storage-mongo');
@@ -58,13 +27,9 @@ if (process.env.MONGODB_URI) {
     };
 } else {
     config = {
-        json_file_store: ((process.env.TOKEN) ? './db_slack_bot_ci/' : './db_slack_bot_a/'), //use a different name if an app or CI
+        json_file_store: ((process.env.TOKEN) ? './db_slack_bot_ci/' : './db_slack_bot_a/'),
     };
 }
-
-/**
- * Are being run as an app or a custom integration? The initialization will differ, depending
- */
 
 if (process.env.TOKEN || process.env.SLACK_TOKEN) {
     //Treat this as a custom integration
@@ -80,58 +45,33 @@ if (process.env.TOKEN || process.env.SLACK_TOKEN) {
     process.exit(1);
 }
 
-
-/**
- * A demonstration for how to handle websocket events. In this case, just log when we have and have not
- * been disconnected from the websocket. In the future, it would be super awesome to be able to specify
- * a reconnect policy, and do reconnections automatically. In the meantime, we aren't going to attempt reconnects,
- * WHICH IS A B0RKED WAY TO HANDLE BEING DISCONNECTED. So we need to fix this.
- *
- * TODO: fixed b0rked reconnect behavior
- */
-// Handle events related to the websocket connection to Slack
 controller.on('rtm_open', function (bot) {
     console.log('** The RTM api just connected!');
 });
 
 controller.on('rtm_close', function (bot) {
     console.log('** The RTM api just closed');
-    // you may want to attempt to re-open
 });
-
-
-/**
- * Core bot logic goes here!
- */
-// BEGIN EDITING HERE!
 
 controller.on('message, message.channels, message.im', function (bot, message) {
     console.log(message);
 });
 
-//Start Convo
 controller.hears('start', 'direct_message', function (bot, message) {
-
     service.setUser(message.user);
-    console.log(message.user);
-
     if (service.getLevel(message.user) === 0) {
         bot.reply(message, 'Welcome! Please say \'I am ready\' when you are ready');
         service.incrementLevel(message.user);
-    } else { // bot replies an error message when the user is not in service.level 0
+    } else { 
         bot.createConversation(message, function (err, convo) {
-            // create a path for when a user says YES
             convo.addMessage({
                 text: 'Please say \'start\' to start a new session.',
             }, 'yes_thread');
 
-            // create a path for when a user says NO
             convo.addMessage({
                 text: 'Alright',
             }, 'no_thread');
 
-            // create a path where neither option was matched
-            // this message has an action field, which directs botkit to go back to the `default` thread after sending this message.
             convo.addMessage({
                 text: 'Sorry I did not understand.',
                 action: 'default',
@@ -140,7 +80,6 @@ controller.hears('start', 'direct_message', function (bot, message) {
                 text: 'session terminated! You can say \'start\' to create a new session',
             }, 'session_terminated');
 
-            // Create a yes/no question in the default thread...
             convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', [{
                     pattern: 'y',
                     callback: function (response, convo) {
@@ -153,6 +92,7 @@ controller.hears('start', 'direct_message', function (bot, message) {
                     pattern: 'n',
                     callback: function (response, convo) {
                         convo.gotoThread('no_thread');
+                        // tell the user about his/her progress
                     },
                 },
                 {
@@ -172,14 +112,14 @@ controller.hears('start', 'direct_message', function (bot, message) {
         });
     }
 });
-//Service level 1
+
 controller.hears('I am ready', 'direct_message', function (bot, message) {
     if (service.getLevel(message.user) === 1) {
         bot.createConversation(message, function (err, convo) {
             // create a path for when a user says NO
             convo.addMessage({
                 text: 'Great! I think I got all the information required',
-                text: `File uploaded successfully at ${service.getFileURL(convo.context.user)}. Go to this link and check the yml file. Type in 'verify' to upload any revisions`,
+                text: "File uploaded successfully at {{& vars.link}}. Go to this link and check the yml file. Type in 'verify' to upload any revisions",
             }, 'Valid');
 
             // create a path where neither option was matched
@@ -319,11 +259,12 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                         if (ValidGithubAccount === true) {
                             if (service.getNoLinkedFlag(convo.context.user) || service.getNoDBLPFlag(convo.context.user) || service.getNoGithubFlag(convo.context.user)) {
                                 var link = await service.mergeAllInfo(convo.context.user);
+                                convo.setVar('link', link);
                                 convo.gotoThread('no_github_thread');
                             } else {
                                 service.incrementLevel(convo.context.user);
                                 var link = await service.mergeAllInfo(convo.context.user);
-                                console.log(link + "at Convo");
+                                convo.setVar('link', link);
                                 convo.gotoThread('Valid');
                             }
                         } else {
@@ -373,7 +314,7 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                     },
                 }
             ], {}, 'no_DBLP_thread');
-            convo.addQuestion(`I see that you have several information missing that I require. Please fill up this template at ${service.getFileURL()} and upload`, [{
+            convo.addQuestion('I see that you have several information missing that I require. Please fill up this template at {{& vars.link}} and upload', [{
                     pattern: /.*.yml/,
                     callback: function (response, convo) {
                         service.incrementLevel(convo.context.user);
@@ -449,6 +390,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                     //TODO where is the dummy link for zipped file? dummy link is in the link variable. mention it somehow
                     console.log(link);
                     bot.reply(message, link);
+                    convo.setVar('link', link);
                     convo.gotoThread('zipped_CV_uploaded');
                     //convo.gotoThread('session_terminated');
                 } else {
@@ -489,7 +431,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                 }
             ], {}, 'github_thread_repoName');
             convo.addMessage({
-                text: `Thanks. The zipped CV has been uploaded successfully at ${service.sessionData.fileURL}`,
+                text: 'Thanks. The zipped CV has been uploaded successfully at {{& vars.link}}',
                 action: 'terminate_session2',
             }, 'zipped_CV_uploaded');
             convo.addMessage({
@@ -518,6 +460,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
             }, 'repoCreated');
             convo.addMessage({
                 text: 'session terminated! You can say \'start\' to create a new session',
+                action: "completed"
             }, 'session_terminated');
             convo.addQuestion('Please say \'terminate\' to terminate the session', function (response, convo) {
                 if (response.text === 'terminate') {
@@ -540,6 +483,23 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                 text: 'Sorry, maybe the fields in the .yml file are not correctly filled up',
                 action: 'default',
             }, 'invalid_YML_content');
+
+
+
+            convo.on('end',function(convo) {
+                console.log(convo.status);
+
+                if (convo.status=='completed') {
+                  // do something useful with the users responses
+                  console.log('edned well');
+              
+                } else {
+                    console.log('ended bad');
+                                }
+              
+              });
+
+
             convo.activate();
         });
 
@@ -589,22 +549,17 @@ controller.hears('verify', 'direct_message', function (bot, message) {
         });
     }
 });
-//
-/**
- * AN example of what could be:
- * Any un-handled direct mention gets a reaction and a pat response!
- */
-controller.on('direct_message,mention,direct_mention', function (bot, message) {
+
+controller.on('direct_message,mention,direct_mention', async function (bot, message) {
     bot.api.reactions.add({
         timestamp: message.ts,
         channel: message.channel,
         name: 'robot_face',
-    }, function (err) {
+    }, async function (err) {
         if (err) {
             console.log(err)
         }
         bot.reply(message, 'Sorry I did not understand. You can start a new session by saying \'start\'');
-        console.log(message);
     });
 });
 

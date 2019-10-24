@@ -242,6 +242,7 @@ function uploadEmptyTemplate() {
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
 function mergeAllInfo(userId) {
+    console.log('called');
     return new Transfer('./user-mock-data.yml')
         .upload()
         .then(function (link) {
@@ -252,7 +253,6 @@ function mergeAllInfo(userId) {
         .catch(function (err) {
             console.log('could not upload');
             sessionData.fileURL = 'www.null.com';
-            console.log(getZipURL());
             return sessionData.fileURL;
         })
 }
