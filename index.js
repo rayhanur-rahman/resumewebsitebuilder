@@ -92,7 +92,13 @@ controller.hears('start', 'direct_message', function (bot, message) {
                     pattern: 'n',
                     callback: function (response, convo) {
                         convo.gotoThread('no_thread');
-                        // tell the user about his/her progress
+
+                        // if (service.getLevel(convo.context.user) === 0)
+                        //     convo.gotoThread('default');
+                        // if (service.getLevel(convo.context.user) === 1)
+                        //     convo.gotoThread('');
+                        // if (service.getLevel(convo.context.user) === 0)
+                        //     convo.gotoThread('');
                     },
                 },
                 {
