@@ -318,7 +318,7 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
 
                         if (ValidGithubAccount === true) {
                             if (service.getNoLinkedFlag(convo.context.user) || service.getNoDBLPFlag(convo.context.user) || service.getNoGithubFlag(convo.context.user)) {
-                                await service.mergeAllInfo(convo.context.user);
+                                var link = await service.mergeAllInfo(convo.context.user);
                                 convo.gotoThread('no_github_thread');
                             } else {
                                 service.incrementLevel(convo.context.user);
@@ -441,12 +441,14 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                 }
               },{},'Template_Choice');
 
-            convo.addQuestion('Do you want your CV in Github.io or in zipped format?[github/zip].',function(response,convo) {
+            convo.addQuestion('Do you want your CV in Github.io or in zipped format?[github/zip].',async function(response,convo) {
                 if (response.text === 'github'){
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
-                    var link = service.uploadZippedCV(convo.context.user);
+                    var link = await service.uploadZippedCV(convo.context.user);
                     //TODO where is the dummy link for zipped file? dummy link is in the link variable. mention it somehow
+                    console.log(link);
+                    bot.reply(message, link);
                     convo.gotoThread('zipped_CV_uploaded');
                     //convo.gotoThread('session_terminated');
                 } else {
@@ -487,7 +489,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                 }
             ], {}, 'github_thread_repoName');
             convo.addMessage({
-                text: `Thanks. The zipped CV has been uploaded successfully at ${service.getZipURL()}`,
+                text: `Thanks. The zipped CV has been uploaded successfully at ${service.sessionData.fileURL}`,
                 action: 'terminate_session2',
             }, 'zipped_CV_uploaded');
             convo.addMessage({

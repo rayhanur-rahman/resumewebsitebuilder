@@ -75,7 +75,8 @@ function setUser(userId) {
 }
 
 function getZipURL() {
-    return mock_data.zipurl;
+    // return mock_data.zipurl;
+    return sessionData.fileURL;
 }
 
 // this function does not work for now
@@ -208,17 +209,18 @@ function getGithubRepoName() {
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
 function uploadZippedCV(user) {
-    new Transfer('./site-mock.zip')
+    return new Transfer('./site-mock.zip')
         .upload()
         .then(function (link) {
             console.log(`File uploaded successfully at ${link}`);
             sessionData.fileURL = link;
-            setFileURL(sessionData.fileURL);
             return sessionData.fileURL;
         })
         .catch(function (err) {
-            console.log(err);
-            return 'null';
+            console.log('could not upload');
+            sessionData.fileURL = 'www.null.com';
+            console.log(getZipURL());
+            return sessionData.fileURL;
         })
 }
 
@@ -239,19 +241,19 @@ function uploadEmptyTemplate() {
 
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
-async function mergeAllInfo(userId) {
-
-
-    new Transfer('./user-mock-data.yml')
+function mergeAllInfo(userId) {
+    return new Transfer('./user-mock-data.yml')
         .upload()
         .then(function (link) {
             console.log(`File uploaded successfully at ${link}`);
             sessionData.fileURL = link;
-            setFileURL(sessionData.fileURL);
             return sessionData.fileURL;
         })
         .catch(function (err) {
-            console.log(err)
+            console.log('could not upload');
+            sessionData.fileURL = 'www.null.com';
+            console.log(getZipURL());
+            return sessionData.fileURL;
         })
 }
 
