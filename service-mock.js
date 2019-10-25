@@ -134,7 +134,7 @@ function ExtractingGithubInfo(userId, response) {
         })
 
         .persist()
-        .get("/users/bob_smith/repos")
+        .get("/users/bobsmith/repos")
         .reply(200, JSON.stringify(mock_data.gitRepos));
 
     var profile_data = toy.getGitHubData(getUserIdFromGitHubLink(response), gitHubToken);

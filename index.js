@@ -1,5 +1,6 @@
 var service = require('./service-mock.js');
 
+
 function onInstallation(bot, installer) {
     if (installer) {
         bot.startPrivateConversation({
@@ -124,8 +125,8 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
         bot.createConversation(message, function (err, convo) {
             // create a path for when a user says NO
             convo.addMessage({
-                text: 'Great! I think I got all the information required',
-                text: "File uploaded successfully at {{& vars.link}}. Go to this link and check the yml file. Type in 'verify' to upload any revisions",
+                //text: 'Based on the information provided, I was able to generate this file',
+                text: "Based on the information provided, I was able to generate a file. The file is uploaded at {{& vars.link}}. Go to this link and check the yml file. Please fill in if there are any missing fields. Type in 'verify' to upload any revisions",
             }, 'Valid');
 
             // create a path where neither option was matched
@@ -245,10 +246,11 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                 {
                     pattern: 'no',
                     callback: async function (response, convo) {
+                        service.incrementLevel(convo.context.user);
                         service.noGithubFlag = true;
                         var link = await service.mergeAllInfo(convo.context.user);
                         convo.setVar('link', link);
-                        convo.gotoThread('no_github_thread');
+                        convo.gotoThread('Valid');
                     },
                 },
                 {
@@ -265,16 +267,16 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                         var ValidGithubAccount = service.ExtractingGithubInfo(convo.context.user, response);
 
                         if (ValidGithubAccount === true) {
-                            if (service.getNoLinkedFlag(convo.context.user) || service.getNoDBLPFlag(convo.context.user) || service.getNoGithubFlag(convo.context.user)) {
-                                var link = await service.mergeAllInfo(convo.context.user);
-                                convo.setVar('link', link);
-                                convo.gotoThread('no_github_thread');
-                            } else {
+                            //if (service.getNoLinkedFlag(convo.context.user) || service.getNoDBLPFlag(convo.context.user) || service.getNoGithubFlag(convo.context.user)) {
+                                //var link = await service.mergeAllInfo(convo.context.user);
+                                //convo.setVar('link', link);
+                                //convo.gotoThread('Valid');
+                            //} else {
                                 service.incrementLevel(convo.context.user);
                                 var link = await service.mergeAllInfo(convo.context.user);
                                 convo.setVar('link', link);
                                 convo.gotoThread('Valid');
-                            }
+                            //}
                         } else {
                             convo.gotoThread('default');
                         }
