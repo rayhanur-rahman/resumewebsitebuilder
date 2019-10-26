@@ -1,6 +1,5 @@
 var service = require('./service-mock.js');
-
-
+var helper = require('./bot-helper.js');
 function onInstallation(bot, installer) {
     if (installer) {
         bot.startPrivateConversation({
@@ -59,10 +58,10 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 });
 
 controller.hears('start', 'direct_message', function (bot, message) {
-    service.setUser(message.user);
-    if (service.getLevel(message.user) === 0) {
+    helper.setUser(message.user);
+    if (helper.getLevel(message.user) === 0) {
         bot.reply(message, 'Welcome! Please say \'I am ready\' when you are ready');
-        service.incrementLevel(message.user);
+        helper.incrementLevel(message.user);
     } else {
         bot.createConversation(message, function (err, convo) {
             convo.addMessage({
@@ -105,7 +104,7 @@ controller.hears('start', 'direct_message', function (bot, message) {
 });
 
 controller.hears('I am ready', 'direct_message', function (bot, message) {
-    if (service.getLevel(message.user) === 1) {
+    if (helper.getLevel(message.user) === 1) {
         bot.createConversation(message, function (err, convo) {
             // create a path for when a user says NO
             convo.addMessage({
@@ -162,7 +161,7 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                     pattern: /.*/,
                     callback: function (response, convo) {
                         //TODO fix linkedin, github, dblp link regex
-                        service.setLinkedInId(convo.context.user, response);
+                        helper.setLinkedInId(convo.context.user, response);
                         convo.gotoThread('Ask_token_LinkedIn');
                     },
                 },
@@ -176,8 +175,8 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
             convo.addQuestion('Great! Please provide your LinkedIn account token', [{
                     pattern: /.*/,
                     callback: function (response, convo) {
-                        service.setLinkedInToken(convo.context.user, response);
-                        if (service.ExtractingLinkedInInfo(service.getLinkedInId(convo.context.user), service.getLinkedInToken(convo.context.user))) {
+                        helper.setLinkedInToken(convo.context.user, response);
+                        if (service.ExtractingLinkedInInfo(helper.getLinkedInId(convo.context.user), helper.getLinkedInToken(convo.context.user))) {
                             convo.gotoThread('Ask_DBLP');
                         } else {
                             convo.gotoThread('yes_linkedin_thread');
@@ -356,7 +355,7 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
             convo.addQuestion('I see that you have several information missing that I require. Please fill up this template at {{& vars.link}} and upload', [{
                     pattern: /.*.yml/,
                     callback: function (response, convo) {
-                        service.incrementLevel(convo.context.user);
+                        helper.incrementLevel(convo.context.user);
                         convo.gotoThread('Valid');
                     },
                 },
@@ -385,7 +384,7 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
 });
 
 controller.hears('verify', 'direct_message', function (bot, message) {
-    if (service.getLevel(message.user) === 2) {
+    if (helper.getLevel(message.user) === 2) {
         //bot.reply(message,'Please give me the link');
         bot.createConversation(message, function (err, convo) {
             convo.addQuestion('Please give me a link of the yml file', [{
@@ -449,7 +448,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
             convo.addQuestion('Token?', [{
                     pattern: /.*/,
                     callback: function (response, convo) {
-                        service.setGithubtoken(convo.context.user, response.match.input);
+                        helper.setGithubtoken(convo.context.user, response.match.input);
                         convo.gotoThread('github_thread_repoName');
                     },
                 },
@@ -464,7 +463,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                     pattern: /.*/,
                     callback: function (response, convo) {
                         // This will create the cv repository for the user
-                        service.setRepoName(convo.context.user, response.match.input);
+                        helper.setRepoName(convo.context.user, response.match.input);
                         if (service.createRepoForUser(convo.context.user)) {
                             convo.gotoThread('repoCreated');
                         } else {
@@ -513,7 +512,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
             // }, 'session_terminated');
             convo.addQuestion('Please say \'terminate\' to terminate the session', function (response, convo) {
                 if (response.text === 'terminate') {
-                    service.setLevel(0, message.user);
+                    helper.setLevel(0, convo.context.user);
                     service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {
@@ -576,7 +575,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                     pattern: 'y',
                     callback: function (response, convo) {
                         convo.gotoThread('yes_thread');
-                        service.setLevel(0, convo.context.user);
+                        helper.setLevel(0, convo.context.user);
                     },
 
                 },
