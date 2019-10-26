@@ -86,12 +86,12 @@ controller.hears('start', 'direct_message', function (bot, message) {
             convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', function (response, convo) {
                 if (response.text === 'y') {
                     convo.gotoThread('yes_thread');
-                    service.setLevel(0, convo.context.user);
+                    helper.setLevel(0, convo.context.user);
                 } else if (response.text === 'n') {
                     convo.gotoThread('no_thread');
                 } else if (response.text === 'terminate'){
                     //convo.gotoThread('session_terminated');
-                    service.setLevel(0, message.user);
+                    helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                     
                 } else {
@@ -147,10 +147,10 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                 if (response.text === 'yes') {
                     convo.gotoThread('yes_linkedin_thread');
                 } else if (response.text === 'no') {
-                    service.setNoLinkedFlag(convo.context.user, true)
+                    helper.setNoLinkedFlag(convo.context.user, true)
                     convo.gotoThread('Ask_DBLP');
                 } else if (response.text === 'terminate'){
-                    service.setLevel(0, message.user);
+                    helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
@@ -215,10 +215,10 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                 if (response.text === 'yes') {
                     convo.gotoThread('yes_dblp_thread');
                 } else if (response.text === 'no') {
-                    service.setNoDBLPFlag(convo.context.user, true);
+                    helper.setNoDBLPFlag(convo.context.user, true);
                     convo.gotoThread('Ask_GitHub');
                 } else if (response.text === 'terminate'){
-                    service.setLevel(0, message.user);
+                    helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
@@ -276,13 +276,13 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                 if (response.text === 'yes') {
                     convo.gotoThread('yes_github_thread');
                 } else if (response.text === 'no') {
-                    service.incrementLevel(convo.context.user);
-                    service.noGithubFlag = true;
+                    helper.incrementLevel(convo.context.user);
+                    helper.noGithubFlag = true;
                     var link =  service.mergeAllInfo(convo.context.user);
                     convo.setVar('link', link);
                     convo.gotoThread('Valid');
                 } else if (response.text === 'terminate'){
-                    service.setLevel(0, message.user);
+                    helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
@@ -300,7 +300,7 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                                 //convo.setVar('link', link);
                                 //convo.gotoThread('Valid');
                             //} else {
-                                service.incrementLevel(convo.context.user);
+                                helper.incrementLevel(convo.context.user);
                                 var link = await service.mergeAllInfo(convo.context.user);
                                 convo.setVar('link', link);
                                 convo.gotoThread('Valid');
@@ -418,7 +418,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                     convo.gotoThread('valid2');
                     //convo.gotoThread('session_terminated');
                 } else if (response.text === 'terminate') {
-                    service.setLevel(0, message.user);
+                    helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                 } 
                 else {
@@ -438,7 +438,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                     convo.gotoThread('zipped_CV_uploaded');
                     //convo.gotoThread('session_terminated');
                 } else if (response.text === 'terminate') {
-                    service.setLevel(0, message.user);
+                    helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                 } 
                 else {
@@ -613,7 +613,7 @@ controller.on('direct_message,mention,direct_mention', async function (bot, mess
 
 controller.hears('terminate', 'direct_message', function (bot, message) {
     bot.reply(message, 'Session terminated! You can start a new session by saying \'start\'');
-    service.setLevel(0,message.user);
+    helper.setLevel(0,message.user);
 });
 
 
