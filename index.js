@@ -76,9 +76,7 @@ controller.hears('start', 'direct_message', function (bot, message) {
                 text: 'Sorry I did not understand.',
                 action: 'default',
             }, 'bad_response');
-            // convo.addMessage({
-            //     text: 'session terminated! You can say \'start\' to create a new session',
-            // }, 'session_terminated');
+            
             convo.addMessage({
                 text: 'Session terminated you can say start to create a new session',
             }, 'session_terminated');
@@ -90,10 +88,8 @@ controller.hears('start', 'direct_message', function (bot, message) {
                 } else if (response.text === 'n') {
                     convo.gotoThread('no_thread');
                 } else if (response.text === 'terminate'){
-                    //convo.gotoThread('session_terminated');
                     helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
-                    
                 } else {
                     convo.gotoThread('bad_response');
                 }
@@ -108,7 +104,6 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
         bot.createConversation(message, function (err, convo) {
             // create a path for when a user says NO
             convo.addMessage({
-                //text: 'Based on the information provided, I was able to generate this file',
                 text: "Based on the information provided, I was able to generate a file. The file is uploaded at {{& vars.link}}. Go to this link and check the yml file. Please fill in if there are any missing fields. Type in 'verify' to upload any revisions",
             }, 'Valid');
 
@@ -119,27 +114,6 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                 action: 'default',
             }, 'bad_response');
 
-            // Question No.1
-            // convo.addQuestion('Please tell me if you have a LinkedIn account?[yes/no]', [{
-            //         pattern: 'yes',
-            //         callback: function (response, convo) {
-            //             convo.gotoThread('yes_linkedin_thread');
-            //         },
-            //     },
-            //     {
-            //         pattern: 'no',
-            //         callback: function (response, convo) {
-            //             service.setNoLinkedFlag(convo.context.user, true)
-            //             convo.gotoThread('Ask_DBLP');
-            //         },
-            //     },
-            //     {
-            //         default: true,
-            //         callback: function (response, convo) {
-            //             convo.gotoThread('bad_response');
-            //         },
-            //     }
-            // ], {}, 'default');
             convo.addMessage({
                 text: 'Session terminated you can say start to create a new session',
             }, 'session_terminated');
@@ -190,27 +164,7 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                     },
                 }
             ], {}, 'Ask_token_LinkedIn');
-            //Question No. 3
-            // convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', [{
-            //         pattern: 'yes',
-            //         callback: function (response, convo) {
-            //             convo.gotoThread('yes_dblp_thread');
-            //         },
-            //     },
-            //     {
-            //         pattern: 'no',
-            //         callback: function (response, convo) {
-            //             service.setNoDBLPFlag(convo.context.user, true);
-            //             convo.gotoThread('Ask_GitHub');
-            //         },
-            //     },
-            //     {
-            //         default: true,
-            //         callback: function (response, convo) {
-            //             convo.gotoThread('bad_response');
-            //         },
-            //     }
-            // ], {}, 'Ask_DBLP');
+            
             convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', function (response, convo) {
                 if (response.text === 'yes') {
                     convo.gotoThread('yes_dblp_thread');
@@ -248,37 +202,14 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                     },
                 }
             ], {}, 'yes_dblp_thread');
-            //Question 5
-            // convo.addQuestion('Awesome! Now tell me if you have a Github account?[yes/no]', [{
-            //         pattern: 'yes',
-            //         callback: function (response, convo) {
-            //             convo.gotoThread('yes_github_thread');
-            //         },
-            //     },
-            //     {
-            //         pattern: 'no',
-            //         callback: async function (response, convo) {
-            //             service.incrementLevel(convo.context.user);
-            //             service.noGithubFlag = true;
-            //             var link = await service.mergeAllInfo(convo.context.user);
-            //             convo.setVar('link', link);
-            //             convo.gotoThread('Valid');
-            //         },
-            //     },
-            //     {
-            //         default: true,
-            //         callback: function (response, convo) {
-            //             convo.gotoThread('bad_response');
-            //         },
-            //     }
-            // ], {}, 'Ask_GitHub');
-            convo.addQuestion('Awesome! Now tell me if you have a Github account?[yes/no]', function (response, convo) {
+            
+            convo.addQuestion('Awesome! Now tell me if you have a Github account?[yes/no]', async function (response, convo) {
                 if (response.text === 'yes') {
                     convo.gotoThread('yes_github_thread');
                 } else if (response.text === 'no') {
                     helper.incrementLevel(convo.context.user);
-                    helper.noGithubFlag = true;
-                    var link =  service.mergeAllInfo(convo.context.user);
+                    helper.setNoGithubFlag(convo.context.user, true);
+                    var link =  await service.mergeAllInfo(convo.context.user);
                     convo.setVar('link', link);
                     convo.gotoThread('Valid');
                 } else if (response.text === 'terminate'){
@@ -295,11 +226,6 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                         var ValidGithubAccount = service.ExtractingGithubInfo(convo.context.user, response);
 
                         if (ValidGithubAccount === true) {
-                            //if (service.getNoLinkedFlag(convo.context.user) || service.getNoDBLPFlag(convo.context.user) || service.getNoGithubFlag(convo.context.user)) {
-                                //var link = await service.mergeAllInfo(convo.context.user);
-                                //convo.setVar('link', link);
-                                //convo.gotoThread('Valid');
-                            //} else {
                                 helper.incrementLevel(convo.context.user);
                                 var link = await service.mergeAllInfo(convo.context.user);
                                 convo.setVar('link', link);
