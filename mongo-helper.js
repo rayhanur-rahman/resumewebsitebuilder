@@ -65,6 +65,17 @@ var MongoHelper = {
             console.log('fai');
             return 'failure'
         });
+    },
+    deleteObject: function(dbo, query) {
+        return dbo.collection(process.env.COLLECTIONNAME).deleteOne(query)
+        .then(res => {
+            console.log('dl');
+            return 'success'
+        })
+        .catch(err => {
+            console.log('fai');
+            return 'failure'
+        });
     }
 }
 

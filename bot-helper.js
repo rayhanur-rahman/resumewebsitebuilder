@@ -67,8 +67,13 @@ function getNoGithubFlag(userId) {
     return sessionData.noDblpFlag;
 }
 
-function setLevel(level, userId) {
-    sessionData.level = level;
+async function setLevel(level, userId) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+    if (response != null) {
+        await MongoHelper.updateObject(dbo, {user: userId}, {$set: {level: level}});
+    }
+    MongoHelper.closeConnection();
 }
 
 async function getLevel(userId) {
@@ -111,6 +116,12 @@ async function setUser(userId) {
         uploadedYMLFileLink: '',
         generatedSiteLink: ''
     });
+    MongoHelper.closeConnection();
+}
+
+async function deleteUser(userId){
+    var dbo = await MongoHelper.openConnection();
+    await MongoHelper.deleteObject(dbo, {user: userId});
     MongoHelper.closeConnection();
 }
 
@@ -180,5 +191,6 @@ module.exports = {
     getNoDBLPFlag: getNoDBLPFlag,
     setNoGithubFlag: setNoGithubFlag,
     getNoGithubFlag: getNoGithubFlag,
-    getZipURL: getZipURL
+    getZipURL: getZipURL,
+    deleteUser: deleteUser
 };

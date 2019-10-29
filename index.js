@@ -81,14 +81,14 @@ controller.hears('start', 'direct_message', async function (bot, message) {
                 text: 'Session terminated you can say start to create a new session',
             }, 'session_terminated');
 
-            convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', function (response, convo) {
+            convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', async function (response, convo) {
                 if (response.text === 'y') {
                     convo.gotoThread('yes_thread');
-                    helper.setLevel(0, convo.context.user);
+                    await helper.setLevel(0, convo.context.user);
                 } else if (response.text === 'n') {
                     convo.gotoThread('no_thread');
                 } else if (response.text === 'terminate'){
-                    helper.setLevel(0, message.user);
+                    await helper.deleteUser(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
