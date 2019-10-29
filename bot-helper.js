@@ -1,23 +1,28 @@
 const mock_data = require('./mock_data.json'); //need to remove this mocking from here
-
+var MongoHelper = require('./mongo-helper.js').MongoHelper;
 // There are three levels. 0-2
 // 0: starts with 'start'
 // 1: starts with 'I am ready'
 // 2: starts with 'verify'
 
-
-
 var sessionData = {
     level: 0,
     user: '',
     fileURL: '',
+    zippedSiteUrl: '',
     userGithubToken: '',
     userGithubRepoName: '',
     userLinkedInId: '',
     userLinkedInToken: '',
     noLinkedInFlag: false,
     noDblpFlag: false,
-    noGithubFlag: false
+    noGithubFlag: false,
+    linkedInData: null,
+    dblpData: null,
+    githubData: null,
+    generatedYMLFileLink: '',
+    uploadedYMLFileLink: '',
+    generatedSiteLink: ''
 }
 
 

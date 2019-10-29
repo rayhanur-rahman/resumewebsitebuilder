@@ -1,6 +1,7 @@
 var Transfer = require('transfer-sh');
 var fs = require('fs');
 var request = require('request');
+var MongoHelper = require('./mongo-helper.js').MongoHelper;
 
 function upload() {
     return new Transfer('./user-mock-data.yml')
@@ -43,13 +44,18 @@ var MongoClient = require('mongodb').MongoClient;
 // Connect to the db
 function connectToMongo() {
     return MongoClient.connect(process.env.MONGODB_URI, { useUnifiedTopology: true }).then(client => {
-        var dbo = client.db('heroku_wvfjdtzx');
-        console.log('db connected');
-        return dbo;
+        console.log('mongo connection establised');
+        return client;
 
     }).catch(err => {
         console.log(err);
     });
+}
+
+function selectDb(client){
+    var dbo = client.db(process.env.DBNAME);
+    console.log('db selected');
+    return dbo;
 }
 
 function createCollection(dbo){
@@ -67,13 +73,14 @@ function insert(dbo){
 
 function find(dbo){
     var collection = dbo.collection('dogs');
-    return collection.findOne({name: 'Alice'}).then(res => {
+    return collection.findOne({name: 'kkk'}).then(res => {
         return res;
     }).catch(err => console.log(err));
 }
 
 async function dosth() {
-    var dbo = await connectToMongo();
+    var client = await connectToMongo();
+    var dbo = await selectDb(client);
     await createCollection(dbo);
     await insert(dbo);
     console.log(await find(dbo));
@@ -81,3 +88,19 @@ async function dosth() {
 }
 
 dosth();
+// console.log(MongoHelper.MongoHelper);
+
+
+var App = {
+    foo: function(a,b) {
+        return a+b;
+    },
+    bar: function(a,b) {
+        return this.foo(a,b);
+    },
+    yay: function(a){
+        if (a%2 == 0) return a;
+        else return null;
+    }
+}
+
