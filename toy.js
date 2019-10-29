@@ -2,6 +2,43 @@ var Transfer = require('transfer-sh');
 var fs = require('fs');
 var request = require('request');
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
+const gitHubUrl = "https://api.github.com";
+const linkedinUrl = "https://api.linkedin.com/v2";
+const dblpUrl = "https://dblp.org"
+
+//Getting DBLP Data from username
+async function getDblpData(userName) {
+    const url = dblpUrl + '/search/publ/api?q==author:' + userName + ":&format=json";
+    console.log(url);
+	const options = {
+		method: 'GET',
+		headers: {
+			"content-type": "application/json"
+		},
+		json: true
+	};
+
+	let profile_details = (await http_request(url, options)).body;
+	var publicationList= profile_details.result.hits.hit;
+	var returnableListOfPublications=[];
+	//console.log(profile_details.result.hits.hit);
+	//var returnAbleList={};
+	for(var i=0; i<publicationList.length; i++){
+		var data = {
+			title:publicationList[i].info.title,
+			authors: publicationList[i].info.authors,
+			venue: publicationList[i].info.venue,
+			type: publicationList[i].info.type,
+			year: publicationList[i].info.year,
+			url: publicationList[i].info.url
+		}
+		returnableListOfPublications.push(data);	
+	}
+	
+	//console.log(returnableListOfPublications);
+	//returnableListOfPublications;
+	return JSON.stringify(returnableListOfPublications);
+}
 
 function upload() {
     return new Transfer('./user-mock-data.yml')
