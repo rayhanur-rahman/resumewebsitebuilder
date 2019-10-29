@@ -88,7 +88,7 @@ async function dosth() {
 }
 
 dosth();
-// console.log(MongoHelper.MongoHelper);
+console.log('fff');
 
 
 var App = {

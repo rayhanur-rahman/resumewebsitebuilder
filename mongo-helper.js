@@ -2,6 +2,16 @@ require('dotenv').config();
 var MongoClient = require('mongodb').MongoClient;
 
 var MongoHelper = {
+    client: null,
+    dbo: null,
+    openConnection: async function(){
+        this.client = await this.connectToMongo();
+        this.dbo = await this.selectDb(this.client);
+        return this.dbo;
+    },
+    closeConnection: async function(){
+        this.client.close();
+    },
     connectToMongo: function () {
         return MongoClient.connect(process.env.MONGODB_URI, {
             useUnifiedTopology: true
@@ -18,10 +28,23 @@ var MongoHelper = {
         console.log('db selected');
         return dbo;
     },
-    insertObjectToCollection: function (dbo, object) {
+    insertObjectToCollection: async function (dbo, query, object) {
         var collection = dbo.collection(process.env.COLLECTIONNAME);
-        if (this.findObject(dbo, object) == null)
-            return collection.insertOne(object).then(res => console.log('inserted')).catch(err => console.log(err));
+        var response = await this.findObject(dbo, query);
+        if (response === null){
+            return collection.insertOne(object)
+            .then(res => {
+                console.log('inserted');
+                return 'success';
+            })
+            .catch(err => {
+                console.log(err);
+                return 'failure';
+            });
+        }
+        else {
+            return 'success 2';
+        }
     },
     findObject: function (dbo, object) {
         var collection = dbo.collection(process.env.COLLECTIONNAME);
@@ -30,6 +53,17 @@ var MongoHelper = {
         }).catch(err => {
             console.log(err);
             return null;
+        });
+    },
+    updateObject: function(dbo, query, object) {
+        return dbo.collection(process.env.COLLECTIONNAME).updateOne(query, object)
+        .then(res => {
+            console.log('up');
+            return 'success'
+        })
+        .catch(err => {
+            console.log('fai');
+            return 'failure'
         });
     }
 }

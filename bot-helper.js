@@ -71,16 +71,47 @@ function setLevel(level, userId) {
     sessionData.level = level;
 }
 
-function getLevel(userId) {
-    return sessionData.level;
+async function getLevel(userId) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+    await MongoHelper.closeConnection();
+    if (response == null) return 0;
+    else {
+        return response.level;
+    }
 }
 
-function incrementLevel(userId) {
-    sessionData.level++;
+async function incrementLevel(userId) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+    if (response != null) {
+        await MongoHelper.updateObject(dbo, {user: userId}, {$set: {level: response.level+1}});
+    }
+    MongoHelper.closeConnection();
 }
 
-function setUser(userId) {
-    sessionData.user = userId;
+async function setUser(userId) {
+    var dbo = await MongoHelper.openConnection();
+    await MongoHelper.insertObjectToCollection(dbo, {user: userId}, {
+        level: 0,
+        user: userId,
+        fileURL: '',
+        zippedSiteUrl: '',
+        userGithubToken: '',
+        userGithubRepoName: '',
+        userLinkedInId: '',
+        userLinkedInToken: '',
+        noLinkedInFlag: false,
+        noDblpFlag: false,
+        noGithubFlag: false,
+        linkedInData: null,
+        dblpData: null,
+        githubData: null,
+        generatedYMLFileLink: '',
+        uploadedYMLFileLink: '',
+        generatedSiteLink: ''
+    });
+    MongoHelper.closeConnection();
 }
 
 // When asked for a token, the text of the user's reply is taken and passed

@@ -57,11 +57,11 @@ controller.on('message, message.channels, message.im', function (bot, message) {
     console.log(message);
 });
 
-controller.hears('start', 'direct_message', function (bot, message) {
-    helper.setUser(message.user);
-    if (helper.getLevel(message.user) === 0) {
+controller.hears('start', 'direct_message', async function (bot, message) {
+    await helper.setUser(message.user);
+    if (await helper.getLevel(message.user) === 0) {
         bot.reply(message, 'Welcome! Please say \'I am ready\' when you are ready');
-        helper.incrementLevel(message.user);
+        await helper.incrementLevel(message.user);
     } else {
         bot.createConversation(message, function (err, convo) {
             convo.addMessage({
