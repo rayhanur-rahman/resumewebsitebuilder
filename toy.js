@@ -4,6 +4,7 @@ var request = require('request');
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
 const axios = require("axios");
 var parseString = require('xml2js').parseString;
+const http_request = require('got');
 
 const gitHubUrl = "https://api.github.com";
 const linkedinUrl = "https://api.linkedin.com/v2";
@@ -152,3 +153,32 @@ var App = {
     }
 }
 
+// get GitHub data from username
+async function getGitHubData(userId) {
+	const url = gitHubUrl + "/users/" + userId + "/repos";
+	const options = {
+		method: 'GET',
+		headers: {
+			"content-type": "application/json"
+		},
+		json: true
+	};
+	let profile_details = (await http_request(url, options)).body;
+	//console.log(profile_details[0].name);
+	//console.log(profile_details);
+	var projectDetails = [];
+	for(var i=0; i<profile_details.length; i++){
+		var data = {
+			name: profile_details[i].name,
+			html_url: profile_details[i].html_url,
+			description: profile_details[i].description
+		}
+		projectDetails.push(data);	
+	}
+	console.log(projectDetails);
+	return projectDetails;
+}
+async function hello(){
+	await getGitHubData('rayhanur-rahman');
+} 
+hello();
