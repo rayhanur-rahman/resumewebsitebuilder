@@ -2,43 +2,54 @@ var Transfer = require('transfer-sh');
 var fs = require('fs');
 var request = require('request');
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
+const axios = require("axios");
+var parseString = require('xml2js').parseString;
+
 const gitHubUrl = "https://api.github.com";
 const linkedinUrl = "https://api.linkedin.com/v2";
 const dblpUrl = "https://dblp.org"
 
 //Getting DBLP Data from username
+async function getUserIdFromDBLPLink(userLink) {
+	const siteUrl = userLink;
+
+	return new Promise(function(resolve, reject)
+	{
+		axios(siteUrl)
+		.then(response => {
+			const html = response.data;
+			//console.log(response.data);
+			var regexForPid =  /homepages\/[0-9]*\/[0-9]*/g;
+			var found = response.data.match(regexForPid);
+			resolve(found[0].substring(9));
+			//console.log(hello);
+		})
+		.catch(console.error);
+	});
+}	
+
 async function getDblpData(userName) {
-    const url = dblpUrl + '/search/publ/api?q==author:' + userName + ":&format=json";
+	const url = dblpUrl+'/pid' + userName + ".xml";
     console.log(url);
 	const options = {
 		method: 'GET',
 		headers: {
-			"content-type": "application/json"
-		},
-		json: true
+			"content-type": "application/xml"
+		}
 	};
 
 	let profile_details = (await http_request(url, options)).body;
-	var publicationList= profile_details.result.hits.hit;
-	var returnableListOfPublications=[];
-	//console.log(profile_details.result.hits.hit);
-	//var returnAbleList={};
-	for(var i=0; i<publicationList.length; i++){
-		var data = {
-			title:publicationList[i].info.title,
-			authors: publicationList[i].info.authors,
-			venue: publicationList[i].info.venue,
-			type: publicationList[i].info.type,
-			year: publicationList[i].info.year,
-			url: publicationList[i].info.url
-		}
-		returnableListOfPublications.push(data);	
-	}
-	
-	//console.log(returnableListOfPublications);
-	//returnableListOfPublications;
-	return JSON.stringify(returnableListOfPublications);
+	console.log(typeof profile_details);
+	return new Promise(function(resolve, reject){
+		parseString(profile_details, function (err, result) {
+			//console.log(result.dblpperson.r);
+			resolve(result.dblpperson.r);
+			//var result = convert.xml2json(result, {compact: true, spaces: 4});
+			//console.log(nodes);
+		});
+	});
 }
+
 
 function upload() {
     return new Transfer('./user-mock-data.yml')
