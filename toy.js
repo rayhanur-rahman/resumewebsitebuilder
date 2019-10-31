@@ -166,19 +166,17 @@ async function getGitHubData(userId) {
 	let profile_details = (await http_request(url, options)).body;
 	//console.log(profile_details[0].name);
 	//console.log(profile_details);
-	var projectDetails = [];
-	for(var i=0; i<profile_details.length; i++){
-		var data = {
-			name: profile_details[i].name,
-			html_url: profile_details[i].html_url,
-			description: profile_details[i].description
+	return new Promise(function(resolve, reject){
+
+		var projectDetails = [];
+		for(var i=0; i<profile_details.length; i++){
+			var data = {
+				name: profile_details[i].name,
+				html_url: profile_details[i].html_url,
+				description: profile_details[i].description
+			}
+			projectDetails.push(data);	
 		}
-		projectDetails.push(data);	
-	}
-	console.log(projectDetails);
-	return projectDetails;
+		resolve(projectDetails);
+	});
 }
-async function hello(){
-	await getGitHubData('rayhanur-rahman');
-} 
-hello();
