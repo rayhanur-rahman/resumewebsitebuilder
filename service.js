@@ -24,11 +24,10 @@ function getUserIdFromGitHubLink(userLink) {
 }
 //Extracting LinkedIn Info; return false if failed
 
-function ExtractingLinkedInInfo(userId, token) {
+async function ExtractingLinkedInInfo(userId, token) {
 
-    var fields = "education,projects,skill";
-
-    var profile_data = toy.getLinkedInData(userId, token, fields);
+    var profile_data = await toy.getLinkedInData(userId);
+    console.log(profile_data)
     // Need to store profile_data in db with corresponding userId
     return true;
 }
