@@ -178,5 +178,5 @@ async function getGitHubData(userId) {
 			projectDetails.push(data);	
 		}
 		resolve(projectDetails);
-	});
+    }); 
 }

@@ -5,6 +5,7 @@ const scrapedin = require('scrapedin')
 const gitHubUrl = "https://api.github.com";
 const linkedinUrl = "https://api.linkedin.com/v2";
 const dblpUrl = "https://dblp.org"
+var MongoHelper = require('./mongo-helper.js').MongoHelper;
 
 require('dotenv').config();
 
@@ -47,6 +48,18 @@ async function getGitHubData(userId, token) {
 }
 
 
+async function setLinkedInData(profile){
+	var profile_obj = JSON.stringify(profile);
+
+	var dbo = await MongoHelper.openConnection();
+	// var response = await MongoHelper.findObject(dbo, {user: userId});
+	// if (response != null) {
+		await MongoHelper.insertObjectToCollection(dbo, {user: "userId"}, {$set: {linkedInData: profile_obj}});
+	// }
+	MongoHelper.closeConnection();
+}
+
 exports.getDblpData = getDblpData
 exports.getLinkedInData = getLinkedInData
 exports.getGitHubData = getGitHubData
+exports.setLinkedInData = setLinkedInData

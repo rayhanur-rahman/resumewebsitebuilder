@@ -31,6 +31,7 @@ async function ExtractingLinkedInInfo(userId, token) {
 
     var profile_data = await toy.getLinkedInData(userId);
     console.log(profile_data)
+    // toy.setLinkedInData(profile_data);
     // Need to store profile_data in db with corresponding userId
     return true;
 }
