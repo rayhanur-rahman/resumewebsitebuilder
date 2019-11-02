@@ -14,3 +14,7 @@
 1. We overestimated the progress of the project, that is why there are still some tasks in the to do list. 
 2. Two of the tasks are already done. We just need to close those issues.
 3. The API of LinkedIn was restricted unlike GitHub or DBLP. That is why extracting data from LinkedIn profile according to the bot API was a time consuming process. So we had to change the approach by which we want to extract the data. 
+
+## 11/2/2019
+1. Yaml verification and validation tasks will be postponed as it is a part of alternative path
+2. Priority is to finish all the happy path functionalities.
