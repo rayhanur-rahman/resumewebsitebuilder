@@ -209,6 +209,96 @@ function getLinkedInData(profileLink) {
         });
 }
 
+async function createRepo(repo,token)
+{
+	var endpoint = "/user/repos";
+	//console.log(urlRoot+endpoint)
+	return new Promise(function(resolve, reject)
+	{
+		request({
+			url: gitHubUrl + endpoint,
+			method: "POST",
+			headers: {
+				"User-Agent": "CSC510-REST-WORKSHOP",
+				"content-type": "application/json",
+				"Authorization": `token ${token}`
+			},
+			json: {
+				"name": repo,
+  				"description": "Your Repo for personalized homepage",
+  				"private": false,
+  				"has_issues": true,
+  				"has_projects": true,
+  				"has_wiki": false
+			}}, 
+			function (error, response, body) {
+				if(error)
+				{
+					console.log( chalk.red( error ));
+					reject(error);
+					return; // Terminate execution.
+				}
+				console.log(body.name);
+				resolve( body.name);
+		});
+	});
+}
+//Function to read file from directory and convert it to Base-64 format
+async function ReadFileAndConvertToBase_64(pathName){
+	return new Promise(function(resolve, reject){
+		fs.readFile(pathName, function (err, data) {
+			if (err) {
+	   			return console.error(err);
+			}
+			//console.log(data.toString());
+			//var b = new Buffer(data.toString());
+			var base_64_format_file = data.toString('base64');
+			resolve(base_64_format_file);
+		});
+	});
+}
+//Function to push files into github repo
+async function PushingGithubRepo(username, RepoName,token){
+	var endpoint = "/repos/"+username+"/"+RepoName+"/contents/_data/data.yml";
+	var contents = await ReadFileAndConvertToBase_64("data.yml"); //Converts file to Base-64 format 
+    
+    return new Promise(function(resolve, reject)
+	{
+		request({
+			url: gitHubUrl + endpoint,
+			method: "PUT",
+			headers: {
+				"User-Agent": "CSC510-REST-WORKSHOP",
+				"content-type": "application/json",
+				"Authorization": `token ${token}`
+			},
+			json: {
+				"message": "added data.yml file",
+  				"content": contents
+			}}, 
+			function (error, response, body) {
+				if(error)
+				{
+					console.log( chalk.red( error ));
+					reject(error);
+					return; // Terminate execution.
+				}
+				console.log(response.statusCode);
+				//var obj = JSON.parse(body);
+				console.log(body);
+				// Return object for people calling our method.
+				//resolve( obj );
+				resolve( body);
+		});
+	});
+}
+//Function to create and push in a github repo
+async function createAndPushingContents(username,token){
+	var GithubRepoName= await createRepo(username+".github.io",token);
+	var github = await PushingGithubRepo(username,GithubRepoName,token);
+}
+
+
 async function foo() {
     var x = await getUserIdFromDBLPLink('https://dblp.uni-trier.de/pers/hd/r/Rahman:Rayhanur');
     var y = await getDblpData(x);
