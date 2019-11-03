@@ -25,11 +25,15 @@ async function getDblpData(userName) {
 	return profile_details;
 }
 
-async function getLinkedInData(userId) {
-
-  	const profileScraper = await scrapedin({ email: process.env.LINKEDIN_MAILID, password: process.env.LINKEDIN_PASS });
-  	const profile = await profileScraper(userId);
-	return profile;
+async function getLinkedInData(profileLink) {
+	console.log(profileLink);
+	return scrapedin({
+        email: process.env.LINKEDIN_MAILID,
+        password: process.env.LINKEDIN_PASS
+    }).then((profileScraper) => profileScraper(profileLink))
+    .then((profile) => {
+        return profile;
+    }).catch(err => {return null;});
 }
 
 async function getGitHubData(userId, token) {
@@ -63,3 +67,6 @@ exports.getDblpData = getDblpData
 exports.getLinkedInData = getLinkedInData
 exports.getGitHubData = getGitHubData
 exports.setLinkedInData = setLinkedInData
+
+//linkedintester88
+//qwerty12

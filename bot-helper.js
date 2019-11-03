@@ -102,10 +102,10 @@ async function setUser(userId) {
         user: userId,
         fileURL: '',
         zippedSiteUrl: '',
-        userGithubToken: '',
-        userGithubRepoName: '',
-        userLinkedInId: '',
-        userLinkedInToken: '',
+        githubToken: '',
+        githubUserName: '',
+        linkedInURL: '',
+        dblpUrl: '',
         noLinkedInFlag: false,
         noDblpFlag: false,
         noGithubFlag: false,
@@ -139,6 +139,33 @@ function setRepoName(userId, repoName) {
 
 function setLinkedInToken(userId, token) {
     sessionData.userLinkedInToken = token;
+}
+
+async function setLinkedInUrl(userId, url) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+    if (response != null) {
+        await MongoHelper.updateObject(dbo, {user: userId}, {$set: {linkedInURL: url}});
+    }
+    MongoHelper.closeConnection();
+}
+
+async function setDBLPUrl(userId, url) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+    if (response != null) {
+        await MongoHelper.updateObject(dbo, {user: userId}, {$set: {dblpUrl: url}});
+    }
+    MongoHelper.closeConnection();
+}
+
+async function setGithubUserName(userId, githubUserName) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+    if (response != null) {
+        await MongoHelper.updateObject(dbo, {user: userId}, {$set: {githubUserName: githubUserName}});
+    }
+    MongoHelper.closeConnection();
 }
 
 function getLinkedInToken(userId) {
@@ -192,5 +219,8 @@ module.exports = {
     setNoGithubFlag: setNoGithubFlag,
     getNoGithubFlag: getNoGithubFlag,
     getZipURL: getZipURL,
-    deleteUser: deleteUser
+    deleteUser: deleteUser,
+    setLinkedInUrl: setLinkedInUrl,
+    setDBLPUrl: setDBLPUrl,
+    setGithubUserName: setGithubUserName
 };

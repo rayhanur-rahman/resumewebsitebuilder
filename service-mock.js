@@ -2,9 +2,15 @@ const fs = require('fs');
 const AWS = require('aws-sdk');
 const mock_data = require('./mock_data.json');
 const Transfer = require('transfer-sh')
-const toy = require('./util.js')
+const utils = require('./util.js')
 const nock = require("nock");
 require('dotenv').config();
+var MongoHelper = require('./mongo-helper.js').MongoHelper;
+const axios = require("axios");
+var xml2js = require('xml2js');
+const util = require('util');
+const http_request = require('got');
+
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.CLOUDCUBE_ACCESS_KEY_ID,
@@ -18,8 +24,39 @@ var sessionData = {
 }
 
 
+
 function getUserIdFromDBLPLink(userLink) {
-    return mock_data.dblpId;
+    return axios(userLink)
+        .then(response => {
+            var regexForPid = /homepages\/[0-9]*\/[0-9]*/g;
+            var found = response.data.match(regexForPid);
+            return found[0].substring(9);
+
+        })
+        .catch(err => {
+            return null;
+        });
+}
+
+async function getDblpData(userName) {
+    const url = "https://dblp.org" + '/pid' + userName + ".xml";
+
+    let profile_details = (await http_request(url, {
+        method: 'GET',
+        headers: {
+            "content-type": "application/xml"
+        }
+    })).body;
+
+    return xml2js.parseStringPromise(profile_details, {
+            attrkey: '@'
+        }).then(function (result) {
+            return result.dblpperson.r;
+        })
+        .catch(function (err) {
+            console.log(err);
+            return null;
+        });
 }
 
 function getUserIdFromGitHubLink(userLink) {
@@ -27,45 +64,104 @@ function getUserIdFromGitHubLink(userLink) {
 }
 //Extracting LinkedIn Info; return false if failed
 
-async function ExtractingLinkedInInfo(userId, token) {
-
-    var profile_data = await toy.getLinkedInData(userId);
-    console.log(profile_data)
-    // toy.setLinkedInData(profile_data);
-    // Need to store profile_data in db with corresponding userId
-    return true;
+async function ExtractingLinkedInInfo(userId, url) {
+    console.log(url);
+    var profile_data = await utils.getLinkedInData(url);
+    console.log(profile_data);
+    if (profile_data != null) {
+        var dbo = await MongoHelper.openConnection();
+        var response = await MongoHelper.findObject(dbo, {
+            user: userId
+        });
+        if (response != null) {
+            await MongoHelper.updateObject(dbo, {
+                user: userId
+            }, {
+                $set: {
+                    linkedInData: profile_data
+                }
+            });
+        }
+        MongoHelper.closeConnection();
+        return true;
+    } else
+        return false;
 }
 
 //Extracting DBLP Info; return false if failed
 
-function ExtractingDBLPInfo(userId, response) {
-    nock("https://dblp.org")
-        .persist()
-        .get("/search/publ/api?q==author:bob_smith:&format=json")
-        .reply(200, JSON.stringify(mock_data.dblp_profile));
+async function ExtractingDBLPInfo(userId, response) {
+    var result = await getUserIdFromDBLPLink(response);
+    if (result != null) {
+        result = await getDblpData(result);
+        if (result != null) {
+            console.log(result);
+            var dbo = await MongoHelper.openConnection();
+            var response = await MongoHelper.findObject(dbo, {
+                user: userId
+            });
+            if (response != null) {
+                await MongoHelper.updateObject(dbo, {
+                    user: userId
+                }, {
+                    $set: {
+                        dblpData: result
+                    }
+                });
+            }
+            MongoHelper.closeConnection();
+            return true;
+        } else
+            return false;
+    } else
+        return false;
 
-    var profile_data = toy.getDblpData(getUserIdFromDBLPLink(response));
-    // Need to store profile_data in db with corresponding userId
-    return true;
 }
 
 //Extracting Github Info; return false if failed
-function ExtractingGithubInfo(userId, response) {
+async function ExtractingGithubInfo(userId, githubUserName) {
+    const url = 'https://api.github.com' + "/users/" + githubUserName + "/repos";
+    const options = {
+        method: 'GET',
+        headers: {
+            "content-type": "application/json"
+        },
+        json: true
+    };
+    let profile_details;
 
-    nock("https://api.github.com", {
-            reqheaders: {
-                'Authorization': gitHubToken
-            },
-        })
+    try {
+        profile_details = (await http_request(url, options)).body;
+        console.log(profile_details);
 
-        .persist()
-        .get("/users/bobsmith/repos")
-        .reply(200, JSON.stringify(mock_data.gitRepos));
+        var projectDetails = [];
+        for (var i = 0; i < profile_details.length; i++) {
+            var data = {
+                name: profile_details[i].name,
+                link: profile_details[i].html_url,
+                details: profile_details[i].description
+            }
+            projectDetails.push(data);
+        }
 
-    var profile_data = toy.getGitHubData(getUserIdFromGitHubLink(response), gitHubToken);
-
-    // Need to store profile_data in db with corresponding userId
-    return true;
+        var dbo = await MongoHelper.openConnection();
+        var response = await MongoHelper.findObject(dbo, {
+            user: userId
+        });
+        if (response != null) {
+            await MongoHelper.updateObject(dbo, {
+                user: userId
+            }, {
+                $set: {
+                    githubData: projectDetails
+                }
+            });
+        }
+        MongoHelper.closeConnection();
+        return true;
+    } catch (error) {
+        return false;
+    }
 }
 
 // If invalid (userGithubToken | userGithubRepoName) return false
@@ -144,5 +240,6 @@ module.exports = {
     fs: fs,
     AWS: AWS,
     s3: s3,
-    deleteAllData: deleteAllData
+    deleteAllData: deleteAllData,
+    ExtractingDBLPInfo: ExtractingDBLPInfo
 };

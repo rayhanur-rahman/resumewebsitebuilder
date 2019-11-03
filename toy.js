@@ -3,52 +3,52 @@ var fs = require('fs');
 var request = require('request');
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
 const axios = require("axios");
-var parseString = require('xml2js').parseString;
+var xml2js = require('xml2js');
 const http_request = require('got');
+const scrapedin = require('scrapedin')
+const util = require('util')
+
+
 
 const gitHubUrl = "https://api.github.com";
 const linkedinUrl = "https://api.linkedin.com/v2";
 const dblpUrl = "https://dblp.org"
 
-//Getting DBLP Data from username
-async function getUserIdFromDBLPLink(userLink) {
-	const siteUrl = userLink;
 
-	return new Promise(function(resolve, reject)
-	{
-		axios(siteUrl)
-		.then(response => {
-			const html = response.data;
-			//console.log(response.data);
-			var regexForPid =  /homepages\/[0-9]*\/[0-9]*/g;
-			var found = response.data.match(regexForPid);
-			resolve(found[0].substring(9));
-			//console.log(hello);
-		})
-		.catch(console.error);
-	});
-}	
+//Getting DBLP Data from username
+function getUserIdFromDBLPLink(userLink) {
+    return axios(userLink)
+        .then(response => {
+            var regexForPid = /homepages\/[0-9]*\/[0-9]*/g;
+            var found = response.data.match(regexForPid);
+            return found[0].substring(9);
+
+        })
+        .catch(err => {
+            return null;
+        });
+}
 
 async function getDblpData(userName) {
-	const url = dblpUrl+'/pid' + userName + ".xml";
-    console.log(url);
-	const options = {
-		method: 'GET',
-		headers: {
-			"content-type": "application/xml"
-		}
-	};
+    const url = dblpUrl + '/pid' + userName + ".xml";
 
-	let profile_details = (await http_request(url, options)).body;
-	console.log(typeof profile_details);
-	return new Promise(function(resolve, reject){
-		parseString(profile_details, function (err, result) {
-			//console.log(result.dblpperson.r);
-			resolve(result.dblpperson.r);
-			//var result = convert.xml2json(result, {compact: true, spaces: 4});
-			//console.log(nodes);
-		});
-	});
+    let profile_details = (await http_request(url, {
+        method: 'GET',
+        headers: {
+            "content-type": "application/xml"
+        }
+    })).body;
+
+    return xml2js.parseStringPromise(profile_details, {
+            attrkey: '@'
+        })
+        .then(function (result) {
+            return result.dblpperson.r;
+        })
+        .catch(function (err) {
+            console.log(err);
+            return null;
+        });
 }
 
 
@@ -92,7 +92,9 @@ var MongoClient = require('mongodb').MongoClient;
 
 // Connect to the db
 function connectToMongo() {
-    return MongoClient.connect(process.env.MONGODB_URI, { useUnifiedTopology: true }).then(client => {
+    return MongoClient.connect(process.env.MONGODB_URI, {
+        useUnifiedTopology: true
+    }).then(client => {
         console.log('mongo connection establised');
         return client;
 
@@ -101,13 +103,13 @@ function connectToMongo() {
     });
 }
 
-function selectDb(client){
+function selectDb(client) {
     var dbo = client.db(process.env.DBNAME);
     console.log('db selected');
     return dbo;
 }
 
-function createCollection(dbo){
+function createCollection(dbo) {
     return dbo.createCollection('dogs').then(result => {
         console.log('collection created!');
     }).catch(err => {
@@ -115,14 +117,19 @@ function createCollection(dbo){
     });
 }
 
-function insert(dbo){
+function insert(dbo) {
     var collection = dbo.collection('dogs');
-    return collection.insertOne({name: 'Darth', id: 3}).then(res => console.log('inserted')).catch(err => console.log(err));
+    return collection.insertOne({
+        name: 'Darth',
+        id: 3
+    }).then(res => console.log('inserted')).catch(err => console.log(err));
 }
 
-function find(dbo){
+function find(dbo) {
     var collection = dbo.collection('dogs');
-    return collection.findOne({name: 'kkk'}).then(res => {
+    return collection.findOne({
+        name: 'kkk'
+    }).then(res => {
         return res;
     }).catch(err => console.log(err));
 }
@@ -136,47 +143,93 @@ async function dosth() {
     console.log('xxx');
 }
 
-dosth();
-console.log('fff');
+// dosth();
+// console.log('fff');
 
 
 var App = {
-    foo: function(a,b) {
-        return a+b;
+    foo: function (a, b) {
+        return a + b;
     },
-    bar: function(a,b) {
-        return this.foo(a,b);
+    bar: function (a, b) {
+        return this.foo(a, b);
     },
-    yay: function(a){
-        if (a%2 == 0) return a;
+    yay: function (a) {
+        if (a % 2 == 0) return a;
         else return null;
     }
 }
 
 // get GitHub data from username
 async function getGitHubData(userId) {
-	const url = gitHubUrl + "/users/" + userId + "/repos";
-	const options = {
-		method: 'GET',
-		headers: {
-			"content-type": "application/json"
-		},
-		json: true
-	};
-	let profile_details = (await http_request(url, options)).body;
-	//console.log(profile_details[0].name);
-	//console.log(profile_details);
-	return new Promise(function(resolve, reject){
+    const url = gitHubUrl + "/users/" + userId + "/repos";
+    const options = {
+        method: 'GET',
+        headers: {
+            "content-type": "application/json"
+        },
+        json: true
+    };
+    let profile_details;
 
-		var projectDetails = [];
-		for(var i=0; i<profile_details.length; i++){
-			var data = {
-				name: profile_details[i].name,
-				html_url: profile_details[i].html_url,
-				description: profile_details[i].description
-			}
-			projectDetails.push(data);	
-		}
-		resolve(projectDetails);
-    }); 
+    try {
+        profile_details = (await http_request(url, options)).body;
+        console.log(profile_details);
+
+        return new Promise(function (resolve, reject) {
+
+            var projectDetails = [];
+            for (var i = 0; i < profile_details.length; i++) {
+                var data = {
+                    name: profile_details[i].name,
+                    link: profile_details[i].html_url,
+                    details: profile_details[i].description
+                }
+                projectDetails.push(data);
+            }
+            resolve(projectDetails);
+        });
+    } catch (error) {
+        return null;
+    }
+
+
 }
+
+function getLinkedInData(profileLink) {
+
+    return scrapedin({
+            email: process.env.LINKEDIN_MAILID,
+            password: process.env.LINKEDIN_PASS
+        }).then((profileScraper) => profileScraper('https://www.linkedin.com/in/rayhanur-rahman/'))
+        .then((profile) => {
+            return profile;
+        }).catch(err => {
+            return null;
+        });
+}
+
+async function foo() {
+    var x = await getUserIdFromDBLPLink('https://dblp.uni-trier.de/pers/hd/r/Rahman:Rayhanur');
+    var y = await getDblpData(x);
+    console.log(util.inspect(y, false, null));
+
+    for (i = 0; i < y.length; i++) {
+        // console.log(y[i].article);
+
+    }
+    // for (i = 0; i < y.length; i++) {
+    //     console.log(y[i].article);
+    //     var x = y[i].article;
+    //     delete x['$'];
+    // }
+
+}
+
+// foo();
+async function bar() {
+    x = await getGitHubData('@@@rayhanur-rahman');
+    console.log(x);
+}
+
+bar();

@@ -99,8 +99,8 @@ controller.hears('start', 'direct_message', async function (bot, message) {
     }
 });
 
-controller.hears('I am ready', 'direct_message', function (bot, message) {
-    if (helper.getLevel(message.user) === 1) {
+controller.hears('I am ready', 'direct_message', async function (bot, message) {
+    if (await helper.getLevel(message.user) === 1) {
         bot.createConversation(message, function (err, convo) {
             // create a path for when a user says NO
             convo.addMessage({
@@ -117,43 +117,46 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
             convo.addMessage({
                 text: 'Session terminated you can say start to create a new session',
             }, 'session_terminated');
-            convo.addQuestion('Please tell me if you have a LinkedIn account?[yes/no]', function (response, convo) {
+            convo.addQuestion('Please tell me if you have a LinkedIn account?[yes/no]', async function (response, convo) {
                 if (response.text === 'yes') {
-                    convo.gotoThread('yes_linkedin_thread');
+                    convo.gotoThread('Ask_Url_LinkedIn');
                 } else if (response.text === 'no') {
-                    helper.setNoLinkedFlag(convo.context.user, true)
+                    await helper.setNoLinkedFlag(convo.context.user, true)
                     convo.gotoThread('Ask_DBLP');
                 } else if (response.text === 'terminate'){
-                    helper.setLevel(0, message.user);
+                    await helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
                 }
             }, {}, 'default');
             //Question 2
-            convo.addQuestion('Great! Please provide your LinkedIn account ID.', [{
+            // convo.addQuestion('Great! Please provide your LinkedIn account ID.', [{
+            //         pattern: /.*/,
+            //         callback: async function (response, convo) {
+            //             //TODO fix linkedin, github, dblp link regex
+            //             await helper.setLinkedInId(convo.context.user, response);
+            //             convo.gotoThread('Ask_Url_LinkedIn');
+            //         },
+            //     },
+            //     {
+            //         default: true,
+            //         callback: function (response, convo) {
+            //             convo.gotoThread('bad_response');
+            //         },
+            //     }
+            // ], {}, 'yes_linkedin_thread');
+
+
+            convo.addQuestion('Great! Please provide your LinkedIn Profile Url', [{
                     pattern: /.*/,
-                    callback: function (response, convo) {
-                        //TODO fix linkedin, github, dblp link regex
-                        helper.setLinkedInId(convo.context.user, response);
-                        convo.gotoThread('Ask_token_LinkedIn');
-                    },
-                },
-                {
-                    default: true,
-                    callback: function (response, convo) {
-                        convo.gotoThread('bad_response');
-                    },
-                }
-            ], {}, 'yes_linkedin_thread');
-            convo.addQuestion('Great! Please provide your LinkedIn account token', [{
-                    pattern: /.*/,
-                    callback: function (response, convo) {
-                        helper.setLinkedInToken(convo.context.user, response);
-                        if (service.ExtractingLinkedInInfo(helper.getLinkedInId(convo.context.user), helper.getLinkedInToken(convo.context.user))) {
+                    callback: async function (response, convo) {
+                        console.log(response);
+                        await helper.setLinkedInUrl(convo.context.user, response.text.substring(1, response.text.length - 1));
+                        if (await service.ExtractingLinkedInInfo(convo.context.user, response.text.substring(1, response.text.length - 1))) {
                             convo.gotoThread('Ask_DBLP');
                         } else {
-                            convo.gotoThread('yes_linkedin_thread');
+                            convo.gotoThread('Ask_Url_LinkedIn');
                         }
                     },
                 },
@@ -163,7 +166,7 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
                         convo.gotoThread('bad_response');
                     },
                 }
-            ], {}, 'Ask_token_LinkedIn');
+            ], {}, 'Ask_Url_LinkedIn');
             
             convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', function (response, convo) {
                 if (response.text === 'yes') {
@@ -181,8 +184,9 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
             //Question No. 4 
             convo.addQuestion('Amazing! Please provide me with the DBLP link.', [{
                     pattern: /.*/,
-                    callback: function (response, convo) {
-                        if (service.ExtractingDBLPInfo(convo.context.user, response)) {
+                    callback: async function (response, convo) {
+                        await helper.setDBLPUrl(convo.context.user, response.text.substring(1, response.text.length - 1));
+                        if (service.ExtractingDBLPInfo(convo.context.user, response.text.substring(1, response.text.length - 1))) {
                             convo.gotoThread('Ask_GitHub');
                         } else {
                             convo.gotoThread('yes_dblp_thread');
@@ -223,15 +227,14 @@ controller.hears('I am ready', 'direct_message', function (bot, message) {
             convo.addQuestion('Amazing! Please provide me with Github link.', [{
                     pattern: /.*/,
                     callback: async function (response, convo) {
-                        var ValidGithubAccount = service.ExtractingGithubInfo(convo.context.user, response);
-
-                        if (ValidGithubAccount === true) {
-                                helper.incrementLevel(convo.context.user);
-                                var link = await service.mergeAllInfo(convo.context.user);
-                                convo.setVar('link', link);
-                                convo.gotoThread('Valid');
-                            //}
-                        } else {
+                        await helper.setGithubUserName(convo.context.user, response.text);
+                        if(await service.ExtractingGithubInfo(convo.context.user, response.text)){
+                            await helper.incrementLevel(convo.context.user);
+                            var link = await service.mergeAllInfo(convo.context.user);
+                            convo.setVar('link', link);
+                            convo.gotoThread('Valid');
+                        }
+                        else {
                             convo.gotoThread('default');
                         }
                     },

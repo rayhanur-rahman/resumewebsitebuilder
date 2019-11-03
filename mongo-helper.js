@@ -62,7 +62,7 @@ var MongoHelper = {
             return 'success'
         })
         .catch(err => {
-            console.log('fai');
+            console.log(err);
             return 'failure'
         });
     },
