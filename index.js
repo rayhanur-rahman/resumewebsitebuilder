@@ -121,7 +121,7 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                 if (response.text === 'yes') {
                     convo.gotoThread('Ask_Url_LinkedIn');
                 } else if (response.text === 'no') {
-                    await helper.setNoLinkedFlag(convo.context.user, true)
+                    // await helper.setNoLinkedFlag(convo.context.user, true)
                     convo.gotoThread('Ask_DBLP');
                 } else if (response.text === 'terminate'){
                     await helper.setLevel(0, message.user);
@@ -130,24 +130,7 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     convo.gotoThread('bad_response');
                 }
             }, {}, 'default');
-            //Question 2
-            // convo.addQuestion('Great! Please provide your LinkedIn account ID.', [{
-            //         pattern: /.*/,
-            //         callback: async function (response, convo) {
-            //             //TODO fix linkedin, github, dblp link regex
-            //             await helper.setLinkedInId(convo.context.user, response);
-            //             convo.gotoThread('Ask_Url_LinkedIn');
-            //         },
-            //     },
-            //     {
-            //         default: true,
-            //         callback: function (response, convo) {
-            //             convo.gotoThread('bad_response');
-            //         },
-            //     }
-            // ], {}, 'yes_linkedin_thread');
-
-
+            
             convo.addQuestion('Great! Please provide your LinkedIn Profile Url', [{
                     pattern: /.*/,
                     callback: async function (response, convo) {
@@ -168,14 +151,14 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                 }
             ], {}, 'Ask_Url_LinkedIn');
             
-            convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', function (response, convo) {
+            convo.addQuestion('Awesome! Now tell me if you have a DBLP account?[yes/no]', async function (response, convo) {
                 if (response.text === 'yes') {
                     convo.gotoThread('yes_dblp_thread');
                 } else if (response.text === 'no') {
-                    helper.setNoDBLPFlag(convo.context.user, true);
+                    // helper.setNoDBLPFlag(convo.context.user, true);
                     convo.gotoThread('Ask_GitHub');
                 } else if (response.text === 'terminate'){
-                    helper.setLevel(0, message.user);
+                    await helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
@@ -186,7 +169,7 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     pattern: /.*/,
                     callback: async function (response, convo) {
                         await helper.setDBLPUrl(convo.context.user, response.text.substring(1, response.text.length - 1));
-                        if (service.ExtractingDBLPInfo(convo.context.user, response.text.substring(1, response.text.length - 1))) {
+                        if (await service.ExtractingDBLPInfo(convo.context.user, response.text.substring(1, response.text.length - 1))) {
                             convo.gotoThread('Ask_GitHub');
                         } else {
                             convo.gotoThread('yes_dblp_thread');
@@ -211,13 +194,13 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                 if (response.text === 'yes') {
                     convo.gotoThread('yes_github_thread');
                 } else if (response.text === 'no') {
-                    helper.incrementLevel(convo.context.user);
-                    helper.setNoGithubFlag(convo.context.user, true);
+                    await helper.incrementLevel(convo.context.user);
+                    // helper.setNoGithubFlag(convo.context.user, true);
                     var link =  await service.mergeAllInfo(convo.context.user);
                     convo.setVar('link', link);
                     convo.gotoThread('Valid');
                 } else if (response.text === 'terminate'){
-                    helper.setLevel(0, message.user);
+                    await helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
@@ -254,61 +237,7 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     },
                 }
             ], {}, 'yes_github_thread');
-            //Message 7
-            convo.addQuestion('Please fill up this template and upload', [{
-                    pattern: /.*.yml/,
-                    callback: function (response, convo) {
-
-                        convo.gotoThread('Ask_DBLP');
-                    },
-                },
-                {
-                    default: true,
-                    callback: function (response, convo) {
-                        convo.gotoThread('bad_at_no_linkedin_thread');
-                    },
-                }
-            ], {}, 'no_linkedin_thread');
-            convo.addQuestion('Please fill up this template and upload', [{
-                    pattern: /.*.yml/,
-                    callback: function (response, convo) {
-
-                        convo.gotoThread('Ask_GitHub');
-                    },
-                },
-                {
-                    default: true,
-                    callback: function (response, convo) {
-                        convo.gotoThread('bad_at_no_DBLP_thread');
-                    },
-                }
-            ], {}, 'no_DBLP_thread');
-            convo.addQuestion('I see that you have several information missing that I require. Please fill up this template at {{& vars.link}} and upload', [{
-                    pattern: /.*.yml/,
-                    callback: function (response, convo) {
-                        helper.incrementLevel(convo.context.user);
-                        convo.gotoThread('Valid');
-                    },
-                },
-                {
-                    default: true,
-                    callback: function (response, convo) {
-                        convo.gotoThread('bad_at_no_github_thread');
-                    },
-                }
-            ], {}, 'no_github_thread');
-            convo.addMessage({
-                text: 'Sorry, maybe you did not upload a yml file',
-                action: 'no_linkedin_thread',
-            }, 'bad_at_no_linkedin_thread');
-            convo.addMessage({
-                text: 'Sorry, maybe you did not upload a yml file',
-                action: 'no_DBLP_thread',
-            }, 'bad_at_no_DBLP_thread');
-            convo.addMessage({
-                text: 'Sorry, maybe you did not upload a yml file',
-                action: 'no_github_thread',
-            }, 'bad_at_no_github_thread');
+            
             convo.activate();
         });
     }
