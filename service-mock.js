@@ -68,6 +68,40 @@ async function ExtractingLinkedInInfo(userId, url) {
     console.log(url);
     var profile_data = await utils.getLinkedInData(url);
     console.log(profile_data);
+
+    var linkedInData = {
+        name: profile_data.profileAlternative.name,
+        title: profile_data.profileAlternative.headline,
+        imageUrl: profile_data.profileAlternative.imageurl,
+        education: [],
+        experience: [],
+        skills: ''
+    }
+
+    profile_data.skills.forEach(element => {
+        linkedInData.skills = linkedInData.skills + ' | ' + element.title;
+    });
+
+    profile_data.positions.forEach(item => {
+        linkedInData.experience.push({
+            role: item.title,
+            time: item.date1,
+            company: item.companyName,
+            location: item.location,
+            details: item.description
+        });
+    });
+
+    profile_data.educations.forEach(item => {
+        linkedInData.education.push({
+            university: item.title,
+            time: item.date1 + ' - ' + item.date2,
+            major: item.fieldofstudy,
+            degree: item.degree,
+            details: item.description
+        });
+    });
+
     if (profile_data != null) {
         var dbo = await MongoHelper.openConnection();
         var response = await MongoHelper.findObject(dbo, {
@@ -78,7 +112,7 @@ async function ExtractingLinkedInInfo(userId, url) {
                 user: userId
             }, {
                 $set: {
-                    linkedInData: profile_data
+                    linkedInData: linkedInData
                 }
             });
         }
@@ -94,6 +128,29 @@ async function ExtractingDBLPInfo(userId, response) {
     var result = await getUserIdFromDBLPLink(response);
     if (result != null) {
         result = await getDblpData(result);
+
+        var dblpData = [];
+
+        result.forEach(item => {
+            if (item.article != null) {
+                dblpData.push({
+                    title: item.article[0].title[0],
+                    authors: item.article[0].author.join(', '),
+                    conference: item.article[0].journal[0],
+                    link: item.article[0].url[0]
+                });
+            }
+
+            if (item.inproceedings != null) {
+                dblpData.push({
+                    title: item.inproceedings[0].title[0],
+                    authors: item.inproceedings[0].author.join(', '),
+                    conference: item.inproceedings[0].booktitle[0],
+                    link: item.inproceedings[0].url[0]
+                });
+            }
+        })
+
         if (result != null) {
             console.log(result);
             var dbo = await MongoHelper.openConnection();
@@ -105,7 +162,7 @@ async function ExtractingDBLPInfo(userId, response) {
                     user: userId
                 }, {
                     $set: {
-                        dblpData: result
+                        dblpData: dblpData
                     }
                 });
             }

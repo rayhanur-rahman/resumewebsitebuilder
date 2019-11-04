@@ -230,9 +230,11 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                         await helper.setGithubUserName(convo.context.user, response.text);
                         if(await service.ExtractingGithubInfo(convo.context.user, response.text)){
                             await helper.incrementLevel(convo.context.user);
+                            console.log('done')
                             var link = await service.mergeAllInfo(convo.context.user);
                             convo.setVar('link', link);
                             convo.gotoThread('Valid');
+                            console.log('done 2');
                         }
                         else {
                             convo.gotoThread('default');

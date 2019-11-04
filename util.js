@@ -33,7 +33,7 @@ async function getLinkedInData(profileLink) {
     }).then((profileScraper) => profileScraper(profileLink))
     .then((profile) => {
         return profile;
-    }).catch(err => {return null;});
+    }).catch(err => {console.log(err); return null;});
 }
 
 async function getGitHubData(userId, token) {
