@@ -22,6 +22,6 @@
 ## 11/3/2019
 1. Currently facing problems to first unzip a folder and deleting a file inside a particular directory in that folder. Need to study callback, async-await and promise in node.js.
 2. Completed creating a git repo using npm and push it to the repository using node.js.
-3. Issue# 39 is requiring significant time and effort. Therefore, we have decided to complete this issue by pair programming.
+3. Issue# 39 (Merge all data into a single json and then convert it to yml) is requiring significant time and effort. Therefore, we have decided to complete this issue by pair programming.
 4. We intend to finish all the modular functionalities by Tuesday because integrating all these tasks to make a functional bot is assumed to require a signifiant amount of time.
 
