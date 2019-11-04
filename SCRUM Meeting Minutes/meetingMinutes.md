@@ -18,3 +18,8 @@
 ## 11/2/2019
 1. Yaml verification and validation tasks will be postponed as it is a part of alternative path
 2. Priority is to finish all the happy path functionalities.
+
+## 11/3/2019
+1. Currently facing problems to first unzip a folder and deleting a file inside a particular directory in that folder. Need to study callback, async-await and promise in node.js.
+2. Completed creating a git repo using npm and push it to the repository using node.js.
+
