@@ -1,6 +1,5 @@
 const fs = require('fs');
 const AWS = require('aws-sdk');
-const mock_data = require('./mock_data.json');
 const Transfer = require('transfer-sh')
 const utils = require('./util.js')
 const nock = require("nock");
@@ -10,6 +9,9 @@ const axios = require("axios");
 var xml2js = require('xml2js');
 const util = require('util');
 const http_request = require('got');
+var MongoHelper = require('./mongo-helper.js').MongoHelper;
+var YAML = require('json2yaml');
+
 
 
 const s3 = new AWS.S3({
@@ -22,7 +24,6 @@ var gitHubToken = process.env.GITHUB_TOKEN;
 var sessionData = {
     fileURL: ''
 }
-
 
 
 function getUserIdFromDBLPLink(userLink) {
@@ -59,9 +60,6 @@ async function getDblpData(userName) {
         });
 }
 
-function getUserIdFromGitHubLink(userLink) {
-    return mock_data.gitHubId;
-}
 //Extracting LinkedIn Info; return false if failed
 
 async function ExtractingLinkedInInfo(userId, url) {
@@ -73,6 +71,7 @@ async function ExtractingLinkedInInfo(userId, url) {
         name: profile_data.profileAlternative.name,
         title: profile_data.profileAlternative.headline,
         imageUrl: profile_data.profileAlternative.imageurl,
+        summary: profile_data.profileAlternative.summary,
         education: [],
         experience: [],
         skills: ''
@@ -137,7 +136,7 @@ async function ExtractingDBLPInfo(userId, response) {
                     title: item.article[0].title[0],
                     authors: item.article[0].author.join(', '),
                     conference: item.article[0].journal[0],
-                    link: item.article[0].url[0]
+                    link: 'https://dblp.org/' + item.article[0].url[0]
                 });
             }
 
@@ -146,7 +145,7 @@ async function ExtractingDBLPInfo(userId, response) {
                     title: item.inproceedings[0].title[0],
                     authors: item.inproceedings[0].author.join(', '),
                     conference: item.inproceedings[0].booktitle[0],
-                    link: item.inproceedings[0].url[0]
+                    link: 'https://dblp.org/' + item.inproceedings[0].url[0]
                 });
             }
         })
@@ -262,19 +261,87 @@ function uploadEmptyTemplate() {
 
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
-function mergeAllInfo(userId) {
-    console.log('called');
-    return new Transfer('./user-mock-data.yml')
+async function mergeAllInfo(userId) {
+    
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+
+    if (response != null) {
+        if (response.linkedInData != null) {
+            response.profileData.intro.name = response.linkedInData.name;
+
+            response.profileData.intro.title = (response.linkedInData.title != null) ? response.linkedInData.title : '...';
+
+            response.profileData.intro.avatar.path = (response.linkedInData.imageUrl != null) ? response.linkedInData.imageUrl : '...';
+
+            response.profileData.profile.details = (response.linkedInData.summary != null) ? response.linkedInData.summary : '...';
+
+            if (response.linkedInData.education.length > 0) {
+                response.profileData.education.items = [];
+                response.linkedInData.education.forEach(item => {
+                    response.profileData.education.items.push(item);
+                });
+            }
+
+            if (response.linkedInData.experience.length > 0) {
+                response.profileData.experiences.items = [];
+                response.linkedInData.experience.forEach(item => {
+                    response.profileData.experiences.items.push(item);
+                });
+            }
+
+            response.profileData.skills.details = (response.linkedInData.skills != ' ') ? response.linkedInData.skills : response.profileData.skills.details;
+        }
+
+        if (response.dblpData != null) {
+
+            if (response.dblpData.length > 0) {
+                response.profileData.publications.items = [];
+                response.dblpData.forEach(item => {
+                    response.profileData.publications.items.push(item);
+                });
+            }
+
+        }
+
+        if (response.githubData != null) {
+
+            if (response.githubData.length > 0) {
+                response.profileData.projects.items = [];
+                response.githubData.forEach(item => {
+                    response.profileData.projects.items.push(item);
+                });
+            }
+
+
+        }
+
+        await MongoHelper.updateObject(dbo, {user: userId}, {$set: {profileData: response.profileData}});
+
+
+        var ymlText = YAML.stringify(response.profileData);
+        
+        fs.writeFile('data.yml', ymlText, (err) => {
+
+        });
+
+    }
+    
+    return new Transfer('./data.yml')
         .upload()
-        .then(function (link) {
+        .then(async function (link) {
             console.log(`File uploaded successfully at ${link}`);
-            sessionData.fileURL = link;
-            return sessionData.fileURL;
+            await MongoHelper.updateObject(dbo, {user: userId}, {$set: {fileURL: link}});
+            MongoHelper.closeConnection();
+            fs.unlinkSync('data.yml');
+            return link;
         })
         .catch(function (err) {
             console.log('could not upload');
             sessionData.fileURL = 'www.null.com';
-            return sessionData.fileURL;
+            MongoHelper.closeConnection();
+            fs.unlinkSync('data.yml');
+            return 'www.null.com';
         })
 }
 
@@ -298,5 +365,7 @@ module.exports = {
     AWS: AWS,
     s3: s3,
     deleteAllData: deleteAllData,
-    ExtractingDBLPInfo: ExtractingDBLPInfo
+    ExtractingDBLPInfo: ExtractingDBLPInfo,
+    getDblpData: getDblpData,
+    getUserIdFromDBLPLink: getUserIdFromDBLPLink
 };

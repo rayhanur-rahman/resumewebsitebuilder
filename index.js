@@ -58,6 +58,10 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 });
 
 controller.hears('start', 'direct_message', async function (bot, message) {
+
+    // await service.mergeAllInfo(message.user);
+    // return;
+
     await helper.setUser(message.user);
     if (await helper.getLevel(message.user) === 0) {
         bot.reply(message, 'Welcome! Please say \'I am ready\' when you are ready');

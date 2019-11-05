@@ -1,4 +1,3 @@
-const mock_data = require('./mock_data.json'); //need to remove this mocking from here
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
 // There are three levels. 0-2
 // 0: starts with 'start'
@@ -35,8 +34,8 @@ var profileData = {
         }
     },
     contact: {
-        email: "...",
-        phone: 123,
+        email: "johndoe@unknowndomain.com",
+        phone: '+19998880000',
         wechat: null,
         telegram: null,
         website: null,
@@ -172,10 +171,6 @@ var profileData = {
     close: 'please contact me at '
 }
 
-function getZipURL() {
-    // return mock_data.zipurl;
-    return sessionData.fileURL;
-}
 
 function setFileURL(url) {
     sessionData.fileURL = URL;
@@ -183,10 +178,7 @@ function setFileURL(url) {
 }
 
 // this function does not work for now
-function getFileURL(userId) {
-    //console.log(fileURL);
-    return mock_data.fileurl;
-}
+
 
 
 function setNoLinkedFlag(userId, value) {
@@ -320,10 +312,7 @@ function setLinkedInId(userId, link) {
     sessionData.userLinkedInId = parseLinkedInIdFromUrl(link);
 }
 
-function parseLinkedInIdFromUrl(link) {
-    console.log(mock_data.linkedId);
-    return mock_data.linkedId;
-}
+
 
 function getLinkedInId(userId) {
     return sessionData.userLinkedInId;
@@ -342,7 +331,6 @@ function getGithubRepoName() {
 
 module.exports = {
     setFileURL: setFileURL,
-    getFileURL: getFileURL,
     setGithubtoken: setGithubtoken,
     setRepoName: setRepoName,
     getGithubToken: getGithubToken,
@@ -362,7 +350,6 @@ module.exports = {
     getNoDBLPFlag: getNoDBLPFlag,
     setNoGithubFlag: setNoGithubFlag,
     getNoGithubFlag: getNoGithubFlag,
-    getZipURL: getZipURL,
     deleteUser: deleteUser,
     setLinkedInUrl: setLinkedInUrl,
     setDBLPUrl: setDBLPUrl,

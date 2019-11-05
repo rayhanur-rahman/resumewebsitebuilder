@@ -8,6 +8,7 @@ const http_request = require('got');
 const scrapedin = require('scrapedin')
 const util = require('util');
 const utils = require('./util.js');
+const svc = require('./service-mock.js');
 
 
 
@@ -33,7 +34,7 @@ function upload() {
         });
 }
 
-function upload() {
+function upload2() {
     return new Promise((resolve, reject) => {
         request.post('https://0x0.st', function (err, resp, body) {
             if (err) {
@@ -42,7 +43,7 @@ function upload() {
             } else {
                 resolve(body);
             }
-        }).form().append('file', fs.createReadStream('util.js'));
+        }).form().append('file', fs.createReadStream('site-mock.zip'));
     });
 }
 
@@ -218,7 +219,27 @@ async function createAndPushingContents(username, token) {
 }
 
 
+async function xxx() {
+    var profile_data = await utils.getLinkedInData('https://www.linkedin.com/in/ncsu-cscsoft-9916a8196');
+    console.log(profile_data);
+
+    var x = profile_data.profileAlternative.summary;
+    if (x == null) console.log('jjj')
+}
 
 
+async function ExtractingDBLPInfo(userId, response) {
+    var result = await svc.getUserIdFromDBLPLink(response);
+    if (result != null) {
+        result = await svc.getDblpData(result);
+        console.log(util.inspect(result, false, null));
+    }
+}
 
+async function rrr(){
+    var x = await upload2();
+    console.log(x);
+}
+
+rrr();
 
