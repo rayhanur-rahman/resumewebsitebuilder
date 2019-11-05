@@ -63,10 +63,23 @@ async function setLinkedInData(profile){
 	MongoHelper.closeConnection();
 }
 
+function upload(filename) {
+    return new Promise((resolve, reject) => {
+        request.post('https://0x0.st', function (err, resp, body) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(body);
+            }
+        }).form().append('file', fs.createReadStream(filename));
+    });
+}
+
 exports.getDblpData = getDblpData
 exports.getLinkedInData = getLinkedInData
 exports.getGitHubData = getGitHubData
 exports.setLinkedInData = setLinkedInData
+exports.upload = upload
 
 //linkedintester88
 //qwerty12

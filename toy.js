@@ -42,7 +42,6 @@ function upload2() {
     return new Promise((resolve, reject) => {
         request.post('https://0x0.st', function (err, resp, body) {
             if (err) {
-                console.log('Error!');
                 reject(err);
             } else {
                 resolve(body);
@@ -265,6 +264,11 @@ async function getSha1(path){
             r(d);
         });
     })
+    
+async function rrr(){
+    var x = await upload2().catch(ex => {return null});
+    console.log( x );
+    var i = 0;
 }
 
 
