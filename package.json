@@ -32,6 +32,7 @@
     "botkit-storage-mongo": "^1.0.2",
     "bson": "^4.0.2",
     "chai": "^4.2.0",
+    "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
     "got": "^9.6.0",
@@ -44,6 +45,7 @@
     "request": "^2.88.0",
     "scrapedin": "^1.0.10",
     "selenium-webdriver": "^4.0.0-alpha.5",
-    "transfer-sh": "^2.1.1"
+    "transfer-sh": "^2.1.1",
+    "walk": "^2.3.14"
   }
 }

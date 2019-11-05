@@ -9,6 +9,10 @@ const scrapedin = require('scrapedin')
 const util = require('util');
 const utils = require('./util.js');
 const svc = require('./service-mock.js');
+var crypto = require('crypto');
+var walk    = require('walk');
+
+
 
 
 
@@ -179,9 +183,10 @@ async function ReadFileAndConvertToBase_64(pathName) {
     });
 }
 //Function to push files into github repo
-async function PushingGithubRepo(username, RepoName, token) {
-    var endpoint = "/repos/" + username + "/" + RepoName + "/contents/_data/data.yml";
-    var contents = await ReadFileAndConvertToBase_64("data.yml"); //Converts file to Base-64 format 
+async function PushFileToGithub(username, RepoName, token, absolutePath, relativePath) {
+    var endpoint = "/repos/" + username + "/" + RepoName + `/contents/${relativePath}`;
+    var contents = await ReadFileAndConvertToBase_64(absolutePath); 
+    var shaValue = await getSha1(absolutePath);
 
     return new Promise(function (resolve, reject) {
         request({
@@ -193,8 +198,9 @@ async function PushingGithubRepo(username, RepoName, token) {
                     "Authorization": `token ${token}`
                 },
                 json: {
-                    "message": "added data.yml file",
-                    "content": contents
+                    "message": `added ${relativePath}`,
+                    "content": contents,
+                    'sha': shaValue
                 }
             },
             function (error, response, body) {
@@ -203,43 +209,63 @@ async function PushingGithubRepo(username, RepoName, token) {
                     reject(error);
                     return; // Terminate execution.
                 }
-                console.log(response.statusCode);
-                //var obj = JSON.parse(body);
-                console.log(body);
-                // Return object for people calling our method.
-                //resolve( obj );
-                resolve(body);
+                // console.log(response.statusCode);
+                var message = (response.statusCode == 201) ? true : false;
+                resolve(message);
             });
     });
 }
-//Function to create and push in a github repo
-async function createAndPushingContents(username, token) {
-    var GithubRepoName = await createRepo(username + ".github.io", token);
-    var github = await PushingGithubRepo(username, GithubRepoName, token);
+
+
+
+
+async function getDir(dir){
+    var files   = [];
+    var walker  = walk.walk(dir, { followLinks: false });
+
+    return new Promise((resolve, reject) => {
+        walker.on('file', function(root, stat, next) {
+            // console.log(root);
+            files.push({
+                absolute: root + '/' + stat.name,
+                leaf: stat.name,
+                relative: (root + '/' + stat.name).substring( dir.length+1 )
+            });
+            next();
+        });
+    
+        walker.on('end', function() {
+            resolve(files);
+        });
+    });
 }
 
-
-async function xxx() {
-    var profile_data = await utils.getLinkedInData('https://www.linkedin.com/in/ncsu-cscsoft-9916a8196');
-    console.log(profile_data);
-
-    var x = profile_data.profileAlternative.summary;
-    if (x == null) console.log('jjj')
-}
-
-
-async function ExtractingDBLPInfo(userId, response) {
-    var result = await svc.getUserIdFromDBLPLink(response);
-    if (result != null) {
-        result = await svc.getDblpData(result);
-        console.log(util.inspect(result, false, null));
+async function pushDir(userName, repoName, token, dir){
+    var listoffiles = await getDir(dir);
+    // console.log(listoffiles);
+    var GithubRepoName = await createRepo(repoName, token);
+    
+    for(i = 0; i < listoffiles.length; i++) {
+        item = listoffiles[i];
+        var content = await PushFileToGithub(userName, GithubRepoName, token, item.absolute, item.relative);
     }
+
 }
 
-async function rrr(){
-    var x = await upload2();
-    console.log(x);
+
+async function getSha1(path){
+    return new Promise( (r,e) => {
+        var algo = 'sha1';
+        var shasum = crypto.createHash(algo);
+        var s = fs.ReadStream(path);
+        s.on('data', function(d) { shasum.update(d); });
+        
+        s.on('end', function() {
+            var d = shasum.digest('hex');
+            r(d);
+        });
+    })
 }
 
-rrr();
+
 
