@@ -327,6 +327,12 @@ async function mergeAllInfo(userId) {
 
     }
     
+    var link =  await utils.upload('./data.yml').catch(exception => {return null;});
+    if (link != null) await MongoHelper.updateObject(dbo, {user: userId}, {$set: {fileURL: link}});
+    MongoHelper.closeConnection();
+    fs.unlinkSync('data.yml');
+    return link;
+
     return new Transfer('./data.yml')
         .upload()
         .then(async function (link) {
