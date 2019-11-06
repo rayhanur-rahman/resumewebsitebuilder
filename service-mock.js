@@ -321,8 +321,8 @@ async function mergeAllInfo(userId) {
 
         var ymlText = YAML.stringify(response.profileData);
         
-        fs.writeFile('data.yml', ymlText, (err) => {
-
+        fs.writeFileSync('data.yml', ymlText, (err) => {
+            console.log(err)
         });
 
     }
