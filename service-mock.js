@@ -11,6 +11,13 @@ const util = require('util');
 const http_request = require('got');
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
 var YAML = require('json2yaml');
+const admZip = require('adm-zip');
+const Path = require('path')  
+const { zip } = require('zip-a-folder');
+var crypto = require('crypto');
+var walk = require('walk');
+var request = require('request');
+
 
 
 
@@ -220,15 +227,189 @@ async function ExtractingGithubInfo(userId, githubUserName) {
     }
 }
 
+async function createRepo(repo, token) {
+    var endpoint = "/user/repos";
+    //console.log(urlRoot+endpoint)
+    return new Promise(function (resolve, reject) {
+        request({
+                url: 'https://api.github.com' + endpoint,
+                method: "POST",
+                headers: {
+                    "User-Agent": "CSC510-REST-WORKSHOP",
+                    "content-type": "application/json",
+                    "Authorization": `token ${token}`
+                },
+                json: {
+                    "name": repo,
+                    "description": "Your Repo for personalized homepage",
+                    "private": false,
+                    "has_issues": true,
+                    "has_projects": true,
+                    "has_wiki": false
+                }
+            },
+            function (error, response, body) {
+                if (error) {
+                    console.log(chalk.red(error));
+                    reject(error);
+                    return; // Terminate execution.
+                }
+                console.log(body.name);
+                resolve(body.name);
+            });
+    });
+}
+//Function to read file from directory and convert it to Base-64 format
+async function ReadFileAndConvertToBase_64(pathName) {
+    return new Promise(function (resolve, reject) {
+        fs.readFile(pathName, function (err, data) {
+            if (err) {
+                return console.error(err);
+            }
+            //console.log(data.toString());
+            //var b = new Buffer(data.toString());
+            var base_64_format_file = data.toString('base64');
+            resolve(base_64_format_file);
+        });
+    });
+}
+//Function to push files into github repo
+async function PushFileToGithub(username, RepoName, token, absolutePath, relativePath) {
+    var endpoint = "/repos/" + username + "/" + RepoName + `/contents/${relativePath}`;
+    var contents = await ReadFileAndConvertToBase_64(absolutePath);
+
+    return new Promise(function (resolve, reject) {
+        request({
+                url: "https://api.github.com" + endpoint,
+                method: "PUT",
+                headers: {
+                    "User-Agent": "CSC510-REST-WORKSHOP",
+                    "content-type": "application/json",
+                    "Authorization": `token ${token}`
+                },
+                json: {
+                    "message": `added ${relativePath}`,
+                    "content": contents
+                }
+            },
+            function (error, response, body) {
+                if (error) {
+                    console.log(chalk.red(error));
+                    reject(error);
+                    return; // Terminate execution.
+                }
+                // console.log(response.statusCode);
+                var message = (response.statusCode == 201) ? true : false;
+                resolve(message);
+            });
+    });
+}
+
+async function getDir(dir) {
+    var files = [];
+    var walker = walk.walk(dir, {
+        followLinks: false
+    });
+
+    return new Promise((resolve, reject) => {
+        walker.on('file', function (root, stat, next) {
+            // console.log(root);
+            files.push({
+                absolute: root + '/' + stat.name,
+                leaf: stat.name,
+                relative: (root + '/' + stat.name).substring(dir.length + 1)
+            });
+            next();
+        });
+
+        walker.on('end', function () {
+            resolve(files);
+        });
+    });
+}
+
+async function pushDir(userName, repoName, token, dir) {
+    var listoffiles = await getDir(dir);
+    // console.log(listoffiles);
+    var GithubRepoName = await createRepo(repoName, token);
+
+    for (i = 0; i < listoffiles.length; i++) {
+        item = listoffiles[i];
+        var content = await PushFileToGithub(userName, GithubRepoName, token, item.absolute, item.relative);
+    }
+
+}
+
 // If invalid (userGithubToken | userGithubRepoName) return false
-function createRepoForUser(userId) {
+async function createRepoForUser(userId, username, token, path) {
+    const zip = new admZip('./resources/site-ac.zip');
+    var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
+        fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
+    }
+
+    zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
+
+    fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
+        if (err) throw err;
+    });
+    
+    await pushDir(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)
+    console.log('complete')
     return true;
 }
 
+async function zipAFolder(srcPath, destPath){
+    return await zip(srcPath, destPath)
+    .then(s => {return true})
+    .catch(e => {return false});
+}
 
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
-function uploadZippedCV(user) {
+async function uploadZippedCV(userId, path) {
+
+    const zip = new admZip('./resources/site-ac.zip');
+    var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
+        fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
+    }
+
+    zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
+
+    fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
+        if (err) throw err;
+    });
+
+    if (await zipAFolder(`./tmp/${randomTmpFolderName}/site`, './site.zip')) {
+        var link = await utils.upload('./site.zip').catch(exception => {
+            return null;
+        });
+
+        var dbo = await MongoHelper.openConnection();
+        var response = await MongoHelper.findObject(dbo, {
+            user: userId
+        });
+
+        if (link != null && response != null) 
+        {
+            await MongoHelper.updateObject(dbo, {
+                user: userId
+            }, {
+                $set: {
+                    zippedSiteUrl: link
+                }
+            });
+            
+        }
+    }
+
+    MongoHelper.closeConnection();
+    fs.unlinkSync('site.zip');
+    return link;
+
     return new Transfer('./site-mock.zip')
         .upload()
         .then(function (link) {
@@ -262,9 +443,11 @@ function uploadEmptyTemplate() {
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
 async function mergeAllInfo(userId) {
-    
+
     var dbo = await MongoHelper.openConnection();
-    var response = await MongoHelper.findObject(dbo, {user: userId});
+    var response = await MongoHelper.findObject(dbo, {
+        user: userId
+    });
 
     if (response != null) {
         if (response.linkedInData != null) {
@@ -316,19 +499,33 @@ async function mergeAllInfo(userId) {
 
         }
 
-        await MongoHelper.updateObject(dbo, {user: userId}, {$set: {profileData: response.profileData}});
+        await MongoHelper.updateObject(dbo, {
+            user: userId
+        }, {
+            $set: {
+                profileData: response.profileData
+            }
+        });
 
 
         var ymlText = YAML.stringify(response.profileData);
-        
+
         fs.writeFileSync('data.yml', ymlText, (err) => {
             console.log(err)
         });
 
     }
-    
-    var link =  await utils.upload('./data.yml').catch(exception => {return null;});
-    if (link != null) await MongoHelper.updateObject(dbo, {user: userId}, {$set: {fileURL: link}});
+
+    var link = await utils.upload('./data.yml').catch(exception => {
+        return null;
+    });
+    if (link != null) await MongoHelper.updateObject(dbo, {
+        user: userId
+    }, {
+        $set: {
+            fileURL: link
+        }
+    });
     MongoHelper.closeConnection();
     fs.unlinkSync('data.yml');
     return link;
@@ -337,7 +534,13 @@ async function mergeAllInfo(userId) {
         .upload()
         .then(async function (link) {
             console.log(`File uploaded successfully at ${link}`);
-            await MongoHelper.updateObject(dbo, {user: userId}, {$set: {fileURL: link}});
+            await MongoHelper.updateObject(dbo, {
+                user: userId
+            }, {
+                $set: {
+                    fileURL: link
+                }
+            });
             MongoHelper.closeConnection();
             fs.unlinkSync('data.yml');
             return link;
@@ -354,6 +557,39 @@ async function mergeAllInfo(userId) {
 //Once the session is terminated, all the data relevant to the session will be deleted
 function deleteAllData() {
     return true;
+}
+
+async function download (url, dir, fileName) {  
+    const path = Path.resolve(__dirname, dir, fileName)
+    const writer = fs.createWriteStream(path)
+  
+    const response = await axios({
+      url,
+      method: 'GET',
+      responseType: 'stream'
+    })
+  
+    response.data.pipe(writer)
+  
+    return new Promise((resolve, reject) => {
+      writer.on('finish', () => {resolve(true)})
+      writer.on('error', () => {reject(false)})
+    })
+  }
+
+async function downloadYmlFile(url){
+
+    var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
+        fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
+    }
+
+    if (await download(url, `./tmp/${randomTmpFolderName}`, 'data.yml')  ) 
+        return `./tmp/${randomTmpFolderName}/data.yml`
+    else 
+        return null
+
 }
 
 //module.exports.verifyYMLContent = verifyYMLContent;
@@ -373,5 +609,6 @@ module.exports = {
     deleteAllData: deleteAllData,
     ExtractingDBLPInfo: ExtractingDBLPInfo,
     getDblpData: getDblpData,
-    getUserIdFromDBLPLink: getUserIdFromDBLPLink
+    getUserIdFromDBLPLink: getUserIdFromDBLPLink,
+    downloadYmlFile: downloadYmlFile
 };

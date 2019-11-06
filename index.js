@@ -247,17 +247,18 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
     }
 });
 
-controller.hears('verify', 'direct_message', function (bot, message) {
-    if (helper.getLevel(message.user) === 2) {
+controller.hears('verify', 'direct_message', async function (bot, message) {
+    if (await helper.getLevel(message.user) === 2) {
         //bot.reply(message,'Please give me the link');
         bot.createConversation(message, function (err, convo) {
             convo.addQuestion('Please give me a link of the yml file', [{
                     pattern: /.*.yml/,
-                    callback: function (response, convo) {
+                    callback: async function (response, convo) {
 
-                        //verifyYMLContent() verifies the yml content. return false if the yml data have errors
+                        var path = await service.downloadYmlFile(response.text.substring(1, response.text.length - 1));
+                        convo.setVar('ymlpath', path);
+                        
                         if (service.verifyYMLContent(response)) {
-                            //bot.reply('Data verified. Do you your CV in Github or zipped format?');
                             convo.gotoThread('Template_Choice');
                         } else {
                             convo.gotoThread('invalid_YML_content');
@@ -272,17 +273,19 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                     },
                 }
             ], {}, 'default');
+            
             convo.addMessage({
                 text: 'Session terminated. You can say \'start\' to create a new session',
             }, 'session_terminated');
-            convo.addQuestion('Data verified. Do you want your CV in industrial or academic format?[i/a]', function (response, convo) {
+            
+            convo.addQuestion('Data verified. Do you want your CV in industrial or academic format?[i/a]', async function (response, convo) {
                 if (response.text === 'i') {
                     convo.gotoThread('valid2');
                 } else if (response.text === 'a') {
                     convo.gotoThread('valid2');
                     //convo.gotoThread('session_terminated');
                 } else if (response.text === 'terminate') {
-                    helper.setLevel(0, message.user);
+                    await helper.setLevel(0, message.user);
                     convo.gotoThread('session_terminated');
                 } 
                 else {
@@ -294,9 +297,8 @@ controller.hears('verify', 'direct_message', function (bot, message) {
                 if (response.text === 'github') {
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
-                    var link = await service.uploadZippedCV(convo.context.user);
-                    //TODO where is the dummy link for zipped file? dummy link is in the link variable. mention it somehow
-                    console.log(link);
+                    var link = await service.uploadZippedCV(convo.context.user, convo.vars.ymlpath);
+                    
                     bot.reply(message, link);
                     convo.setVar('link', link);
                     convo.gotoThread('zipped_CV_uploaded');
@@ -312,7 +314,7 @@ controller.hears('verify', 'direct_message', function (bot, message) {
             convo.addQuestion('Token?', [{
                     pattern: /.*/,
                     callback: function (response, convo) {
-                        helper.setGithubtoken(convo.context.user, response.match.input);
+                        convo.setVar('token', response.text)
                         convo.gotoThread('github_thread_repoName');
                     },
                 },
@@ -325,10 +327,10 @@ controller.hears('verify', 'direct_message', function (bot, message) {
             ], {}, 'github_thread_token');
             convo.addQuestion('User name?', [{
                     pattern: /.*/,
-                    callback: function (response, convo) {
+                    callback: async function (response, convo) {
                         // This will create the cv repository for the user
-                        helper.setRepoName(convo.context.user, response.match.input);
-                        if (service.createRepoForUser(convo.context.user)) {
+                        convo.setVar('username', response.text)
+                        if (await service.createRepoForUser(convo.context.user, convo.vars.username, convo.vars.token, convo.vars.ymlpath)) {
                             convo.gotoThread('repoCreated');
                         } else {
                             convo.gotoThread('bad_at_repoCreation');

@@ -10,7 +10,8 @@ const util = require('util');
 const utils = require('./util.js');
 const svc = require('./service-mock.js');
 var crypto = require('crypto');
-var walk    = require('walk');
+var walk = require('walk');
+const admZip = require('adm-zip');
 
 
 
@@ -19,41 +20,6 @@ var walk    = require('walk');
 const gitHubUrl = "https://api.github.com";
 const linkedinUrl = "https://api.linkedin.com/v2";
 const dblpUrl = "https://dblp.org"
-
-
-//Getting DBLP Data from username
-
-
-
-function upload() {
-    return new Transfer('./user-mock-data.yml')
-        .upload()
-        .then(function (link) {
-            console.log(`File uploaded successfully at ${link}`);
-            return 'succ';
-        })
-        .catch(function (err) {
-            console.log('error');
-            return 'xxx';
-        });
-}
-
-function upload2() {
-    return new Promise((resolve, reject) => {
-        request.post('https://0x0.st', function (err, resp, body) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(body);
-            }
-        }).form().append('file', fs.createReadStream('site-mock.zip'));
-    });
-}
-
-async function test() {
-    var x = await upload();
-    console.log(x);
-}
 
 require('dotenv').config();
 
@@ -119,19 +85,6 @@ async function dosth() {
 // console.log('fff');
 
 
-var App = {
-    foo: function (a, b) {
-        return a + b;
-    },
-    bar: function (a, b) {
-        return this.foo(a, b);
-    },
-    yay: function (a) {
-        if (a % 2 == 0) return a;
-        else return null;
-    }
-}
-
 // get GitHub data from username
 
 
@@ -184,7 +137,7 @@ async function ReadFileAndConvertToBase_64(pathName) {
 //Function to push files into github repo
 async function PushFileToGithub(username, RepoName, token, absolutePath, relativePath) {
     var endpoint = "/repos/" + username + "/" + RepoName + `/contents/${relativePath}`;
-    var contents = await ReadFileAndConvertToBase_64(absolutePath); 
+    var contents = await ReadFileAndConvertToBase_64(absolutePath);
     var shaValue = await getSha1(absolutePath);
 
     return new Promise(function (resolve, reject) {
@@ -216,60 +169,78 @@ async function PushFileToGithub(username, RepoName, token, absolutePath, relativ
 }
 
 
-
-
-async function getDir(dir){
-    var files   = [];
-    var walker  = walk.walk(dir, { followLinks: false });
+async function getDir(dir) {
+    var files = [];
+    var walker = walk.walk(dir, {
+        followLinks: false
+    });
 
     return new Promise((resolve, reject) => {
-        walker.on('file', function(root, stat, next) {
+        walker.on('file', function (root, stat, next) {
             // console.log(root);
             files.push({
                 absolute: root + '/' + stat.name,
                 leaf: stat.name,
-                relative: (root + '/' + stat.name).substring( dir.length+1 )
+                relative: (root + '/' + stat.name).substring(dir.length + 1)
             });
             next();
         });
-    
-        walker.on('end', function() {
+
+        walker.on('end', function () {
             resolve(files);
         });
     });
 }
 
-async function pushDir(userName, repoName, token, dir){
+async function pushDir(userName, repoName, token, dir) {
     var listoffiles = await getDir(dir);
     // console.log(listoffiles);
     var GithubRepoName = await createRepo(repoName, token);
-    
-    for(i = 0; i < listoffiles.length; i++) {
+
+    for (i = 0; i < listoffiles.length; i++) {
         item = listoffiles[i];
+        console.log('pushing ' + item)
         var content = await PushFileToGithub(userName, GithubRepoName, token, item.absolute, item.relative);
+        console.log('pushed');
+
     }
 
 }
 
 
-async function getSha1(path){
-    return new Promise( (r,e) => {
+async function getSha1(path) {
+    return new Promise((r, e) => {
         var algo = 'sha1';
         var shasum = crypto.createHash(algo);
         var s = fs.ReadStream(path);
-        s.on('data', function(d) { shasum.update(d); });
-        
-        s.on('end', function() {
+        s.on('data', function (d) {
+            shasum.update(d);
+        });
+
+        s.on('end', function () {
             var d = shasum.digest('hex');
             r(d);
         });
-    })
-    
-async function rrr(){
-    var x = await upload2().catch(ex => {return null});
-    console.log( x );
-    var i = 0;
+    });
 }
 
+const { zip } = require('zip-a-folder');
 
 
+async function ziiii(){
+    return await zip('/home/rr/Downloads', '/home/rr/bk.zip')
+    .then(s => {return true})
+    .catch(e => {return false});
+}
+
+async function hhh(){
+    var x = await ziiii();
+    console.log(x);
+}
+
+async function fff(){
+    await pushDir('saadabrar12', 'saadabrar12.github.io', 'ddeffd0fc8a8965454a0c64f2dfffa93db9de8b5', './resources/site-ac/site');
+    console.log('complete')
+}
+
+fff();
