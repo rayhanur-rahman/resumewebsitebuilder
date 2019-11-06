@@ -6,6 +6,8 @@ const gitHubUrl = "https://api.github.com";
 const linkedinUrl = "https://api.linkedin.com/v2";
 const dblpUrl = "https://dblp.org"
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
+var request = require('request')
+var fs = require('fs')
 
 require('dotenv').config();
 
