@@ -20,7 +20,12 @@ async function downloadImage (imgURL, dir, destFile) {
   return new Promise((resolve, reject) => {
     writer.on('finish', resolve)
     writer.on('error', reject)
+    console.log('downloaded');
   })
 }
 
-downloadImage('https://github.com/rayhanur-rahman/rayhanur-rahman.github.io/blob/master/assets/images/resume.png?raw=true', './images', 'profile.png')  
+downloadImage('https://transfer.sh/BQvqT/data.yml', './images', 'data.yml')  
+
+module.exports = {
+  downloadImage: downloadImage
+};
