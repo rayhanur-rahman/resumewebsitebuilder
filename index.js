@@ -285,8 +285,10 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
             
             convo.addQuestion('Data verified. Do you want your CV in industrial or academic format?[i/a]', async function (response, convo) {
                 if (response.text === 'i') {
+                    convo.setVar('choice', response.text);
                     convo.gotoThread('valid2');
                 } else if (response.text === 'a') {
+                    convo.setVar('choice', response.text);
                     convo.gotoThread('valid2');
                     //convo.gotoThread('session_terminated');
                 } else if (response.text === 'terminate') {
@@ -303,7 +305,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                 if (response.text === 'github') {
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
-                    var link = await service.uploadZippedCV(convo.context.user, convo.vars.ymlpath);
+                    var link = await service.uploadZippedCV(convo.context.user, convo.vars.ymlpath, convo.vars.choice);
                     
                     bot.reply(message, link);
                     convo.setVar('link', link);
@@ -337,7 +339,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                     callback: async function (response, convo) {
                         // This will create the cv repository for the user
                         convo.setVar('username', response.text)
-                        if (await service.createRepoForUser(convo.context.user, convo.vars.username, convo.vars.token, convo.vars.ymlpath)) {
+                        if (await service.createRepoForUser(convo.context.user, convo.vars.username, convo.vars.token, convo.vars.ymlpath, convo.vars.choice)) {
                             convo.gotoThread('repoCreated');
                         } else {
                             convo.gotoThread('bad_at_repoCreation');
@@ -376,7 +378,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                 action: 'valid2',
             }, 'bad_at_valid2');
             convo.addMessage({
-                text: 'website has been published at <your github username>.github.io ', //here will be the github.io link
+                text: 'website has been published at {{& vars.username}}.github.io ', //here will be the github.io link
                 action: 'terminate_session2',
             }, 'repoCreated');
             // convo.addMessage({

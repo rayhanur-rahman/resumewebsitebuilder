@@ -223,3 +223,15 @@ async function getSha1(path) {
         });
     });
 }
+
+const validateSchema = require('yaml-schema-validator')
+
+function verifyYMLContent(path) {
+    var errors = validateSchema(path, {
+        schemaPath: './schema.yaml' // can also be schema.json
+    });
+    console.log(errors)
+    // return (errors.length == 0) ? true : false;
+}
+
+verifyYMLContent('/home/rr/Workspace/csc510-20/resources/site-in/site/_data/data.yml');
