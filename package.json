@@ -48,6 +48,9 @@
     "selenium-webdriver": "^4.0.0-alpha.5",
     "transfer-sh": "^2.1.1",
     "walk": "^2.3.14",
+    "yaml-lint": "^1.2.4",
+    "yaml-schema-validator": "^1.1.9",
+    "yaml-validator": "^2.2.0",
     "zip-a-folder": "0.0.9"
   }
 }

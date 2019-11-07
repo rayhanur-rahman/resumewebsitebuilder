@@ -93,6 +93,7 @@ controller.hears('start', 'direct_message', async function (bot, message) {
                     convo.gotoThread('no_thread');
                 } else if (response.text === 'terminate'){
                     await helper.deleteUser(convo.context.user);
+                    await service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
@@ -129,6 +130,7 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     convo.gotoThread('Ask_DBLP');
                 } else if (response.text === 'terminate'){
                     await helper.setLevel(0, message.user);
+                    await service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
@@ -163,6 +165,7 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     convo.gotoThread('Ask_GitHub');
                 } else if (response.text === 'terminate'){
                     await helper.setLevel(0, message.user);
+                    await service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
@@ -205,13 +208,14 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     convo.gotoThread('Valid');
                 } else if (response.text === 'terminate'){
                     await helper.setLevel(0, message.user);
+                    await service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_response');
                 }
             }, {}, 'Ask_GitHub');
             //Question 6
-            convo.addQuestion('Amazing! Please provide me with Github link.', [{
+            convo.addQuestion('Amazing! Please provide me with Github User Name.', [{
                     pattern: /.*/,
                     callback: async function (response, convo) {
                         await helper.setGithubUserName(convo.context.user, response.text);
@@ -257,8 +261,9 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
 
                         var path = await service.downloadYmlFile(response.text.substring(1, response.text.length - 1));
                         convo.setVar('ymlpath', path);
+                        console.log(path);
                         
-                        if (service.verifyYMLContent(response)) {
+                        if (service.verifyYMLContent(convo.vars.ymlpath)) {
                             convo.gotoThread('Template_Choice');
                         } else {
                             convo.gotoThread('invalid_YML_content');
@@ -286,6 +291,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                     //convo.gotoThread('session_terminated');
                 } else if (response.text === 'terminate') {
                     await helper.setLevel(0, message.user);
+                    await service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } 
                 else {
@@ -305,6 +311,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                     //convo.gotoThread('session_terminated');
                 } else if (response.text === 'terminate') {
                     helper.setLevel(0, message.user);
+                    await service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } 
                 else {
@@ -376,10 +383,10 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
             //     text: 'session terminated! You can say \'start\' to create a new session',
             //     action: "completed"
             // }, 'session_terminated');
-            convo.addQuestion('Please say \'terminate\' to terminate the session', function (response, convo) {
+            convo.addQuestion('Please say \'terminate\' to terminate the session', async function (response, convo) {
                 if (response.text === 'terminate') {
-                    helper.setLevel(0, convo.context.user);
-                    service.deleteAllData(convo.context.user);
+                    await helper.setLevel(0, convo.context.user);
+                    await service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {
                     convo.gotoThread('bad_at_terminate_session2');
@@ -439,9 +446,9 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
             // Create a yes/no question in the default thread...
             convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', [{
                     pattern: 'y',
-                    callback: function (response, convo) {
+                    callback: async function (response, convo) {
                         convo.gotoThread('yes_thread');
-                        helper.setLevel(0, convo.context.user);
+                        await helper.setLevel(0, convo.context.user);
                     },
 
                 },
@@ -477,9 +484,10 @@ controller.on('direct_message,mention,direct_mention', async function (bot, mess
     });
 });
 
-controller.hears('terminate', 'direct_message', function (bot, message) {
+controller.hears('terminate', 'direct_message', async function (bot, message) {
     bot.reply(message, 'Session terminated! You can start a new session by saying \'start\'');
-    helper.setLevel(0,message.user);
+    await helper.setLevel(0,message.user);
+    await service.deleteAllData(message.user);
 });
 
 

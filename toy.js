@@ -223,24 +223,3 @@ async function getSha1(path) {
         });
     });
 }
-
-const { zip } = require('zip-a-folder');
-
-
-async function ziiii(){
-    return await zip('/home/rr/Downloads', '/home/rr/bk.zip')
-    .then(s => {return true})
-    .catch(e => {return false});
-}
-
-async function hhh(){
-    var x = await ziiii();
-    console.log(x);
-}
-
-async function fff(){
-    await pushDir('saadabrar12', 'saadabrar12.github.io', 'ddeffd0fc8a8965454a0c64f2dfffa93db9de8b5', './resources/site-ac/site');
-    console.log('complete')
-}
-
-fff();

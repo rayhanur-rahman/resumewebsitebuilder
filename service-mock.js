@@ -17,6 +17,7 @@ const { zip } = require('zip-a-folder');
 var crypto = require('crypto');
 var walk = require('walk');
 var request = require('request');
+const validateSchema = require('yaml-schema-validator')
 
 
 
@@ -71,6 +72,9 @@ async function getDblpData(userName) {
 
 async function ExtractingLinkedInInfo(userId, url) {
     console.log(url);
+    var tokens = url.split('/');
+    var linkedinUserName = tokens[tokens.length - 2];
+
     var profile_data = await utils.getLinkedInData(url);
     console.log(profile_data);
 
@@ -81,7 +85,8 @@ async function ExtractingLinkedInInfo(userId, url) {
         summary: profile_data.profileAlternative.summary,
         education: [],
         experience: [],
-        skills: ''
+        skills: '',
+        username: linkedinUserName
     }
 
     profile_data.skills.forEach(element => {
@@ -216,7 +221,7 @@ async function ExtractingGithubInfo(userId, githubUserName) {
                 user: userId
             }, {
                 $set: {
-                    githubData: projectDetails
+                    githubData: {projects: projectDetails, author: githubUserName}
                 }
             });
         }
@@ -428,10 +433,11 @@ async function uploadZippedCV(userId, path) {
 // This function verifies the yml content of the file uploaded by the user
 // Return false if the content is inconsistent with the data obtained from the links or
 // submitted earlier by the user
-function verifyYMLContent(url) {
-    // check if the link contains a yml file
-    // check if the yml files contains required attributes
-    return true;
+function verifyYMLContent(path) {
+    var errors = validateSchema(path, {
+        schemaPath: './schema.yaml' // can also be schema.json
+    });
+    return (errors.length == 0) ? true : false;
 }
 
 // This function uploads an empty template for the user to fill in when they don't have
@@ -451,6 +457,7 @@ async function mergeAllInfo(userId) {
 
     if (response != null) {
         if (response.linkedInData != null) {
+            response.profileData.contact.linkedin = response.linkedInData.username;
             response.profileData.intro.name = response.linkedInData.name;
 
             response.profileData.intro.title = (response.linkedInData.title != null) ? response.linkedInData.title : '...';
@@ -489,11 +496,15 @@ async function mergeAllInfo(userId) {
 
         if (response.githubData != null) {
 
-            if (response.githubData.length > 0) {
-                response.profileData.projects.items = [];
-                response.githubData.forEach(item => {
-                    response.profileData.projects.items.push(item);
-                });
+            if (response.githubData.projects != null) {
+                if (response.githubData.projects.length > 0) {
+                    response.profileData.contact.github = response.githubData.author;
+                    response.profileData.projects.items = [];
+                    response.githubData.projects.forEach(item => {
+                        response.profileData.projects.items.push(item);
+                    });
+                    
+                }
             }
 
 
@@ -555,8 +566,17 @@ async function mergeAllInfo(userId) {
 }
 
 //Once the session is terminated, all the data relevant to the session will be deleted
-function deleteAllData() {
-    return true;
+async function deleteAllData(user) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {
+        user: user
+    });
+
+    if(response != null) {
+        await MongoHelper.deleteObject(dbo, {user: user})
+    }
+
+    MongoHelper.closeConnection();
 }
 
 async function download (url, dir, fileName) {  
