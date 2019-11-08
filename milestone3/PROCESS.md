@@ -18,7 +18,13 @@ Item Number | Deliverable Story | Use-Case  | Issue Number  | Status|
 |14|Validate yml file's attributes uploaded by user|3|#40|Incomplete after 1st iteration|
 |15|merge all data into a single json and then convert it to yml|2| #39|Incomplete after 1st iteration|
 
-As the worksheet clearly states, we divided the tasks that we had in hand into subtasks and classified them as per the use case. The points and the developers that were assigned to each task can be viewed in the corresponding issue number. After having set the targets for the 1st iteration, we completed almost all the tasks barring the issue numbers #29,#40 and #39. Some of the reasons that we identified for this backlog during our corresponding scrum meeting was that we underestimated the time we required to complete those tasks. We have provided the screenshot of the kanban board at the end of iteration 1. 
+Some of the strategies we followed are given below:
+1. As the worksheet clearly states, we divided the tasks that we had in hand into subtasks and classified them as per the use case. 
+2. The points and the developers that were assigned to each task can be viewed in the corresponding issue number. 
+3. After having set the targets for the 1st iteration, we completed almost all the tasks barring the issue numbers #29,#40 and #39. 
+4. Some of the reasons that we identified for this backlog during our corresponding scrum meeting was that we underestimated the time we required to complete those tasks. 
+
+We have provided the screenshot of the kanban board at the end of iteration 1. 
 
 ![](Iteration1KANBAN.png)
 
@@ -38,7 +44,14 @@ Item Number | Deliverable Story | Use-Case  | Issue Number  | Status|
 |9|Store site template files to cloudcube storage|3|#44|Done|
 |10|Integrate #43 and Generate Zipped Site Folder|3|#47|Done|
 
-Just like the Iteration 1, at the outset of this iteration, we decided the stories that we will implement in the scrum meeting. Some of the backlog tasks from the last iteration were reassigned and this time around we were able to complete all the tasks that were in hand. We have attached the screenshot of our kanban board at the end of iteration 2.
+1. Just like the Iteration 1, at the outset of this iteration, we decided the stories that we will implement in the scrum meeting. 
+2. Some of the backlog tasks from the last iteration were reassigned and this time around we were able to complete all the tasks that were in hand. 
+3. Issue #39 seemed challenging and as we mentioned we underestimated the volume and difficulty of the task. Hence, we decided to go onto pair programming approach to solve this issue.
+4. There were various situations when some of the packages that we planned to use for completing the tasks did not work out well. For example, for completing the issue #42, we planned to use Simple-git package. But as we progressed with the work, we saw that the package would not serve the purpose that we are intending to have. So, while addressing the later tasks, we always had someone else other than the person assigned to do the task to search alternative ways to complete the task. 
+5. NPM has so many alternatives for a single task and thats why choosing an appropriate package was particularly challenging.
+6. Many of the NPM packages did not have implicit promisify functions that made your implementation tough.
+
+We have attached the screenshot of our kanban board at the end of iteration 2.
 
 ![](Iteration2KANBAN.png)
 
