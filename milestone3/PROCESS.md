@@ -51,4 +51,4 @@ Iteration 2: https://github.ncsu.edu/csc510-fall2019/CSC510-20/projects/2
 ## Scrum meeting
 [Here](https://docs.google.com/document/d/1WSpF12QC6ngRVm-wY1Dg5f6evlgZ2TMK4O29R8ocZuU/edit?usp=sharing) is the google doc that we  used to record the meeting minutes.
 
-The meeting minutes were also maintained in the [repository](../SCRUM Meeting Minutes/meetingMinutes.md)
+The meeting minutes were also maintained in this [repository](../SCRUM_Meeting_Minutes/meetingMinutes.md).
