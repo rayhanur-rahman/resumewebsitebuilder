@@ -71,6 +71,8 @@ async function getDblpData(userName) {
 //Extracting LinkedIn Info; return false if failed
 
 async function ExtractingLinkedInInfo(userId, url) {
+
+    
     console.log(url);
     var tokens = url.split('/');
     var linkedinUserName = tokens[tokens.length - 2];

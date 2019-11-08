@@ -1,4 +1,4 @@
-var service = require('./service-mock.js');
+var service = require('./service.js');
 var helper = require('./bot-helper.js');
 function onInstallation(bot, installer) {
     if (installer) {
