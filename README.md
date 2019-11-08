@@ -4,6 +4,7 @@
 
 - [Design](milestone1/Design.md)
 - [Bot](milestone2/BOT.md)
+- [Process](milestone3/PROCESS.md)
 
 ## Team Members
 - Saad Mohammad Abrar(sabrar)
