@@ -49,7 +49,7 @@ Item Number | Deliverable Story | Use-Case  | Issue Number  | Status|
 3. Issue #39 seemed challenging and as we mentioned we underestimated the volume and difficulty of the task. Hence, we decided to go onto pair programming approach to solve this issue.
 4. There were various situations when some of the packages that we planned to use for completing the tasks did not work out well. For example, for completing the issue #42, we planned to use Simple-git package. But as we progressed with the work, we saw that the package would not serve the purpose that we are intending to have. So, while addressing the later tasks, we always had someone else other than the person assigned to do the task to search alternative ways to complete the task. 
 5. NPM has so many alternatives for a single task and thats why choosing an appropriate package was particularly challenging.
-6. Many of the NPM packages did not have implicit promisify functions that made your implementation tough.
+6. Many of the NPM packages did not have implicit promisify functions that made our implementation tough.
 
 We have attached the screenshot of our kanban board at the end of iteration 2.
 
