@@ -7,8 +7,7 @@ var xml2js = require('xml2js');
 const gitHubUrl = "https://api.github.com";
 const dblpUrl = "https://dblp.org";
 
-
-async function prepareRepoForResume(username, token, path, zip){
+function prepareTempData(path, zip){
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
     if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
@@ -19,6 +18,12 @@ async function prepareRepoForResume(username, token, path, zip){
     fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
         if (err) throw err;
     });
+    return randomTmpFolderName
+}
+
+
+async function prepareRepoForResume(username, token, path, zip){
+    var randomTmpFolderName = prepareTempData(path, zip);
     await pushDataToGitHub(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)
     console.log('complete')
     return true;
@@ -26,14 +31,7 @@ async function prepareRepoForResume(username, token, path, zip){
 
 
 async function prepareZippedFile(userId, path, zip){
-    var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
-        fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
-    }
-    zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
-    fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
-        if (err) throw err;
-    });
+    var randomTmpFolderName = prepareTempData(path, zip);
     if (await utils.zipFolder(`./tmp/${randomTmpFolderName}/site`, './site.zip')) {
         var link = await utils.upload('./site.zip').catch(exception => {
             return null;
