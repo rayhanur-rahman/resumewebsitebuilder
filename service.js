@@ -174,135 +174,93 @@ async function ExtractingGithubInfo(userId, githubUserName) {
 }
 
 
+function prepareRepoForResume(username, token, path, zip){
+    var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
+        fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
+    }
+    zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
+
+    fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
+        if (err) throw err;
+    });
+    await utils.pushDataToGitHub(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)
+    console.log('complete')
+    return true;
+}
+
 
 // If invalid (userGithubToken | userGithubRepoName) return false
 async function createRepoForUser(userId, username, token, path, choice) {
 
     if (choice == 'a') {
         const zip = new admZip('./resources/site-ac.zip');
-        var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-        if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
-            fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
-        }
-
-        zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
-
-        fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
-            if (err) throw err;
-        });
-
-        await utils.pushDataToGitHub(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)
-        console.log('complete')
-        return true;
     }
-
-    if (choice == 'i') {
+    else if (choice == 'i') {
         const zip = new admZip('./resources/site-in.zip');
-        var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-        if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
-            fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
-        }
-
-        zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
-
-        fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
-            if (err) throw err;
-        });
-
-        await pushDirToGitHub(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)
-        console.log('complete')
-        return true;
     }
-
-
+    else{
+        return false;
+    }
+    return prepareRepoForResume(username, token, path, zip);
 }
 
+
+function prepareZippedFile(userId, path, zip){
+    var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+        if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
+            fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
+        }
+
+        zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
+
+        fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
+            if (err) throw err;
+        });
+
+        if (await utils.zipFolder(`./tmp/${randomTmpFolderName}/site`, './site.zip')) {
+            var link = await utils.upload('./site.zip').catch(exception => {
+                return null;
+            });
+
+            var dbo = await MongoHelper.openConnection();
+            var response = await MongoHelper.findObject(dbo, {
+                user: userId
+            });
+
+            if (link != null && response != null) {
+                await MongoHelper.updateObject(dbo, {
+                    user: userId
+                }, {
+                    $set: {
+                        zippedSiteUrl: link
+                    }
+                });
+
+            }
+        }
+
+        MongoHelper.closeConnection();
+}
 
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
 async function uploadZippedCV(userId, path, choice) {
     if (choice == 'a') {
         const zip = new admZip('./resources/site-ac.zip');
-        var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-        if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
-            fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
-        }
-
-        zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
-
-        fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
-            if (err) throw err;
-        });
-
-        if (await utils.zipFolder(`./tmp/${randomTmpFolderName}/site`, './site.zip')) {
-            var link = await utils.upload('./site.zip').catch(exception => {
-                return null;
-            });
-
-            var dbo = await MongoHelper.openConnection();
-            var response = await MongoHelper.findObject(dbo, {
-                user: userId
-            });
-
-            if (link != null && response != null) {
-                await MongoHelper.updateObject(dbo, {
-                    user: userId
-                }, {
-                    $set: {
-                        zippedSiteUrl: link
-                    }
-                });
-
-            }
-        }
-
-        MongoHelper.closeConnection();
-        fs.unlinkSync('site.zip');
-        return link;
     }
-    
-    if (choice == 'i') {
+    else if (choice == 'i') {
         const zip = new admZip('./resources/site-in.zip');
-        var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-        if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
-            fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
-        }
-
-        zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
-
-        fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
-            if (err) throw err;
-        });
-
-        if (await utils.zipFolder(`./tmp/${randomTmpFolderName}/site`, './site.zip')) {
-            var link = await utils.upload('./site.zip').catch(exception => {
-                return null;
-            });
-
-            var dbo = await MongoHelper.openConnection();
-            var response = await MongoHelper.findObject(dbo, {
-                user: userId
-            });
-
-            if (link != null && response != null) {
-                await MongoHelper.updateObject(dbo, {
-                    user: userId
-                }, {
-                    $set: {
-                        zippedSiteUrl: link
-                    }
-                });
-
-            }
-        }
-        MongoHelper.closeConnection();
-        fs.unlinkSync('site.zip');
-        return link;
     }
+    else{
+        return null;
+    }
+
+    var link = prepareZippedFile(userId, path, zip)
+    fs.unlinkSync('site.zip');
+    return link;
 }
 
 // This function verifies the yml content of the file uploaded by the user
@@ -421,16 +379,13 @@ async function deleteAllData(user) {
     if(response != null) {
         await MongoHelper.deleteObject(dbo, {user: user})
     }
-
     MongoHelper.closeConnection();
 }
 
 
 
 async function downloadYmlFile(url){
-
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
     if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
         fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
     }
@@ -452,6 +407,5 @@ module.exports = {
     uploadZippedCV: uploadZippedCV,
     uploadEmptyTemplate: uploadEmptyTemplate,
     deleteAllData: deleteAllData,
-    ExtractingDBLPInfo: ExtractingDBLPInfo,
     downloadYmlFile: downloadYmlFile
 };

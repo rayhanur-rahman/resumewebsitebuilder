@@ -242,16 +242,17 @@ async function zipFolder(srcPath, destPath){
 }
 
 
-
-exports.getDblpData = getDblpData
-exports.getLinkedInData = getLinkedInData
-exports.getGitHubData = getGitHubData
-exports.setLinkedInData = setLinkedInData
-exports.upload = upload
-exports.download = download
-exports.getUserIdFromDBLPLink = getUserIdFromDBLPLink
-exports.ReadFileAndConvertToBase_64 = ReadFileAndConvertToBase_64
-exports.pushDataToGitHub = pushDataToGitHub
-exports.zipFolder = zipFolder
+module.exports = {
+	getDblpData = getDblpData,
+	getLinkedInData = getLinkedInData,
+	getGitHubData = getGitHubData,
+	setLinkedInData = setLinkedInData,
+	upload = upload,
+	download = download,
+	getUserIdFromDBLPLink = getUserIdFromDBLPLink,
+	ReadFileAndConvertToBase_64 = ReadFileAndConvertToBase_64,
+	pushDataToGitHub = pushDataToGitHub,
+	zipFolder = zipFolder,
+}
 //linkedintester88
 //qwerty12
