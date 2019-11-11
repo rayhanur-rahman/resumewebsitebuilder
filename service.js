@@ -167,12 +167,12 @@ async function ExtractingGithubInfo(userId, githubUserName) {
 
 // If invalid (userGithubToken | userGithubRepoName) return false
 async function createRepoForUser(userId, username, token, path, choice) {
-
+    let zip;
     if (choice == 'a') {
-        const zip = new admZip('./resources/site-ac.zip');
+        zip = new admZip('./resources/site-ac.zip');
     }
     else if (choice == 'i') {
-        const zip = new admZip('./resources/site-in.zip');
+        zip = new admZip('./resources/site-in.zip');
     }
     else{
         return false;
@@ -184,11 +184,12 @@ async function createRepoForUser(userId, username, token, path, choice) {
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
 async function uploadZippedCV(userId, path, choice) {
+    let zip;
     if (choice == 'a') {
-        const zip = new admZip('./resources/site-ac.zip');
+        zip = new admZip('./resources/site-ac.zip');
     }
     else if (choice == 'i') {
-        const zip = new admZip('./resources/site-in.zip');
+        zip = new admZip('./resources/site-in.zip');
     }
     else{
         return null;
@@ -230,7 +231,7 @@ async function mergeAllInfo(userId) {
             helper.mergeLinkedInData(response);
         }
         if (response.dblpData != null) {
-            hepler.mergeDblpData(response);
+            helper.mergeDblpData(response);
         }
         if (response.githubData != null) {
             helper.mergeGitHubData(response);

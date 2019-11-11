@@ -2,9 +2,11 @@ const fs = require('fs');
 const utils = require('./util.js')
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
 const http_request = require('got');
-
+const scrapedin = require('scrapedin')
+var xml2js = require('xml2js');
 const gitHubUrl = "https://api.github.com";
 const dblpUrl = "https://dblp.org";
+
 
 async function prepareRepoForResume(username, token, path, zip){
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
