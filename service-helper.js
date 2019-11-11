@@ -6,7 +6,7 @@ const http_request = require('got');
 const gitHubUrl = "https://api.github.com";
 const dblpUrl = "https://dblp.org";
 
-function prepareRepoForResume(username, token, path, zip){
+async function prepareRepoForResume(username, token, path, zip){
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
     if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
@@ -23,7 +23,7 @@ function prepareRepoForResume(username, token, path, zip){
 }
 
 
-function prepareZippedFile(userId, path, zip){
+async function prepareZippedFile(userId, path, zip){
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
         fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
@@ -251,13 +251,13 @@ async function getGitHubData(githubUserName) {
 }
 
 module.exports = {
-    getLinkedInData = getLinkedInData,
-    prepareRepoForResume = prepareRepoForResume,
-    prepareZippedFile = prepareZippedFile,
-    mergeLinkedInData = mergeLinkedInData,
-    mergeDblpData = mergeDblpData,
-    mergeGitHubData = mergeGitHubData,
-    getDblpData = getDblpData,
-    getGitHubData = getGitHubData
+    getLinkedInData : getLinkedInData,
+    prepareRepoForResume : prepareRepoForResume,
+    prepareZippedFile : prepareZippedFile,
+    mergeLinkedInData : mergeLinkedInData,
+    mergeDblpData : mergeDblpData,
+    mergeGitHubData : mergeGitHubData,
+    getDblpData : getDblpData,
+    getGitHubData : getGitHubData
 }
 

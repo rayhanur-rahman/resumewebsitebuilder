@@ -177,7 +177,7 @@ async function createRepoForUser(userId, username, token, path, choice) {
     else{
         return false;
     }
-    return helper.prepareRepoForResume(username, token, path, zip);
+    return await helper.prepareRepoForResume(username, token, path, zip);
 }
 
 
@@ -194,7 +194,7 @@ async function uploadZippedCV(userId, path, choice) {
         return null;
     }
 
-    var link = helper.prepareZippedFile(userId, path, zip)
+    var link = await helper.prepareZippedFile(userId, path, zip)
     fs.unlinkSync('site.zip');
     return link;
 }

@@ -5,7 +5,6 @@ const Path = require('path')
 const { zip } = require('zip-a-folder');
 const request = require('request');
 
-
 require('dotenv').config();
 
 
@@ -75,11 +74,13 @@ async function zipFolder(srcPath, destPath){
     .catch(e => {return false});
 }
 
-exports.upload = upload
-exports.download = download
-exports.getUserIdFromDBLPLink = getUserIdFromDBLPLink
-exports.ReadFileAndConvertToBase_64 =ReadFileAndConvertToBase_64
-exports.zipFolder = zipFolder
 
+module.exports = {
+	upload : upload,
+	download : download,
+	getUserIdFromDBLPLink : getUserIdFromDBLPLink,
+	ReadFileAndConvertToBase_64 : ReadFileAndConvertToBase_64,
+	zipFolder : zipFolder
+}
 //linkedintester88
 //qwerty12
