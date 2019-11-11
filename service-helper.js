@@ -4,8 +4,12 @@ var MongoHelper = require('./mongo-helper.js').MongoHelper;
 const http_request = require('got');
 const scrapedin = require('scrapedin')
 var xml2js = require('xml2js');
+var walk = require('walk');
+const request = require('request');
+
 const gitHubUrl = "https://api.github.com";
 const dblpUrl = "https://dblp.org";
+
 
 function prepareTempData(path, zip){
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -32,8 +36,9 @@ async function prepareRepoForResume(username, token, path, zip){
 
 async function prepareZippedFile(userId, path, zip){
     var randomTmpFolderName = prepareTempData(path, zip);
+    let link;
     if (await utils.zipFolder(`./tmp/${randomTmpFolderName}/site`, './site.zip')) {
-        var link = await utils.upload('./site.zip').catch(exception => {
+        link = await utils.upload('./site.zip').catch(exception => {
             return null;
         });
         var dbo = await MongoHelper.openConnection();
@@ -51,6 +56,7 @@ async function prepareZippedFile(userId, path, zip){
         }
     }
     MongoHelper.closeConnection();
+    return link;
 }
 
 function mergeLinkedInData(response){
@@ -146,7 +152,7 @@ async function pushDataToGitHub(userName, repoName, token, dir) {
 //Function to push files into github repo
 async function PushFileToGithub(username, RepoName, token, absolutePath, relativePath) {
     var endpoint = "/repos/" + username + "/" + RepoName + `/contents/${relativePath}`;
-    var contents = await ReadFileAndConvertToBase_64(absolutePath);
+    var contents = await utils.ReadFileAndConvertToBase_64(absolutePath);
 
     return new Promise(function (resolve, reject) {
         request({
