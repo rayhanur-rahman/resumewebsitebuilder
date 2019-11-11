@@ -1,8 +1,8 @@
 const fs = require('fs');
 const utils = require('./util.js')
+const helper = require('./service-helper.js')
 const YAML = require('json2yaml');
 const admZip = require('adm-zip');
-const http_request = require('got');
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
 const validateSchema = require('yaml-schema-validator')
 
@@ -16,7 +16,7 @@ async function ExtractingLinkedInInfo(userId, url) {
     var tokens = url.split('/');
     var linkedinUserName = tokens[tokens.length - 2];
 
-    var profile_data = await utils.getLinkedInData(url);
+    var profile_data = await helper.getLinkedInData(url);
     console.log(profile_data);
 
     var linkedInData = {
@@ -79,7 +79,7 @@ async function ExtractingLinkedInInfo(userId, url) {
 async function ExtractingDBLPInfo(userId, response) {
     var result = await utils.getUserIdFromDBLPLink(response);
     if (result != null) {
-        result = await utils.getDblpData(result);
+        result = await helper.getDblpData(result);
 
         var dblpData = [];
 
@@ -129,18 +129,9 @@ async function ExtractingDBLPInfo(userId, response) {
 
 //Extracting Github Info; return false if failed
 async function ExtractingGithubInfo(userId, githubUserName) {
-    const url = 'https://api.github.com' + "/users/" + githubUserName + "/repos";
-    const options = {
-        method: 'GET',
-        headers: {
-            "content-type": "application/json"
-        },
-        json: true
-    };
-    let profile_details;
-
     try {
-        profile_details = (await http_request(url, options)).body;
+        profile_details = await helper.getGitHubData(githubUserName);
+        if(profile_details == null) return false;
         console.log(profile_details);
 
         var projectDetails = [];
@@ -174,23 +165,6 @@ async function ExtractingGithubInfo(userId, githubUserName) {
 }
 
 
-function prepareRepoForResume(username, token, path, zip){
-    var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-    if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
-        fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
-    }
-    zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
-
-    fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
-        if (err) throw err;
-    });
-    await utils.pushDataToGitHub(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)
-    console.log('complete')
-    return true;
-}
-
-
 // If invalid (userGithubToken | userGithubRepoName) return false
 async function createRepoForUser(userId, username, token, path, choice) {
 
@@ -203,47 +177,9 @@ async function createRepoForUser(userId, username, token, path, choice) {
     else{
         return false;
     }
-    return prepareRepoForResume(username, token, path, zip);
+    return helper.prepareRepoForResume(username, token, path, zip);
 }
 
-
-function prepareZippedFile(userId, path, zip){
-    var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-        if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
-            fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
-        }
-
-        zip.extractAllTo(`./tmp/${randomTmpFolderName}`, true);
-
-        fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
-            if (err) throw err;
-        });
-
-        if (await utils.zipFolder(`./tmp/${randomTmpFolderName}/site`, './site.zip')) {
-            var link = await utils.upload('./site.zip').catch(exception => {
-                return null;
-            });
-
-            var dbo = await MongoHelper.openConnection();
-            var response = await MongoHelper.findObject(dbo, {
-                user: userId
-            });
-
-            if (link != null && response != null) {
-                await MongoHelper.updateObject(dbo, {
-                    user: userId
-                }, {
-                    $set: {
-                        zippedSiteUrl: link
-                    }
-                });
-
-            }
-        }
-
-        MongoHelper.closeConnection();
-}
 
 // This function is called when the zippedCV is successfully uploaded;
 // Return false if failed
@@ -258,7 +194,7 @@ async function uploadZippedCV(userId, path, choice) {
         return null;
     }
 
-    var link = prepareZippedFile(userId, path, zip)
+    var link = helper.prepareZippedFile(userId, path, zip)
     fs.unlinkSync('site.zip');
     return link;
 }
@@ -279,48 +215,6 @@ function uploadEmptyTemplate() {
 
 }
 
-function mergeLinkedInData(response){
-    response.profileData.contact.linkedin = response.linkedInData.username;
-    response.profileData.intro.name = response.linkedInData.name;
-    response.profileData.intro.title = (response.linkedInData.title != null) ? response.linkedInData.title : '...';
-    response.profileData.intro.avatar.path = (response.linkedInData.imageUrl != null) ? response.linkedInData.imageUrl : '...';
-    response.profileData.profile.details = (response.linkedInData.summary != null) ? response.linkedInData.summary : '...';
-    if (response.linkedInData.education.length > 0) {
-        response.profileData.education.items = [];
-        response.linkedInData.education.forEach(item => {
-            response.profileData.education.items.push(item);
-        });
-    }
-    if (response.linkedInData.experience.length > 0) {
-        response.profileData.experiences.items = [];
-        response.linkedInData.experience.forEach(item => {
-            response.profileData.experiences.items.push(item);
-        });
-    }
-    response.profileData.skills.details = (response.linkedInData.skills != ' ') ? response.linkedInData.skills : response.profileData.skills.details;  
-}
-
-function mergeDblpData(response){
-    if (response.dblpData.length > 0) {
-        response.profileData.publications.items = [];
-        response.dblpData.forEach(item => {
-            response.profileData.publications.items.push(item);
-        });
-    }
-}
-
-function mergeGitHubData(response){
-    if (response.githubData.projects != null) {
-        if (response.githubData.projects.length > 0) {
-            response.profileData.contact.github = response.githubData.author;
-            response.profileData.projects.items = [];
-            response.githubData.projects.forEach(item => {
-                response.profileData.projects.items.push(item);
-            });
-            
-        }
-    }
-}
 
 // This function merges all the info extracted from the linkedin, dblp, and github page
 // and put them in yml file
@@ -333,13 +227,13 @@ async function mergeAllInfo(userId) {
 
     if (response != null) {
         if (response.linkedInData != null) {
-            mergeLinkedInData(response);
+            helper.mergeLinkedInData(response);
         }
         if (response.dblpData != null) {
-            mergeDblpData(response);
+            hepler.mergeDblpData(response);
         }
         if (response.githubData != null) {
-            mergeGitHubData(response);
+            helper.mergeGitHubData(response);
         }
 
         await MongoHelper.updateObject(dbo, {
@@ -381,7 +275,6 @@ async function deleteAllData(user) {
     }
     MongoHelper.closeConnection();
 }
-
 
 
 async function downloadYmlFile(url){
