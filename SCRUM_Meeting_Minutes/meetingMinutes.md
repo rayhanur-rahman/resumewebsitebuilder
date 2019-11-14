@@ -33,7 +33,7 @@
 5. Our working codes are in the experimental branch right now.
 
 ## 11/14/2019
-1. We plan to refactor our conversation. We plan to remove the unnecessary parts and add some more useful instrcutions for an user to use. 
+1. We plan to refactor our conversation. We plan to remove the unnecessary parts and add some more useful instructions for a user to use. 
 2. The bot should be able to retrieve the state of the user from the database if he says no when the bot asks if the user wants to create a new conversation.
 3. The profile picture still does not show on user's homepage. We plan to fix this.
 
