@@ -189,6 +189,16 @@ async function getLevel(userId) {
     }
 }
 
+async function getProfileData(userId) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+    await MongoHelper.closeConnection();
+    if (response == null) return 0;
+    else {
+        return response.profileData;
+    }
+}
+
 async function incrementLevel(userId) {
     var dbo = await MongoHelper.openConnection();
     var response = await MongoHelper.findObject(dbo, {user: userId});
@@ -265,5 +275,6 @@ module.exports = {
     setDBLPUrl: setDBLPUrl,
     setGithubUserName: setGithubUserName,
     setUserUploadedYmlUrl: setUserUploadedYmlUrl,
-    setZippedCvUrl: setZippedCvUrl
+    setZippedCvUrl: setZippedCvUrl,
+    getProfileData: getProfileData
 };

@@ -90,6 +90,7 @@ controller.hears('start', 'direct_message', async function (bot, message) {
                     convo.gotoThread('yes_thread');
                     await helper.setLevel(0, convo.context.user);
                 } else if (response.text === 'n') {
+                    //TODO get user level and provide hints
                     convo.gotoThread('no_thread');
                 } else if (response.text === 'terminate'){
                     await helper.deleteUser(convo.context.user);

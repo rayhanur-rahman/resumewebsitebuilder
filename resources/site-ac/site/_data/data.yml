@@ -1,0 +1,242 @@
+intro:
+    name: Md Rayhanur Rahman
+    title: Ph.D. Student at Computer Science, North Carolina State University
+    avatar:
+        display: true
+        path: profile.png
+
+contact:
+    email: mrahman@ncsu.edu
+    phone: +9196497823
+    wechat: 
+    telegram: 
+    website:
+    linkedin: rayhanur-rahman
+    github: rayhanur-rahman
+    gitlab: 
+    bitbucket: 
+    twitter:
+    stackoverflow: 
+    codewars: 
+    goodreads:
+    googlescholar: hhh
+    researchgate: Rayhanur_Rahman
+    resume: hhh
+
+languages:
+    display: false
+    title: Languages
+    items:
+        - idiom: Bengali
+          level: Native
+
+        - idiom: English
+          level: Professional
+
+interests:
+    display: true
+    title: Interests
+    items:
+        - item: European Football
+        - item: Traveling
+        - item: Motorcycling
+        - item: Playing with Linux Distros
+    
+profile:
+    display: false
+    title: Profile
+    details: |
+      It's your career profile, you can wirte markdown format text.
+      + First
+      + Second
+
+
+education:
+    display: true
+    title: Education
+    items:
+        - university: |
+            [North Carolina State University](https://www.csc.ncsu.edu/)
+          time: Since 2018
+          major: Computer Science
+          degree: Ph.D. | 3.58/4.00
+          details: |
+            I am currently working as a Research Assistant supervised by [Dr. Laurie Williams](https://scholar.google.com/citations?user=Cln2viUAAAAJ&hl=en). I am investigating into misuse of user expectations in real world mobile and web applications. Previously, I worked as a Teaching Assistant for graduate level software engineering courses for the fall'18 and spring'19 semester with [Dr. Nicholas Kraft](https://nkraft.github.io) and [Dr. Jamie Jennings](https://www.csc.ncsu.edu/people/jajenni3).
+        
+        - university: |
+            [University of Dhaka](http://www.iit.du.ac.bd/)
+          time: 2013-2014
+          major: Software Engineering
+          degree: Masters | 3.98/4.00
+          details: |
+            I worked with [Dr. Kazi Sakib](https://scholar.google.com/citations?user=G88J0-EAAAAJ&hl=en) on the cloud computing domain. My thesis topic is A Peer to Peer Resource Discovery Scheme for Provisioning in Cloud. I also got the National Science and Technology Fellowship from the Ministry of Science and Technology that supported my research work.
+
+
+        - university: |
+            [University of Dhaka](http://www.iit.du.ac.bd/)
+          time: 2009-2012
+          major: Software Engineering
+          degree: Bachelor | 3.96/4.00
+          details: |
+            Choosing Software Engineering as a major proved to be a fun undergraduate life for me. Learning all the concepts were amazing as well as implementing and watching your own creation was breathtaking. The four years went quickly by building course projects and semester projects along with various programming and software development contests. 
+
+experiences:
+    display: true
+    title: Experiences
+    items:
+        - role: Assistant Professor
+          time: 2018.08 - Present (On Study Leave)
+          company: |
+            [University of Dhaka](http://www.iit.du.ac.bd/)
+          location: Dhaka, Bangladesh
+        
+        - role: Lecturer
+          time: 2014.09 - 2018.08
+          company: |
+            [University of Dhaka](http://www.iit.du.ac.bd/)
+          location: Dhaka, Bangladesh
+          details: |
+            I mostly taught undergrad courses such as Discrete Math, Data Structure, Combinatorial Optimization, Object Oriented Concepts and Operating Systems. Apart from teaching, I also worked with Distributed Systems and Sofware Engineering research group focused on cloud computing and software engineering. Several of my researches were funded by the Ministry of ICT and University Grants Commission, Bangladesh. 
+
+        - role: Junior Software Engineer
+          time: 2013.12 - 2014.09
+          company: |
+            [Kaz Software Ltd](http://kaz.com.bd/)
+          location: Dhaka, Bangladesh
+          details: |
+            I worked on a proprietary google chrome extension named LinkableNews and web application named LinkableService which provided web ontology and identity services. The technology we used were C#, ASP.NET MVC 3, KnockoutJs, MS SQL Server etc. I had to write a lot of stored procedures which was not fun.  
+
+        - role: Part Time Software Engineer
+          time: 2012.08 - 2013.11
+          company: |
+            [Kaz Software Ltd](http://kaz.com.bd/)
+          location: Dhaka, Bangladesh
+          details: |
+            As a part-time employee, first I worked with a team for a tax management application named Orbitax. Later, I worked on a prototype javascript based piano composer named GrooveyBeats.
+
+        - role: Intern
+          time: 2011.07 - 2011.12
+          company: |
+            [Southtech Ltd](https://www.southtechgroup.com)
+          location: Dhaka, Bangladesh
+          details: |
+            I worked on SCALED - Human resource management desktop based application built upon visual basic and Microsoft SQL server.
+
+projects:
+    display: true
+    title: Projects
+    intro: |
+      These are all the projects I'm involved in.
+    
+    items:
+        - name: SLIC-Ansible
+          link: https://github.com/rayhanur-rahman/SLIC-Ansible
+          details: |
+            SLIC is a static analysis tool that looks for security smells in infrastructure as code (IaC) scripts. This project is aimed to identify security smells in Ansible playbooks.
+        
+        - name: Online Software Defect Prediction using VFDT
+          link: https://github.com/rayhanur-rahman/VFDT-Defect-Prediction
+          details: |
+           This is a course project for Foundation on Software Science by [Dr. Tim Menzies](http://menzies.us/). It is a scalable online learner for software defect prediction based on Hoefdingg tree.
+        
+        - name: Spark API Converter
+          link: https://github.com/rayhanur-rahman/Spark-Api-Converter
+          details: |
+           This is a course project for Compilers Construction by [Dr. Xipeng Shen](https://people.engr.ncsu.edu/xshen5/). It converts Spark RDD API to Dataframe API.
+        
+        - name: Graph Planner
+          link: https://github.com/rayhanur-rahman/Graph-Planner
+          details: |
+           This is a course project for AI by [Dr. Collin Lynch](https://people.engr.ncsu.edu/cflynch/). 
+        
+        - name: Others
+          details: |
+            Back in earlier days, also did projects on:
+            + GroovyBeats: an online piano composer based on KinectJS
+            + Click2Dial: a Microsoft Outlook extension for dialing contacts
+            + IITDURMS: Result Management System for IIT, University of Dhaka
+            + DSEDROID: An Android App for Dhaka Stock Exchange
+            + Greenflash: Behavioral based malware protection system for USB drives, works on Windows platforms
+
+publications:
+    display: true
+    title: Publications
+    intro: |
+      These are all the research projects I am and were involved
+
+    items:
+        - title: "Share but Beware: Security Smells in Python Gists"
+          authors: Rayhanur Rahman, Akond Rahman, Laurie Willaims
+          conference: International Conference on Software Maintenance and Evolution, 2019
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/19-rrahman-icsme.pdf
+        
+        - title: 'MMRUC3 A Recommendation Approach Of Move Method Refactoring Using Coupling,        Cohesion And Contextual Similarity To Enhance Software Design'
+          authors: Masudur Rahman, Rashed Rabby Riyadh, Khaled Shah, Md. Rayhanur Rahman
+          conference: Software Practice And Experience - Wiley, 2018
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/18-rshrabon-spe.pdf
+
+        - title: A scalable resource provisioning scheme for the cloud using peer to peer resource    discovery and multi-attribute utility theory
+          authors: Rayhanur Rahman, Kazi Sakib
+          conference: International Journal of Cloud Computing - Inderscience, 2018
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/18-rrahman-ijcc.pdf
+
+        - title: MobiCoMonkey - Context Testing of Android Apps
+          authors: Amit Seal, Mehedi Hassan, Rayhanur Rahman, Kazi Sakib
+          conference: Mobilesoft (Co-hosted with ICSE), 2018
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/18-aseal-icse.pdf
+
+        - title: 'DTCTH: a discriminative local pattern descriptor for image classification'
+          authors: Mostafizur Rahman, Shanto Rahman, Rayhanur Rahman, B M Hossain, Md Shoyaib
+          conference: EURASIP Journal on Image and Video Processing, 2017
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/17-rraju-eurasip.pdf
+
+        - title: A Proactive Approach for Context-AwareSelf-Adaptive Mobile Applications to EnsureQuality of Service
+          authors: Md Shafiuzzaman, Nadia Nahar, Rayhanur Rahman
+          conference: International Conference on Computer and Information Technology, 2015
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/15-shira-iciev.pdf
+
+        - title: A peer to peer resource provisioning scheme for cloud computing environment using multi attribute utility theory
+          authors: Rayhanur Rahman, Alim Ul Gias, Asif Imran, Kazi Sakib
+          conference: International Conference on Innovative Computing Technology, 2013
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/14-rrahman-intech.pdf
+
+        - title: 'IVRIDIO: Design of a software testing framework to provide Test-first Performance as a service'
+          authors: Alim Ul Gias, Asif Imran, Rayhanur Rahman, Kazi Sakib
+          conference: International Conference on Innovative Computing Technology, 2013
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/14-agius-intech.pdf
+
+        - title: 'Provintsec: a provenance cognition blueprint ensuring integrity and security for real life open source cloud'
+          authors: Asif Imran, Alim Ul Gias, Rayhanur Rahman, Kazi Sakib
+          conference: International Journal of Information Privacy, Security and Integrity, 2013
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/14-aimran-ijipsi.pdf
+
+        - title: 'TFPaaS: Test-first Performance as a Service to Cloud for Software Testing Environment'
+          authors: Alim Ul Gias, Rayhanur Rahman, Asif Imran, Kazi Sakib
+          conference: International Journal of Web Applications, 2014
+          link: https://github.com/rayhanur-rahman/pre-prints/blob/master/14-agius-ijwa.pdf
+
+
+skills:
+    display: true
+    title: Skills
+    details: |
+      I have done projects using these languages and frameworks:
+      + Languages: Java, C#, Python, Javascript, C
+      + Frameworks: ASP.NET MVC, WPF, Windows Forms, Scikit-learn
+      + Others: MSSQL, Git, Linux
+
+evaluation:
+  display: false
+  title: Self-evaluation
+  details: |
+    Here is my self evaluation.
+    + First
+    + Second
+
+    ...
+
+footer: 
+  display: true
+
+close: >
+  Sorry, my resume has been hidden. You can contanct me at me {at} example.com.

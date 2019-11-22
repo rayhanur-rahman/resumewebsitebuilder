@@ -178,7 +178,7 @@ async function createRepoForUser(userId, username, token, path, choice) {
     else{
         return false;
     }
-    return await helper.prepareRepoForResume(username, token, path, zip);
+    return await helper.prepareRepoForResume(userId, username, token, path, zip);
 }
 
 
@@ -209,12 +209,6 @@ function verifyYMLContent(path) {
         schemaPath: './schema.yaml' // can also be schema.json
     });
     return (errors.length == 0) ? true : false;
-}
-
-// This function uploads an empty template for the user to fill in when they don't have
-// one or any links
-function uploadEmptyTemplate() {
-
 }
 
 
@@ -300,7 +294,6 @@ module.exports = {
     ExtractingGithubInfo: ExtractingGithubInfo,
     createRepoForUser: createRepoForUser,
     uploadZippedCV: uploadZippedCV,
-    uploadEmptyTemplate: uploadEmptyTemplate,
     deleteAllData: deleteAllData,
     downloadYmlFile: downloadYmlFile
 };

@@ -1,0 +1,200 @@
+---
+  intro: 
+    name: "Rayhanur Rahman"
+    title: "Lecturer at Institute of Information Technology, University of Dhaka"
+    avatar: 
+      display: true
+      path: "https://media.licdn.com/dms/image/C4D03AQH7GjLKDb22TQ/profile-displayphoto-shrink_200_200/0?e=1578528000&v=beta&t=6uSSxUFsmN5T634y1iGeNGfGRj5rmmOCGbUEyDfAsU0"
+  contact: 
+    email: "..."
+    phone: 123
+    wechat: null
+    telegram: null
+    website: null
+    linkedin: "test"
+    github: "test"
+    gitlab: null
+    bitbucket: null
+    twitter: null
+    stackoverflow: null
+    codewars: null
+    goodreads: null
+    googlescholar: "..."
+    researchgate: "..."
+    resume: "..."
+  languages: 
+    display: false
+    title: "Languages"
+    items: 
+      - 
+        idiom: "English"
+        level: "Professional"
+  interests: 
+    display: true
+    title: "Interests"
+    items: 
+      - 
+        item: "Coding"
+      - 
+        item: "Reading"
+  profile: 
+    display: false
+    title: "Profile"
+    details: "..."
+  education: 
+    display: true
+    title: "Education"
+    items: 
+      - 
+        university: "North Carolina State University"
+        time: "2018 - 2023"
+        major: "Computer Science"
+        degree: "Ph.D."
+        details: null
+      - 
+        university: "University of Dhaka"
+        time: "2013 - 2014"
+        major: "Software Engineering"
+        degree: "Masters"
+        details: null
+      - 
+        university: "University of Dhaka"
+        time: "2009 - 2013"
+        major: "Software Engineering"
+        degree: "Bachelor in Software Engineering"
+        details: null
+  experiences: 
+    display: true
+    title: "Experiences"
+    items: 
+      - 
+        role: "Assistant Professor"
+        time: "Aug 2018 – Present"
+        company: "University of Dhaka"
+        location: "Dhaka, Bangladesh"
+        details: "(On Study Leave)"
+      - 
+        role: "Lecturer"
+        time: "Sep 2014 – Aug 2018"
+        company: "University of Dhaka"
+        location: "Dhaka, Bangladesh"
+        details: "Took software engineering courses on undergraduate and graduate levels"
+      - 
+        role: "KAZ Software Limited"
+        time: "Dec 2013 – Sep 2014"
+        company: null
+        location: "Dhaka"
+        details: null
+      - 
+        role: "Title\nJunior Software Engineer"
+        time: "Dec 2013 – Sep 2014"
+        company: null
+        location: "Dhaka"
+        details: null
+      - 
+        role: "Title\nPart Time Software Engineer"
+        time: "Sep 2012 – Nov 2013"
+        company: null
+        location: "Dhaka"
+        details: null
+      - 
+        role: "Intern, Consultant"
+        time: "Jul 2011 – Dec 2011"
+        company: "Southtech Limited"
+        location: null
+        details: null
+  projects: 
+    display: true
+    title: "Projects"
+    intro: "these are my projects..."
+    items: 
+      - 
+        name: "Graph-Planner"
+        link: "https://github.com/rayhanur-rahman/Graph-Planner"
+        details: null
+      - 
+        name: "pre-prints"
+        link: "https://github.com/rayhanur-rahman/pre-prints"
+        details: null
+      - 
+        name: "rayhanur-rahman.github.io"
+        link: "https://github.com/rayhanur-rahman/rayhanur-rahman.github.io"
+        details: null
+      - 
+        name: "security-smell-detector-python-gist"
+        link: "https://github.com/rayhanur-rahman/security-smell-detector-python-gist"
+        details: null
+      - 
+        name: "SLIC-Ansible"
+        link: "https://github.com/rayhanur-rahman/SLIC-Ansible"
+        details: null
+      - 
+        name: "Spark-Api-Converter"
+        link: "https://github.com/rayhanur-rahman/Spark-Api-Converter"
+        details: null
+      - 
+        name: "VFDT-Defect-Prediction"
+        link: "https://github.com/rayhanur-rahman/VFDT-Defect-Prediction"
+        details: null
+  publications: 
+    display: true
+    title: "Publications"
+    intro: "these are my papers..."
+    items: 
+      - 
+        title: "Security Smells in Infrastructure as Code Scripts."
+        authors: "Akond Rahman, Md. Rayhanur Rahman, Chris Parnin, Laurie Williams"
+        conference: "CoRR"
+        link: "db/journals/corr/corr1907.html#abs-1907-07159"
+      - 
+        title: "MMRUC3: A recommendation approach of move method refactoring using coupling, cohesion, and contextual similarity to enhance software design."
+        authors: "[object Object], Rashed Rubby Riyadh, Shah Mostafa Khaled, Abdus Satter, Md. Rayhanur Rahman"
+        conference: "Softw., Pract. Exper."
+        link: "db/journals/spe/spe48.html#RahmanRKSR18"
+      - 
+        title: "Mobicomonkey: context testing of Android apps."
+        authors: "Amit Seal Ami, Md. Mehedi Hasan, Md. Rayhanur Rahman, Kazi Sakib"
+        conference: "MOBILESoft@ICSE"
+        link: "db/conf/icse/mobilesoft2018.html#AmiHRS18"
+      - 
+        title: "MobiCoMonkey - Context Testing of Android Apps."
+        authors: "Amit Seal Ami, Md. Mehedi Hasan, Md. Rayhanur Rahman, Kazi Sakib"
+        conference: "CoRR"
+        link: "db/journals/corr/corr1804.html#abs-1804-02533"
+      - 
+        title: "DTCTH: a discriminative local pattern descriptor for image classification."
+        authors: "Md. Mostafijur Rahman, Shanto Rahman, Rayhanur Rahman, B. M. Mainul Hossain, Mohammad Shoyaib"
+        conference: "EURASIP J. Image and Video Processing"
+        link: "db/journals/ejivp/ejivp2017.html#RahmanRRHS17"
+      - 
+        title: "A scalable resource provisioning scheme for the cloud using peer to peer resource discovery and multi-attribute utility theory."
+        authors: "Rayhanur Rahman, Kazi Sakib"
+        conference: "IJCC"
+        link: "db/journals/ijcc/ijcc6.html#RahmanS17"
+      - 
+        title: "TFPaaS : Test-first Performance as a Service to Cloud for Software Testing Environment."
+        authors: "Alim Ul Gias, Rayhanur Rahman, Asif Imran, Kazi Sakib"
+        conference: "CoRR"
+        link: "db/journals/corr/corr1407.html#GiasRIS14"
+      - 
+        title: "ProvIntSec: a provenance cognition blueprint ensuring integrity and security for real life open source cloud."
+        authors: "Asif Imran, Alim Ul Gias, Rayhanur Rahman, Kazi Sakib"
+        conference: "IJIPSI"
+        link: "db/journals/ijipsi/ijipsi1.html#ImranGRS13"
+      - 
+        title: "TFPaaS: Test-first Performance as a Service to Cloud for Software Testing Environment."
+        authors: "Alim Ul Gias, Rayhanur Rahman, Asif Imran, Kazi Sakib"
+        conference: "IJWA"
+        link: "db/journals/ijwa/ijwa5.html#GiasRIS13"
+  skills: 
+    display: true
+    title: "Skills"
+    details: " | C# | JavaScript | MySQL"
+  evaluation: 
+    display: false
+    title: "Self-evaluation"
+    details: "Here is my self evaluation..."
+  footer: 
+    display: true
+  close: "please contact me at "
+

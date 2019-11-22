@@ -6,12 +6,13 @@ const scrapedin = require('scrapedin')
 var xml2js = require('xml2js');
 var walk = require('walk');
 const request = require('request');
+const helper = require('./bot-helper.js')
 
 const gitHubUrl = "https://api.github.com";
 const dblpUrl = "https://dblp.org";
 
 
-function prepareTempData(path, zip){
+async function prepareTempData(userId, path, zip){
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
     if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
@@ -22,12 +23,16 @@ function prepareTempData(path, zip){
     fs.copyFile(path, `./tmp/${randomTmpFolderName}/site/_data/data.yml`, (err) => {
         if (err) throw err;
     });
+
+    profilePicUrl = (await helper.getProfileData(userId)).intro.avatar.path
+    await utils.download(profilePicUrl, `./tmp/${randomTmpFolderName}/site/assets/images/`, 'profile.png')
+
     return randomTmpFolderName
 }
 
 
-async function prepareRepoForResume(username, token, path, zip){
-    var randomTmpFolderName = prepareTempData(path, zip);
+async function prepareRepoForResume(userId, username, token, path, zip){
+    var randomTmpFolderName = await prepareTempData(userId, path, zip);
     await pushDataToGitHub(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)
     console.log('complete')
     return true;
@@ -35,7 +40,7 @@ async function prepareRepoForResume(username, token, path, zip){
 
 
 async function prepareZippedFile(userId, path, zip){
-    var randomTmpFolderName = prepareTempData(path, zip);
+    var randomTmpFolderName = await prepareTempData(userId, path, zip);
     let link;
     if (await utils.zipFolder(`./tmp/${randomTmpFolderName}/site`, './site.zip')) {
         link = await utils.upload('./site.zip').catch(exception => {
