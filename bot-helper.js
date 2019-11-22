@@ -4,26 +4,6 @@ var MongoHelper = require('./mongo-helper.js').MongoHelper;
 // 1: starts with 'I am ready'
 // 2: starts with 'verify'
 
-var sessionData = {
-    level: 0,
-    user: '',
-    fileURL: '',
-    zippedSiteUrl: '',
-    userGithubToken: '',
-    userGithubRepoName: '',
-    userLinkedInId: '',
-    userLinkedInToken: '',
-    noLinkedInFlag: false,
-    noDblpFlag: false,
-    noGithubFlag: false,
-    linkedInData: null,
-    dblpData: null,
-    githubData: null,
-    generatedYMLFileLink: '',
-    uploadedYMLFileLink: '',
-    generatedSiteLink: ''
-}
-
 var profileData = {
     intro: {
         name: '...',
@@ -172,44 +152,29 @@ var profileData = {
 }
 
 
-function setFileURL(url) {
-    sessionData.fileURL = URL;
-    //console.log(fileURL)
-}
-
-// this function does not work for now
-
-
-
-function setNoLinkedFlag(userId, value) {
-    sessionData.noLinkedInFlag = value;
-}
-
-function getNoLinkedFlag(userId) {
-    return sessionData.noLinkedInFlag;
-}
-
-function setNoDBLPFlag(userId, value) {
-    sessionData.noDblpFlag = value;
-}
-
-function getNoDBLPFlag(userId) {
-    return sessionData.noDblpFlag;
-}
-
-function setNoGithubFlag(userId, value) {
-    sessionData.noDblpFlag = value;
-}
-
-function getNoGithubFlag(userId) {
-    return sessionData.noDblpFlag;
-}
-
 async function setLevel(level, userId) {
     var dbo = await MongoHelper.openConnection();
     var response = await MongoHelper.findObject(dbo, {user: userId});
     if (response != null) {
         await MongoHelper.updateObject(dbo, {user: userId}, {$set: {level: level}});
+    }
+    MongoHelper.closeConnection();
+}
+
+async function setUserUploadedYmlUrl(url, userId) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+    if (response != null) {
+        await MongoHelper.updateObject(dbo, {user: userId}, {$set: {userUploadedYMLFileUrl: url}});
+    }
+    MongoHelper.closeConnection();
+}
+
+async function setZippedCvUrl(url, userId) {
+    var dbo = await MongoHelper.openConnection();
+    var response = await MongoHelper.findObject(dbo, {user: userId});
+    if (response != null) {
+        await MongoHelper.updateObject(dbo, {user: userId}, {$set: {generatedSiteLink: url}});
     }
     MongoHelper.closeConnection();
 }
@@ -247,8 +212,8 @@ async function setUser(userId) {
         linkedInData: null,
         dblpData: null,
         githubData: null,
-        generatedYMLFileLink: '',
-        uploadedYMLFileLink: '',
+        generatedYMLFileUrl: '',
+        userUploadedYMLFileUrl: '',
         generatedSiteLink: '',
         profileData: profileData
     });
@@ -261,21 +226,6 @@ async function deleteUser(userId){
     MongoHelper.closeConnection();
 }
 
-// When asked for a token, the text of the user's reply is taken and passed
-// to this function to set the global var userGithubToken
-function setGithubtoken(userId, token) {
-    sessionData.userGithubToken = token;
-}
-
-// When asked for a repo name, the text of the user's reply is taken and passed
-// to this function to set the global var userGithubRepoName
-function setRepoName(userId, repoName) {
-    sessionData.userGithubRepoName = repoName;
-}
-
-function setLinkedInToken(userId, token) {
-    sessionData.userLinkedInToken = token;
-}
 
 async function setLinkedInUrl(userId, url) {
     var dbo = await MongoHelper.openConnection();
@@ -304,54 +254,16 @@ async function setGithubUserName(userId, githubUserName) {
     MongoHelper.closeConnection();
 }
 
-function getLinkedInToken(userId) {
-    return sessionData.userLinkedInToken;
-}
-
-function setLinkedInId(userId, link) {
-    sessionData.userLinkedInId = parseLinkedInIdFromUrl(link);
-}
-
-
-
-function getLinkedInId(userId) {
-    return sessionData.userLinkedInId;
-}
-
-// getter function; not needed as the var userGithubToken is global
-function getGithubToken() {
-    return sessionData.userGithubToken;
-}
-
-// getter function; not needed as the var userGithubRepoName is global
-function getGithubRepoName() {
-    return sessionData.userGithubRepoName;
-}
-
 
 module.exports = {
-    setFileURL: setFileURL,
-    setGithubtoken: setGithubtoken,
-    setRepoName: setRepoName,
-    getGithubToken: getGithubToken,
-    getGithubRepoName: getGithubRepoName,
-    getLinkedInToken: getLinkedInToken,
-    getLinkedInId: getLinkedInId,
-    setLinkedInToken: setLinkedInToken,
-    setLinkedInId: setLinkedInId,
     setLevel: setLevel,
     getLevel: getLevel,
     incrementLevel: incrementLevel,
-    sessionData: sessionData,
     setUser: setUser,
-    setNoLinkedFlag: setNoLinkedFlag,
-    getNoLinkedFlag: getNoLinkedFlag,
-    setNoDBLPFlag: setNoDBLPFlag,
-    getNoDBLPFlag: getNoDBLPFlag,
-    setNoGithubFlag: setNoGithubFlag,
-    getNoGithubFlag: getNoGithubFlag,
     deleteUser: deleteUser,
     setLinkedInUrl: setLinkedInUrl,
     setDBLPUrl: setDBLPUrl,
-    setGithubUserName: setGithubUserName
+    setGithubUserName: setGithubUserName,
+    setUserUploadedYmlUrl: setUserUploadedYmlUrl,
+    setZippedCvUrl: setZippedCvUrl
 };

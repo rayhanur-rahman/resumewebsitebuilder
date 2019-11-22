@@ -19,42 +19,42 @@ async function ExtractingLinkedInInfo(userId, url) {
     var profile_data = await helper.getLinkedInData(url);
     console.log(profile_data);
 
-    var linkedInData = {
-        name: profile_data.profileAlternative.name,
-        title: profile_data.profileAlternative.headline,
-        imageUrl: profile_data.profileAlternative.imageurl,
-        summary: profile_data.profileAlternative.summary,
-        education: [],
-        experience: [],
-        skills: '',
-        username: linkedinUserName
-    }
-
-    profile_data.skills.forEach(element => {
-        linkedInData.skills = linkedInData.skills + ' | ' + element.title;
-    });
-
-    profile_data.positions.forEach(item => {
-        linkedInData.experience.push({
-            role: item.title,
-            time: item.date1,
-            company: item.companyName,
-            location: item.location,
-            details: item.description
+    if (profile_data != null){
+        var linkedInData = {
+            name: profile_data.profileAlternative.name,
+            title: profile_data.profileAlternative.headline,
+            imageUrl: profile_data.profileAlternative.imageurl,
+            summary: profile_data.profileAlternative.summary,
+            education: [],
+            experience: [],
+            skills: '',
+            username: linkedinUserName
+        }
+    
+        profile_data.skills.forEach(element => {
+            linkedInData.skills = linkedInData.skills + ' | ' + element.title;
         });
-    });
-
-    profile_data.educations.forEach(item => {
-        linkedInData.education.push({
-            university: item.title,
-            time: item.date1 + ' - ' + item.date2,
-            major: item.fieldofstudy,
-            degree: item.degree,
-            details: item.description
+    
+        profile_data.positions.forEach(item => {
+            linkedInData.experience.push({
+                role: item.title,
+                time: item.date1,
+                company: item.companyName,
+                location: item.location,
+                details: item.description
+            });
         });
-    });
+    
+        profile_data.educations.forEach(item => {
+            linkedInData.education.push({
+                university: item.title,
+                time: item.date1 + ' - ' + item.date2,
+                major: item.fieldofstudy,
+                degree: item.degree,
+                details: item.description
+            });
+        });
 
-    if (profile_data != null) {
         var dbo = await MongoHelper.openConnection();
         var response = await MongoHelper.findObject(dbo, {
             user: userId
@@ -70,7 +70,8 @@ async function ExtractingLinkedInInfo(userId, url) {
         }
         MongoHelper.closeConnection();
         return true;
-    } else
+    }
+    else
         return false;
 }
 
@@ -256,7 +257,7 @@ async function mergeAllInfo(userId) {
         user: userId
     }, {
         $set: {
-            fileURL: link
+            generatedYMLFileUrl: link
         }
     });
     MongoHelper.closeConnection();

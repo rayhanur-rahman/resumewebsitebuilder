@@ -234,7 +234,7 @@ async function getLinkedInData(profileLink) {
     }).then((profileScraper) => profileScraper(profileLink))
     .then((profile) => {
         return profile;
-    }).catch(err => {console.log(err); return null;});
+    }).catch(err => {console.log('could not parse linkedin site, try again later'); return null;});
 }
 
 

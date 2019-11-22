@@ -109,7 +109,7 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
         bot.createConversation(message, function (err, convo) {
             // create a path for when a user says NO
             convo.addMessage({
-                text: "Based on the information provided, I was able to generate a file. The file is uploaded at {{& vars.link}}. Go to this link and check the yml file. Please fill in if there are any missing fields. Type in 'verify' to upload any revisions",
+                text: "Based on the information provided, I was able to generate a file. The file is uploaded at {{& vars.generatedYmlUrl.url}}. Go to this link and check the yml file. Please fill in if there are any missing fields. Type in 'verify' to upload any revisions",
             }, 'Valid');
 
             // create a path where neither option was matched
@@ -204,7 +204,8 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     await helper.incrementLevel(convo.context.user);
                     // helper.setNoGithubFlag(convo.context.user, true);
                     var link =  await service.mergeAllInfo(convo.context.user);
-                    convo.setVar('link', link);
+                    // convo.setVar('link', link);
+                    convo.setVar('generatedYmlUrl', {user: convo.context.user, url: link})
                     convo.gotoThread('Valid');
                 } else if (response.text === 'terminate'){
                     await helper.setLevel(0, message.user);
@@ -223,7 +224,8 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                             await helper.incrementLevel(convo.context.user);
                             console.log('done')
                             var link = await service.mergeAllInfo(convo.context.user);
-                            convo.setVar('link', link);
+                            // convo.setVar('link', link);
+                            convo.setVar('generatedYmlUrl', {user: convo.context.user, url: link})
                             convo.gotoThread('Valid');
                             console.log('done 2');
                         }
@@ -260,10 +262,12 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                     callback: async function (response, convo) {
 
                         var path = await service.downloadYmlFile(response.text.substring(1, response.text.length - 1));
-                        convo.setVar('ymlpath', path);
+                        // convo.setVar('ymlpath', path);
+                        convo.setVar('userUploadedYmlUrl', {user: convo.context.user, url: path})
                         console.log(path);
+                        await helper.setUserUploadedYmlUrl(path, convo.context.user)
                         
-                        if (service.verifyYMLContent(convo.vars.ymlpath)) {
+                        if (service.verifyYMLContent(convo.vars.userUploadedYmlUrl.url)) {
                             convo.gotoThread('Template_Choice');
                         } else {
                             convo.gotoThread('invalid_YML_content');
@@ -285,10 +289,12 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
             
             convo.addQuestion('Data verified. Do you want your CV in industrial or academic format?[i/a]', async function (response, convo) {
                 if (response.text === 'i') {
-                    convo.setVar('choice', response.text);
+                    // convo.setVar('choice', response.text);
+                    convo.setVar('choice', {user: convo.context.user, choice: response.text})
                     convo.gotoThread('valid2');
                 } else if (response.text === 'a') {
-                    convo.setVar('choice', response.text);
+                    // convo.setVar('choice', response.text);
+                    convo.setVar('choice', {user: convo.context.user, choice: response.text})
                     convo.gotoThread('valid2');
                     //convo.gotoThread('session_terminated');
                 } else if (response.text === 'terminate') {
@@ -305,12 +311,20 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                 if (response.text === 'github') {
                     convo.gotoThread('github_thread_token');
                 } else if (response.text === 'zip') {
-                    var link = await service.uploadZippedCV(convo.context.user, convo.vars.ymlpath, convo.vars.choice);
-                    
-                    bot.reply(message, link);
-                    convo.setVar('link', link);
-                    convo.gotoThread('zipped_CV_uploaded');
-                    //convo.gotoThread('session_terminated');
+
+                    if (convo.context.user == convo.vars.userUploadedYmlUrl.user &&
+                        convo.context.user == convo.vars.choice.user){
+                            var link = await service.uploadZippedCV(convo.context.user, convo.vars.userUploadedYmlUrl.url, convo.vars.choice.choice);
+                            await helper.setZippedCvUrl(link, convo.context.user)
+                            bot.reply(message, link);
+                            // convo.setVar('link', link);
+                            convo.setVar('uploadedZippedCV', {user: convo.context.user, url: link})
+                            convo.gotoThread('zipped_CV_uploaded');
+                        }
+                    else {
+                        bot.reply(message, 'please only talk to bot one user at a time')
+                        convo.gotoThread('default')
+                    }
                 } else if (response.text === 'terminate') {
                     helper.setLevel(0, message.user);
                     await service.deleteAllData(convo.context.user);
@@ -323,7 +337,8 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
             convo.addQuestion('Token?', [{
                     pattern: /.*/,
                     callback: function (response, convo) {
-                        convo.setVar('token', response.text)
+                        // convo.setVar('token', response.text)
+                        convo.setVar('githubToken', {user: convo.context.user, token: response.text})
                         convo.gotoThread('github_thread_repoName');
                     },
                 },
@@ -338,11 +353,20 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                     pattern: /.*/,
                     callback: async function (response, convo) {
                         // This will create the cv repository for the user
-                        convo.setVar('username', response.text)
-                        if (await service.createRepoForUser(convo.context.user, convo.vars.username, convo.vars.token, convo.vars.ymlpath, convo.vars.choice)) {
-                            convo.gotoThread('repoCreated');
-                        } else {
-                            convo.gotoThread('bad_at_repoCreation');
+                        // convo.setVar('username', response.text)
+                        convo.setVar('githubUserName', {user: convo.context.user, username: response.text})
+                        if (convo.context.user == convo.vars.githubToken.user &&
+                            convo.context.user == convo.vars.userUploadedYmlUrl.user &&
+                            convo.context.user == convo.vars.choice.user){
+                                if (await service.createRepoForUser(convo.context.user, convo.vars.githubUserName.username, convo.vars.githubToken.token, convo.vars.userUploadedYmlUrl.url, convo.vars.choice.choice)) {
+                                    convo.gotoThread('repoCreated');
+                                } else {
+                                    convo.gotoThread('bad_at_repoCreation');
+                                }
+                        }
+                        else {
+                            bot.reply(message, 'please only talk to bot one user at a time')
+                            convo.gotoThread('default')
                         }
                     },
                 },
@@ -354,7 +378,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                 }
             ], {}, 'github_thread_repoName');
             convo.addMessage({
-                text: 'Thanks. The zipped CV has been uploaded successfully at {{& vars.link}}',
+                text: 'Thanks. The zipped CV has been uploaded successfully at {{& vars.uploadedZippedCV.url}}',
                 action: 'terminate_session2',
             }, 'zipped_CV_uploaded');
             convo.addMessage({
@@ -378,7 +402,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                 action: 'valid2',
             }, 'bad_at_valid2');
             convo.addMessage({
-                text: 'website has been published at {{& vars.username}}.github.io ', //here will be the github.io link
+                text: 'website has been published at {{& vars.githubUserName.username}}.github.io ', //here will be the github.io link
                 action: 'terminate_session2',
             }, 'repoCreated');
             // convo.addMessage({
@@ -479,6 +503,7 @@ controller.on('direct_message,mention,direct_mention', async function (bot, mess
         channel: message.channel,
         name: 'robot_face',
     }, async function (err) {
+        
         if (err) {
             console.log(err)
         }
