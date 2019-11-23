@@ -1,18 +1,7 @@
-var Transfer = require('transfer-sh');
 var fs = require('fs');
 var request = require('request');
-var MongoHelper = require('./mongo-helper.js').MongoHelper;
-const axios = require("axios");
-var xml2js = require('xml2js');
-const http_request = require('got');
-const scrapedin = require('scrapedin')
-const util = require('util');
-const utils = require('./util.js');
-const svc = require('./service-mock.js');
 var crypto = require('crypto');
 var walk = require('walk');
-const admZip = require('adm-zip');
-
 
 
 
@@ -228,10 +217,11 @@ const validateSchema = require('yaml-schema-validator')
 
 function verifyYMLContent(path) {
     var errors = validateSchema(path, {
-        schemaPath: './schema.yaml' // can also be schema.json
+        schemaPath: './schema.yaml' ,
+        logLevel: 'verbose'
     });
     console.log(errors)
     // return (errors.length == 0) ? true : false;
 }
 
-verifyYMLContent('/home/rr/Workspace/csc510-20/resources/site-in/site/_data/data.yml');
+verifyYMLContent('/home/rr/Desktop/hh.yaml');

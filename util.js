@@ -24,18 +24,15 @@ async function download (url, dir, fileName) {
     const path = Path.resolve(__dirname, dir, fileName)
     const writer = fs.createWriteStream(path)
   
-    const response = await axios({
+    return await axios({
       url,
       method: 'GET',
       responseType: 'stream'
-    })
-  
-    response.data.pipe(writer)
-  
-    return new Promise((resolve, reject) => {
-      writer.on('finish', () => {resolve(true)})
-      writer.on('error', () => {reject(false)})
-    })
+    }).then(function (response) {
+        response.data.pipe(writer)
+        return true
+      }).catch(rej => {
+          return false})
 }
 
 function getUserIdFromDBLPLink(userLink) {

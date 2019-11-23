@@ -237,6 +237,7 @@ async function getLinkedInData(profileLink) {
         email: process.env.LINKEDIN_MAILID,
         password: process.env.LINKEDIN_PASS
     }).then((profileScraper) => profileScraper(profileLink))
+    .catch(err => {console.log('could not parse linkedin site, try again later'); return null;})
     .then((profile) => {
         return profile;
     }).catch(err => {console.log('could not parse linkedin site, try again later'); return null;});
