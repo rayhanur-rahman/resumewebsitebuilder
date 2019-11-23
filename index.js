@@ -77,6 +77,14 @@ controller.hears('start', 'direct_message', async function (bot, message) {
             }, 'no_thread');
 
             convo.addMessage({
+                text: 'Please Say I am ready when you are ready',
+            }, 'level-1');
+
+            convo.addMessage({
+                text: 'Please Say Verify when you are done with your YML file Validation',
+            }, 'level-2');
+
+            convo.addMessage({
                 text: 'Sorry I did not understand.',
                 action: 'default',
             }, 'bad_response');
@@ -91,7 +99,10 @@ controller.hears('start', 'direct_message', async function (bot, message) {
                     await helper.setLevel(0, convo.context.user);
                 } else if (response.text === 'n') {
                     //TODO get user level and provide hints
-                    convo.gotoThread('no_thread');
+                    var level = await helper.getLevel(message.user);
+                    if (level == 1) convo.gotoThread('level-1')
+                    if (level == 2) convo.gotoThread('level-2')
+                    // convo.gotoThread('no_thread');
                 } else if (response.text === 'terminate'){
                     await helper.deleteUser(convo.context.user);
                     await service.deleteAllData(convo.context.user);
