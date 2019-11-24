@@ -1,4 +1,6 @@
 const fs = require('fs');
+const fse = require('fs-extra')
+const rmrf= require('rimraf')
 const utils = require('./util.js')
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
 const http_request = require('got');
@@ -35,15 +37,24 @@ async function prepareRepoForResume(userId, username, token, path, zip){
     var randomTmpFolderName = await prepareTempData(userId, path, zip);
     await pushDataToGitHub(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)
     console.log('complete')
+    // fse.removeSync('./tmp/*');
+    rmrf.sync('./tmp/*')
     return true;
 }
 
 
 async function prepareZippedFile(userId, path, zip){
     var randomTmpFolderName = await prepareTempData(userId, path, zip);
+
+    var randomTmpFolderNameForZippedSite = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    if (!fs.existsSync(`./tmp/${randomTmpFolderNameForZippedSite}`)) {
+        fs.mkdirSync(`./tmp/${randomTmpFolderNameForZippedSite}`);
+    }
+
     let link;
-    if (await utils.zipFolder(`./tmp/${randomTmpFolderName}/site`, './site.zip')) {
-        link = await utils.upload('./site.zip').catch(exception => {
+    if (await utils.zipFolder(`./tmp/${randomTmpFolderName}/site`, `./tmp/${randomTmpFolderNameForZippedSite}/site.zip`)) {
+        link = await utils.upload(`./tmp/${randomTmpFolderNameForZippedSite}/site.zip`).catch(exception => {
             return null;
         });
         var dbo = await MongoHelper.openConnection();
@@ -61,6 +72,8 @@ async function prepareZippedFile(userId, path, zip){
         }
     }
     MongoHelper.closeConnection();
+    // fse.removeSync('./tmp/')
+    rmrf.sync('./tmp/*')
     return link;
 }
 

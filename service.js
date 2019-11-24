@@ -5,6 +5,7 @@ const YAML = require('json2yaml');
 const admZip = require('adm-zip');
 var MongoHelper = require('./mongo-helper.js').MongoHelper;
 const validateSchema = require('yaml-schema-validator')
+const fse = require('fs-extra')
 
 require('dotenv').config();
 
@@ -197,7 +198,6 @@ async function uploadZippedCV(userId, path, choice) {
     }
 
     var link = await helper.prepareZippedFile(userId, path, zip)
-    fs.unlinkSync('site.zip');
     return link;
 }
 
@@ -240,11 +240,15 @@ async function mergeAllInfo(userId) {
             }
         });
         var ymlText = YAML.stringify(response.profileData);
-        fs.writeFileSync('data.yml', ymlText, (err) => {
+        var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
+            fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
+        }
+        fs.writeFileSync(`./tmp/${randomTmpFolderName}/data.yml`, ymlText, (err) => {
             console.log(err)
         });
     }
-    var link = await utils.upload('./data.yml').catch(exception => {
+    var link = await utils.upload(`./tmp/${randomTmpFolderName}/data.yml`).catch(exception => {
         return null;
     });
     if (link != null) await MongoHelper.updateObject(dbo, {
@@ -255,7 +259,7 @@ async function mergeAllInfo(userId) {
         }
     });
     MongoHelper.closeConnection();
-    fs.unlinkSync('data.yml');
+    fse.removeSync('./tmp/*');
     return link;
 }
 
