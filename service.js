@@ -241,8 +241,15 @@ async function mergeAllInfo(userId) {
         });
         var ymlText = YAML.stringify(response.profileData);
         var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
+        // if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
+        //     fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
+        // }
+        try{
+        if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)){
             fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
+        }
+        }catch(err){
+            console.log(err);
         }
         fs.writeFileSync(`./tmp/${randomTmpFolderName}/data.yml`, ymlText, (err) => {
             console.log(err)
