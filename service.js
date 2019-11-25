@@ -87,21 +87,41 @@ async function ExtractingDBLPInfo(userId, response) {
 
         result.forEach(item => {
             if (item.article != null) {
-                dblpData.push({
-                    title: item.article[0].title[0],
-                    authors: item.article[0].author.join(', '),
-                    conference: item.article[0].journal[0],
-                    link: 'https://dblp.org/' + item.article[0].url[0]
-                });
+                if(typeof(item.article[0].title[0])==='string'){
+                    dblpData.push({
+                        title: item.article[0].title[0],
+                        authors: item.article[0].author.join(', '),
+                        conference: item.article[0].journal[0],
+                        link: 'https://dblp.org/' + item.article[0].url[0]
+                    });
+                } else {
+                    console.log("Title Object");
+                    dblpData.push({
+                        title: item.article[0].title[0]._,
+                        authors: item.article[0].author.join(', '),
+                        conference: item.article[0].journal[0],
+                        link: 'https://dblp.org/' + item.article[0].url[0]
+                    });
+                } 
             }
 
             if (item.inproceedings != null) {
-                dblpData.push({
-                    title: item.inproceedings[0].title[0],
-                    authors: item.inproceedings[0].author.join(', '),
-                    conference: item.inproceedings[0].booktitle[0],
-                    link: 'https://dblp.org/' + item.inproceedings[0].url[0]
-                });
+                //console.log(item.article[0].title[0]);
+                if(typeof(item.inproceedings[0].title[0])==='string'){
+                    dblpData.push({
+                        title: item.inproceedings[0].title[0],
+                        authors: item.inproceedings[0].author.join(', '),
+                        conference: item.inproceedings[0].booktitle[0],
+                        link: 'https://dblp.org/' + item.inproceedings[0].url[0]
+                    });
+                } else {
+                    dblpData.push({
+                        title: item.inproceedings[0].title[0]._,
+                        authors: item.inproceedings[0].author.join(', '),
+                        conference: item.inproceedings[0].booktitle[0],
+                        link: 'https://dblp.org/' + item.inproceedings[0].url[0]
+                    });
+                }
             }
         })
 
