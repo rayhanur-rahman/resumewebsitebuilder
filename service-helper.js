@@ -17,6 +17,8 @@ const dblpUrl = "https://dblp.org";
 async function prepareTempData(userId, path, zip){
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
+    if (!fs.existsSync(`./tmp`)) fs.mkdirSync(`./tmp`);
+    
     if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
         fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
     }
@@ -26,8 +28,10 @@ async function prepareTempData(userId, path, zip){
         if (err) throw err;
     });
 
-    profilePicUrl = (await helper.getProfileData(userId)).intro.avatar.path
-    await utils.download(profilePicUrl, `./tmp/${randomTmpFolderName}/site/assets/images/`, 'profile.png')
+    var profilePicUrl = (await helper.getProfileData(userId)).intro.avatar.path
+    if (profilePicUrl != '...') {
+        await utils.download(profilePicUrl, `./tmp/${randomTmpFolderName}/site/assets/images/`, 'profile.png')
+    }
 
     return randomTmpFolderName
 }
@@ -47,6 +51,8 @@ async function prepareZippedFile(userId, path, zip){
     var randomTmpFolderName = await prepareTempData(userId, path, zip);
 
     var randomTmpFolderNameForZippedSite = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    if (!fs.existsSync(`./tmp`)) fs.mkdirSync(`./tmp`);
 
     if (!fs.existsSync(`./tmp/${randomTmpFolderNameForZippedSite}`)) {
         fs.mkdirSync(`./tmp/${randomTmpFolderNameForZippedSite}`);

@@ -87,21 +87,44 @@ async function ExtractingDBLPInfo(userId, response) {
 
         result.forEach(item => {
             if (item.article != null) {
-                dblpData.push({
-                    title: item.article[0].title[0],
-                    authors: item.article[0].author.join(', '),
-                    conference: item.article[0].journal[0],
-                    link: 'https://dblp.org/' + item.article[0].url[0]
-                });
+                
+                if(typeof(item.article[0].title[0])==='string'){
+                    dblpData.push({
+                        title: item.article[0].title[0],
+                        authors: item.article[0].author.join(', '),
+                        conference: item.article[0].journal[0],
+                        link: 'https://dblp.org/' + item.article[0].url[0]
+                    });
+                } else {
+                    console.log("Title Object");
+                    dblpData.push({
+                        title: item.article[0].title[0]._,
+                        authors: item.article[0].author.join(', '),
+                        conference: item.article[0].journal[0],
+                        link: 'https://dblp.org/' + item.article[0].url[0]
+                    });
+                } 
+
             }
 
             if (item.inproceedings != null) {
-                dblpData.push({
-                    title: item.inproceedings[0].title[0],
-                    authors: item.inproceedings[0].author.join(', '),
-                    conference: item.inproceedings[0].booktitle[0],
-                    link: 'https://dblp.org/' + item.inproceedings[0].url[0]
-                });
+                
+                if(typeof(item.inproceedings[0].title[0])==='string'){
+                    dblpData.push({
+                        title: item.inproceedings[0].title[0],
+                        authors: item.inproceedings[0].author.join(', '),
+                        conference: item.inproceedings[0].booktitle[0],
+                        link: 'https://dblp.org/' + item.inproceedings[0].url[0]
+                    });
+                } else {
+                    dblpData.push({
+                        title: item.inproceedings[0].title[0]._,
+                        authors: item.inproceedings[0].author.join(', '),
+                        conference: item.inproceedings[0].booktitle[0],
+                        link: 'https://dblp.org/' + item.inproceedings[0].url[0]
+                    });
+                }
+
             }
         })
 
@@ -239,6 +262,7 @@ async function mergeAllInfo(userId) {
                 profileData: response.profileData
             }
         });
+        if (!fs.existsSync(`./tmp`)) fs.mkdirSync(`./tmp`);
         var ymlText = YAML.stringify(response.profileData);
         var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
@@ -279,6 +303,7 @@ async function deleteAllData(user) {
 
 async function downloadYmlFile(url){
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    if (!fs.existsSync(`./tmp`)) fs.mkdirSync(`./tmp`);
     if (!fs.existsSync(`./tmp/${randomTmpFolderName}`)) {
         fs.mkdirSync(`./tmp/${randomTmpFolderName}`);
     }
