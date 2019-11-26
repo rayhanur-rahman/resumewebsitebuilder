@@ -10,7 +10,7 @@ var profileData = {
         title: '...',
         avatar: {
             display: true,
-            path: 'profile.png'
+            path: '...'
         }
     },
     contact: {

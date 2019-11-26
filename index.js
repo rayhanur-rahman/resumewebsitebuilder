@@ -59,11 +59,9 @@ controller.on('message, message.channels, message.im', function (bot, message) {
 });
 
 controller.hears('start', 'direct_message', async function (bot, message) {
-
-    // await service.mergeAllInfo(message.user);
-    // return;
-
+    
     await helper.setUser(message.user);
+
     if (await helper.getLevel(message.user) === 0) {
         bot.reply(message, 'Welcome! This bot will help you build your one page resume website. Please say \'I am ready\' when you have your linkedin and dblp public url along with your github username. If you do not have any of this, bot can generate an empty website for you!');
         await helper.incrementLevel(message.user);
@@ -96,15 +94,13 @@ controller.hears('start', 'direct_message', async function (bot, message) {
 
             convo.addQuestion('A session is already going on. Do you want to start a new session [y/n]?', async function (response, convo) {
                 if (response.text === 'y') {
-                    convo.gotoThread('yes_thread');
                     await helper.setLevel(0, convo.context.user);
                     await service.deleteAllData(convo.context.user);
+                    convo.gotoThread('yes_thread');
                 } else if (response.text === 'n') {
-                    //TODO get user level and provide hints
                     var level = await helper.getLevel(message.user);
                     if (level == 1) convo.gotoThread('level-1')
                     if (level == 2) convo.gotoThread('level-2')
-                    // convo.gotoThread('no_thread');
                 } else if (response.text === 'terminate') {
                     await helper.deleteUser(convo.context.user);
                     await service.deleteAllData(convo.context.user);
@@ -140,7 +136,6 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                 if (response.text === 'yes') {
                     convo.gotoThread('Ask_Url_LinkedIn');
                 } else if (response.text === 'no') {
-                    // await helper.setNoLinkedFlag(convo.context.user, true)
                     convo.gotoThread('Ask_DBLP');
                 } else if (response.text === 'terminate') {
                     await helper.setLevel(0, message.user);
@@ -156,12 +151,19 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     callback: async function (response, convo) {
                         console.log(response.text);
                         await helper.setLinkedInUrl(convo.context.user, response.text.substring(1, response.text.length - 1));
-                        if (await service.ExtractingLinkedInInfo(convo.context.user, response.text.substring(1, response.text.length - 1))) {
-                            convo.gotoThread('Ask_DBLP');
-                        } else {
-                            bot.reply(message, 'Sorry! The Url is wrong...')
+                        try {
+                            if (await service.ExtractingLinkedInInfo(convo.context.user, response.text.substring(1, response.text.length - 1))) {
+                                convo.gotoThread('Ask_DBLP');
+                            } else {
+                                bot.reply(message, 'Sorry! The Url is wrong...')
+                                convo.gotoThread('Ask_Url_LinkedIn');
+                            }
+                        }
+                        catch(ex){
+                            bot.reply(message, 'Sorry! Something went wrong...')
                             convo.gotoThread('Ask_Url_LinkedIn');
                         }
+                        
                     },
                 },
                 {
@@ -190,10 +192,17 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     pattern: /.*/,
                     callback: async function (response, convo) {
                         await helper.setDBLPUrl(convo.context.user, response.text.substring(1, response.text.length - 1));
-                        if (await service.ExtractingDBLPInfo(convo.context.user, response.text.substring(1, response.text.length - 1))) {
-                            convo.gotoThread('Ask_GitHub');
-                        } else {
-                            bot.reply(message, 'Sorry! The Url is wrong...')
+
+                        try{
+                            if (await service.ExtractingDBLPInfo(convo.context.user, response.text.substring(1, response.text.length - 1))) {
+                                convo.gotoThread('Ask_GitHub');
+                            } else {
+                                bot.reply(message, 'Sorry! The Url is wrong...')
+                                convo.gotoThread('yes_dblp_thread');
+                            }
+                        }
+                        catch(ex){
+                            bot.reply(message, 'Sorry! Something went wrong...')
                             convo.gotoThread('yes_dblp_thread');
                         }
                     },
@@ -216,18 +225,25 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                 if (response.text === 'yes') {
                     convo.gotoThread('yes_github_thread');
                 } else if (response.text === 'no') {
-                    var link = await service.mergeAllInfo(convo.context.user);
-                    if (link != null) {
-                        convo.setVar('generatedYmlUrl', {
-                            user: convo.context.user,
-                            url: link
-                        })
-                        await helper.incrementLevel(convo.context.user);
-                        convo.gotoThread('Valid');
-                    } else {
+                    try {
+                        var link = await service.mergeAllInfo(convo.context.user);
+                        if (link != null) {
+                            convo.setVar('generatedYmlUrl', {
+                                user: convo.context.user,
+                                url: link
+                            })
+                            await helper.incrementLevel(convo.context.user);
+                            convo.gotoThread('Valid');
+                        } else {
+                            bot.reply(message, 'Sorry! Something went wrong. Let\'s start again')
+                            convo.gotoThread('default');
+                        }
+                    }
+                    catch(ex){
                         bot.reply(message, 'Sorry! Something went wrong. Let\'s start again')
                         convo.gotoThread('default');
                     }
+                    
                 } else if (response.text === 'terminate') {
                     await helper.setLevel(0, message.user);
                     await service.deleteAllData(convo.context.user);
@@ -241,23 +257,30 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                     pattern: /.*/,
                     callback: async function (response, convo) {
                         await helper.setGithubUserName(convo.context.user, response.text);
-                        if (await service.ExtractingGithubInfo(convo.context.user, response.text)) {
-                            var link = await service.mergeAllInfo(convo.context.user);
-                            if (link != null) {
-                                convo.setVar('generatedYmlUrl', {
-                                    user: convo.context.user,
-                                    url: link
-                                })
-                                await helper.incrementLevel(convo.context.user);
-                                convo.gotoThread('Valid');
+                        try {
+                            if (await service.ExtractingGithubInfo(convo.context.user, response.text)) {
+                                var link = await service.mergeAllInfo(convo.context.user);
+                                if (link != null) {
+                                    convo.setVar('generatedYmlUrl', {
+                                        user: convo.context.user,
+                                        url: link
+                                    })
+                                    await helper.incrementLevel(convo.context.user);
+                                    convo.gotoThread('Valid');
+                                } else {
+                                    bot.reply(message, 'Sorry! Something went wrong. Let\'s start again')
+                                    convo.gotoThread('default');
+                                }
                             } else {
-                                bot.reply(message, 'Sorry! Something went wrong. Let\'s start again')
-                                convo.gotoThread('default');
+                                bot.reply(message, 'Sorry! The github info is wrong')
+                                convo.gotoThread('Ask_GitHub')
                             }
-                        } else {
-                            bot.reply(message, 'Sorry! The github info is wrong')
+                        }
+                        catch(ex){
+                            bot.reply(message, 'Sorry! Something went wrong')
                             convo.gotoThread('Ask_GitHub')
                         }
+                        
                     },
                 },
                 {
@@ -286,25 +309,32 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
             convo.addQuestion('Please give me a shareable link of the yml file in the form of [http|https]://[any file sharing website url]', [{
                     pattern: /.*/,
                     callback: async function (response, convo) {
+                        try {
+                            var path = await service.downloadYmlFile(response.text.substring(1, response.text.length - 1));
 
-                        var path = await service.downloadYmlFile(response.text.substring(1, response.text.length - 1));
+                            if (path != null) {
+                                convo.setVar('userUploadedYmlUrl', {
+                                    user: convo.context.user,
+                                    url: path
+                                })
+                                console.log(path);
+                                await helper.setUserUploadedYmlUrl(path, convo.context.user)
 
-                        if (path != null) {
-                            convo.setVar('userUploadedYmlUrl', {
-                                user: convo.context.user,
-                                url: path
-                            })
-                            console.log(path);
-                            await helper.setUserUploadedYmlUrl(path, convo.context.user)
-
-                            if (service.verifyYMLContent(convo.vars.userUploadedYmlUrl.url)) {
-                                convo.gotoThread('Template_Choice');
+                                if (service.verifyYMLContent(convo.vars.userUploadedYmlUrl.url)) {
+                                    convo.gotoThread('Template_Choice');
+                                } else {
+                                    convo.gotoThread('invalid_YML_content');
+                                }
                             } else {
-                                convo.gotoThread('invalid_YML_content');
+                                convo.gotoThread('bad_at_default');
                             }
-                        } else {
+
+                        }catch(ex){
+                            bot.reply(message, 'Sorry, Something went wrong')
                             convo.gotoThread('bad_at_default');
                         }
+
+                        
                     },
                 },
                 {
@@ -349,25 +379,31 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                     convo.gotoThread('github_thread_username');
                 } else if (response.text === 'zip') {
 
-                    if (convo.context.user == convo.vars.userUploadedYmlUrl.user &&
-                        convo.context.user == convo.vars.choice.user) {
-                        var link = await service.uploadZippedCV(convo.context.user, convo.vars.userUploadedYmlUrl.url, convo.vars.choice.choice);
-                        if (link != null) {
-                            await helper.setZippedCvUrl(link, convo.context.user)
-                            bot.reply(message, link);
-                            convo.setVar('uploadedZippedCV', {
-                                user: convo.context.user,
-                                url: link
-                            })
-                            convo.gotoThread('zipped_CV_uploaded');
+                    try {
+                        if (convo.context.user == convo.vars.userUploadedYmlUrl.user &&
+                            convo.context.user == convo.vars.choice.user) {
+                            var link = await service.uploadZippedCV(convo.context.user, convo.vars.userUploadedYmlUrl.url, convo.vars.choice.choice);
+                            if (link != null) {
+                                await helper.setZippedCvUrl(link, convo.context.user)
+                                convo.setVar('uploadedZippedCV', {
+                                    user: convo.context.user,
+                                    url: link
+                                })
+                                convo.gotoThread('zipped_CV_uploaded');
+                            } else {
+                                bot.reply(message, 'something went wrong...')
+                                convo.gotoThread('valid2')
+                            }
                         } else {
-                            bot.reply(message, 'something went wrong...')
+                            bot.reply(message, 'please only talk to bot one user at a time')
                             convo.gotoThread('valid2')
                         }
-                    } else {
-                        bot.reply(message, 'please only talk to bot one user at a time')
+                    }catch(ex){
+                        bot.reply(message, 'SOmething went wrong')
                         convo.gotoThread('valid2')
                     }
+
+                    
                 } else if (response.text === 'terminate') {
                     await helper.setLevel(0, message.user);
                     await service.deleteAllData(convo.context.user);
@@ -405,21 +441,25 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                             token: response.text
                         })
 
-                        if (convo.context.user == convo.vars.githubUserName.user &&
-                            convo.context.user == convo.vars.userUploadedYmlUrl.user &&
-                            convo.context.user == convo.vars.choice.user) 
-                        {
-                            if (await service.createRepoForUser(convo.context.user, convo.vars.githubUserName.username, convo.vars.githubToken.token, convo.vars.userUploadedYmlUrl.url, convo.vars.choice.choice)) 
+                        try{
+                            if (convo.context.user == convo.vars.githubUserName.user &&
+                                convo.context.user == convo.vars.userUploadedYmlUrl.user &&
+                                convo.context.user == convo.vars.choice.user) 
                             {
-                                convo.gotoThread('repoCreated');
+                                if (await service.createRepoForUser(convo.context.user, convo.vars.githubUserName.username, convo.vars.githubToken.token, convo.vars.userUploadedYmlUrl.url, convo.vars.choice.choice)) 
+                                {
+                                    convo.gotoThread('repoCreated');
+                                } else {
+                                    convo.gotoThread('bad_at_repoCreation');
+                                }
                             } else {
-                                convo.gotoThread('bad_at_repoCreation');
+                                bot.reply(message, 'please only talk to bot one user at a time')
+                                convo.gotoThread('bad_at_repoCreation')
                             }
-                        } else {
-                            bot.reply(message, 'please only talk to bot one user at a time')
+                        } catch(ex){
+                            bot.reply(message, 'Something went wrong')
                             convo.gotoThread('bad_at_repoCreation')
                         }
-
                     },
                 },
                 {

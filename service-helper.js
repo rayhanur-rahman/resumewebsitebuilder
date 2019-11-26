@@ -136,7 +136,7 @@ async function createRepo(repo, token) {
                 url: gitHubUrl + endpoint,
                 method: "POST",
                 headers: {
-                    "User-Agent": "CSC510-REST-WORKSHOP",
+                    "User-Agent": "Resume Slack Bot",
                     "content-type": "application/json",
                     "Authorization": `token ${token}`
                 },
@@ -183,7 +183,7 @@ async function PushFileToGithub(username, RepoName, token, absolutePath, relativ
                 url: gitHubUrl + endpoint,
                 method: "PUT",
                 headers: {
-                    "User-Agent": "CSC510-REST-WORKSHOP",
+                    "User-Agent": "Resume Slack Bot",
                     "content-type": "application/json",
                     "Authorization": `token ${token}`
                 },
