@@ -98,6 +98,7 @@ controller.hears('start', 'direct_message', async function (bot, message) {
                 if (response.text === 'y') {
                     convo.gotoThread('yes_thread');
                     await helper.setLevel(0, convo.context.user);
+                    await service.deleteAllData(convo.context.user);
                 } else if (response.text === 'n') {
                     //TODO get user level and provide hints
                     var level = await helper.getLevel(message.user);
@@ -368,7 +369,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                         convo.gotoThread('valid2')
                     }
                 } else if (response.text === 'terminate') {
-                    helper.setLevel(0, message.user);
+                    await helper.setLevel(0, message.user);
                     await service.deleteAllData(convo.context.user);
                     convo.gotoThread('session_terminated');
                 } else {
@@ -397,6 +398,8 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
             convo.addQuestion('Token?', [{
                     pattern: /.*/,
                     callback: async function (response, convo) {
+                        bot.reply(message, 'Pushing items to your github. This might take a while...')
+
                         convo.setVar('githubToken', {
                             user: convo.context.user,
                             token: response.text
@@ -525,6 +528,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                     callback: async function (response, convo) {
                         convo.gotoThread('yes_thread');
                         await helper.setLevel(0, convo.context.user);
+                        await service.deleteAllData(message.user);
                     },
 
                 },
