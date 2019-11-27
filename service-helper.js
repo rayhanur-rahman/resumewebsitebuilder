@@ -13,7 +13,7 @@ const helper = require('./bot-helper.js')
 const gitHubUrl = "https://api.github.com";
 const dblpUrl = "https://dblp.org";
 
-var retryCount = 3;
+var retryCount = 2;
 
 
 async function prepareTempData(userId, path, zip){
@@ -281,7 +281,7 @@ async function getLinkedInData(profileLink) {
                 continue;
             }
             else{
-                console.log(profileData)
+                // console.log(profileData)
                 return profileData;
             }
         }
@@ -289,7 +289,7 @@ async function getLinkedInData(profileLink) {
         
     })
     .then((profile) => {
-        console.log(profile)
+        // console.log(profile)
         return profile;
     }).catch(err => {console.log('could not parse linkedin site, try again later'); return null;});
 }
@@ -323,6 +323,3 @@ module.exports = {
     getDblpData : getDblpData,
     getGitHubData : getGitHubData
 }
-
-var data = getLinkedInData("https://www.linkedin.com/in/marufulhaque")
-
