@@ -13,6 +13,8 @@ const helper = require('./bot-helper.js')
 const gitHubUrl = "https://api.github.com";
 const dblpUrl = "https://dblp.org";
 
+var retryCount = 3;
+
 
 async function prepareTempData(userId, path, zip){
     var randomTmpFolderName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -250,14 +252,44 @@ async function getDblpData(userName) {
         });
 }
 
+async function retryGettingLinkedInData(profileLink){
+    return scrapedin({
+        email: process.env.LINKEDIN_MAILID,
+        password: process.env.LINKEDIN_PASS
+    }).then((profileScraper) => profileScraper(profileLink))
+    .catch(err => {
+        console.log('could not parse linkedin site, try again later');   
+        return null;
+    })
+    .then((profile) => {
+        return profile;
+    }).catch(err => {console.log('could not parse linkedin site, try again later'); return null;});
+}
+
 async function getLinkedInData(profileLink) {
 	console.log(profileLink);
 	return scrapedin({
         email: process.env.LINKEDIN_MAILID,
         password: process.env.LINKEDIN_PASS
     }).then((profileScraper) => profileScraper(profileLink))
-    .catch(err => {console.log('could not parse linkedin site, try again later'); return null;})
+    .catch(err => {
+        console.log('could not parse linkedin site, try again later. Retrying ...'); 
+        while(retryCount > 0){
+            var profileData = retryGettingLinkedInData(profileLink);
+            if(profileData == null) {
+                retryCount --;
+                continue;
+            }
+            else{
+                console.log(profileData)
+                return profileData;
+            }
+        }
+        return null;
+        
+    })
     .then((profile) => {
+        console.log(profile)
         return profile;
     }).catch(err => {console.log('could not parse linkedin site, try again later'); return null;});
 }
@@ -291,4 +323,6 @@ module.exports = {
     getDblpData : getDblpData,
     getGitHubData : getGitHubData
 }
+
+var data = getLinkedInData("https://www.linkedin.com/in/marufulhaque")
 
