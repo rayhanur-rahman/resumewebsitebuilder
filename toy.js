@@ -224,4 +224,25 @@ function verifyYMLContent(path) {
     // return (errors.length == 0) ? true : false;
 }
 
-verifyYMLContent('/home/rr/Desktop/hh.yaml');
+// verifyYMLContent('/home/rr/Desktop/hh.yaml');
+
+const scrapedin = require('scrapedin')
+
+const cookies = fs.readFileSync('./resources/cookies')
+const options = {
+  cookies: JSON.parse(cookies)
+}
+
+async function foo(){
+    const profileScraper = await scrapedin(options)
+    const profile = profileScraper('https://www.linkedin.com/in/rayhanur-rahman/')
+    return profile
+}
+
+async function bar(){
+    var x = await foo()
+    console.log(x)
+}
+
+bar()
+

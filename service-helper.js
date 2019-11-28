@@ -253,9 +253,10 @@ async function getDblpData(userName) {
 }
 
 async function retryGettingLinkedInData(profileLink){
+    const cookies = fs.readFileSync('./resources/cookies')
     return scrapedin({
-        email: process.env.LINKEDIN_MAILID,
-        password: process.env.LINKEDIN_PASS
+        cookies: JSON.parse(cookies),
+        hasToLog: true
     }).then((profileScraper) => profileScraper(profileLink))
     .catch(err => {
         console.log('could not parse linkedin site, try again later');   
