@@ -156,12 +156,12 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                                 convo.gotoThread('Ask_DBLP');
                             } else {
                                 bot.reply(message, 'Sorry! The Url is wrong...')
-                                convo.gotoThread('Ask_Url_LinkedIn');
+                                convo.gotoThread('default');
                             }
                         }
                         catch(ex){
                             bot.reply(message, 'Sorry! Something went wrong...')
-                            convo.gotoThread('Ask_Url_LinkedIn');
+                            convo.gotoThread('default');
                         }
                         
                     },
@@ -198,12 +198,12 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                                 convo.gotoThread('Ask_GitHub');
                             } else {
                                 bot.reply(message, 'Sorry! The Url is wrong...')
-                                convo.gotoThread('yes_dblp_thread');
+                                convo.gotoThread('Ask_DBLP');
                             }
                         }
                         catch(ex){
                             bot.reply(message, 'Sorry! Something went wrong...')
-                            convo.gotoThread('yes_dblp_thread');
+                            convo.gotoThread('Ask_DBLP');
                         }
                     },
                 },
@@ -413,7 +413,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                 }
             }, {}, 'valid2');
 
-            convo.addQuestion('User name?', [{
+            convo.addQuestion('Make sure your Github does not have a repository named <username>.github.io. Now your Github username?', [{
                     pattern: /.*/,
                     callback: async function (response, convo) {
                         convo.setVar('githubUserName', {
