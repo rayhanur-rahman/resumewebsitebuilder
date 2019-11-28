@@ -275,7 +275,7 @@ async function getLinkedInData(profileLink) {
         cookies: JSON.parse(cookies),
         isHeadless: true,
         hasToLog: true
-    }).then((profileScraper) => profileScraper(profileLink, 5000))
+    }).then((profileScraper) => profileScraper(profileLink))
     .catch(err => {
         console.log('could not parse linkedin site, try again later. Retrying ...'); 
         while(retryCount > 0){
