@@ -269,9 +269,10 @@ async function retryGettingLinkedInData(profileLink){
 
 async function getLinkedInData(profileLink) {
 	console.log(profileLink);
-	return scrapedin({
-        email: process.env.LINKEDIN_MAILID,
-        password: process.env.LINKEDIN_PASS
+	const cookies = fs.readFileSync('./resources/cookies')
+    return scrapedin({
+        cookies: JSON.parse(cookies),
+        hasToLog: true
     }).then((profileScraper) => profileScraper(profileLink))
     .catch(err => {
         console.log('could not parse linkedin site, try again later. Retrying ...'); 
