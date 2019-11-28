@@ -256,8 +256,9 @@ async function retryGettingLinkedInData(profileLink){
     const cookies = fs.readFileSync('./resources/cookies')
     return scrapedin({
         cookies: JSON.parse(cookies),
+        isHeadless: true,
         hasToLog: true
-    }).then((profileScraper) => profileScraper(profileLink))
+    }).then((profileScraper) => profileScraper(profileLink, 5000))
     .catch(err => {
         console.log('could not parse linkedin site, try again later');   
         return null;
@@ -272,8 +273,9 @@ async function getLinkedInData(profileLink) {
 	const cookies = fs.readFileSync('./resources/cookies')
     return scrapedin({
         cookies: JSON.parse(cookies),
+        isHeadless: true,
         hasToLog: true
-    }).then((profileScraper) => profileScraper(profileLink))
+    }).then((profileScraper) => profileScraper(profileLink, 5000))
     .catch(err => {
         console.log('could not parse linkedin site, try again later. Retrying ...'); 
         while(retryCount > 0){
