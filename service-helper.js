@@ -256,7 +256,13 @@ async function retryGettingLinkedInData(profileLink){
     const cookies = fs.readFileSync('./resources/cookies')
     return scrapedin({
         cookies: JSON.parse(cookies),
-        hasToLog: true
+        hasToLog: true,
+        puppeteerArgs: {
+            'args' : [
+              '--no-sandbox',
+              '--disable-setuid-sandbox'
+            ]
+          }
     }).then((profileScraper) => profileScraper(profileLink, 5000))
     .catch(err => {
         console.log('could not parse linkedin site, try again later');   
@@ -272,7 +278,13 @@ async function getLinkedInData(profileLink) {
 	const cookies = fs.readFileSync('./resources/cookies')
     return scrapedin({
         cookies: JSON.parse(cookies),
-        hasToLog: true
+        hasToLog: true,
+        puppeteerArgs: {
+            'args' : [
+              '--no-sandbox',
+              '--disable-setuid-sandbox'
+            ]
+          }
     }).then((profileScraper) => profileScraper(profileLink))
     .catch(err => {
         console.log(err)
