@@ -264,7 +264,7 @@ async function retryGettingLinkedInData(profileLink){
     })
     .then((profile) => {
         return profile;
-    }).catch(err => {console.log('could not parse linkedin site, try again later'); return null;});
+    }).catch(err => {console.log('could not parse linkedin profile, try again later'); return null;});
 }
 
 async function getLinkedInData(profileLink) {
@@ -275,6 +275,7 @@ async function getLinkedInData(profileLink) {
         hasToLog: true
     }).then((profileScraper) => profileScraper(profileLink))
     .catch(err => {
+        console.log(err)
         console.log('could not parse linkedin site, try again later. Retrying ...'); 
         while(retryCount > 0){
             var profileData = retryGettingLinkedInData(profileLink);
@@ -293,7 +294,7 @@ async function getLinkedInData(profileLink) {
     .then((profile) => {
         // console.log(profile)
         return profile;
-    }).catch(err => {console.log('could not parse linkedin site, try again later'); return null;});
+    }).catch(err => {console.log('could not parse linkedin profile, try again later'); return null;});
 }
 
 
