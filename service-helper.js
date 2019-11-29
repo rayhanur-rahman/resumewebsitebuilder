@@ -256,7 +256,6 @@ async function retryGettingLinkedInData(profileLink){
     const cookies = fs.readFileSync('./resources/cookies')
     return scrapedin({
         cookies: JSON.parse(cookies),
-        isHeadless: true,
         hasToLog: true
     }).then((profileScraper) => profileScraper(profileLink, 5000))
     .catch(err => {
@@ -273,7 +272,6 @@ async function getLinkedInData(profileLink) {
 	const cookies = fs.readFileSync('./resources/cookies')
     return scrapedin({
         cookies: JSON.parse(cookies),
-        isHeadless: true,
         hasToLog: true
     }).then((profileScraper) => profileScraper(profileLink))
     .catch(err => {
