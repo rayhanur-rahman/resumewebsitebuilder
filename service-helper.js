@@ -265,7 +265,7 @@ async function retryGettingLinkedInData(profileLink){
           }
     }).then((profileScraper) => profileScraper(profileLink, 5000))
     .catch(err => {
-        console.log('could not parse linkedin site, try again later');   
+        console.log('could not parse linkedin site, try again later...');   
         return null;
     })
     .then((profile) => {
