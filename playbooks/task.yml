@@ -1,26 +1,15 @@
 ---
 - hosts: all
   vars: 
-    dir: '/root/'
+    dir: '/root/resumeslackbot'
 
   tasks:
+   - name: setup latest nodejs package repo step 1
+     shell: "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
+   
    - name: Install nodejs
-     pacman: 
-       name: nodejs
-       state: latest
-     become: yes
-
-   - name: Install npm
-     pacman: 
-       name: npm
-       state: latest
-     become: yes
+     shell: 'sudo apt install -y nodejs git'
   
-   - name: Install git
-     pacman: 
-       name: git
-       state: latest
-     become: yes
 
    - name: Install forever
      npm: 
@@ -30,27 +19,32 @@
   
    - name: clone git repo
      git:
-       repo: https://github.com/CSC-DevOps/App
+       repo: 'https://{{ githubuser | urlencode }}:{{ githubpassword | urlencode }}@github.ncsu.edu/csc510-fall2019/CSC510-20.git'
        dest: '{{dir}}'
+   
+   - name: Install nodejs
+     shell: 'git checkout experimental'
+     args:
+       chdir: "{{dir}}"
      
    - name: npm install
-     npm: 
-       path: "{{dir}}"
-     become: yes
-
-   - name: run the app
-     command: 'forever start main.js start'
+     command: 'npm install --save'
      args:
        chdir: '{{dir}}'
+       
+   - name: 'copy .env'
+     copy:
+       src: '/home/rr/Workspace/csc510-20/.env'
+       dest : '{{dir}}'
+       
+   - name: 'copy cookies'
+     copy:
+       src: '/home/rr/Workspace/csc510-20/resources/cookies'
+       dest : '{{dir}}/resources/'
    
-   - name: clean tmp directory
-     shell: 'rm -rf *'
+   - name: run the app
+     command: 'forever start -o out.log -e err.log index.js'
      args:
-       chdir: '/tmp/'
-     become: yes
-  
-   - name: Security Check
-     pacman: 
-       name: ['bash', 'openssl', 'openssh']
-       state: latest
-     become: yes
+       chdir: '{{dir}}'
+
+# ansible-playbook -i inventory task.yml -e "githubuser=***" -e "githubpassword=***"
