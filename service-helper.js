@@ -257,6 +257,8 @@ async function retryGettingLinkedInData(profileLink){
     return scrapedin({
         cookies: JSON.parse(cookies),
         hasToLog: true,
+        isHeadless: true,
+        waitTimeMs: 50000,
         puppeteerArgs: {
             'args' : [
               '--no-sandbox',
@@ -279,6 +281,8 @@ async function getLinkedInData(profileLink) {
     return scrapedin({
         cookies: JSON.parse(cookies),
         hasToLog: true,
+        isHeadless: true,
+        waitTimeMs: 50000,
         puppeteerArgs: {
             'args' : [
               '--no-sandbox',
