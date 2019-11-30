@@ -1,0 +1,56 @@
+---
+- hosts: all
+  vars: 
+    dir: '/root/'
+
+  tasks:
+   - name: Install nodejs
+     pacman: 
+       name: nodejs
+       state: latest
+     become: yes
+
+   - name: Install npm
+     pacman: 
+       name: npm
+       state: latest
+     become: yes
+  
+   - name: Install git
+     pacman: 
+       name: git
+       state: latest
+     become: yes
+
+   - name: Install forever
+     npm: 
+       name: forever
+       global: yes
+     become: yes
+  
+   - name: clone git repo
+     git:
+       repo: https://github.com/CSC-DevOps/App
+       dest: '{{dir}}'
+     
+   - name: npm install
+     npm: 
+       path: "{{dir}}"
+     become: yes
+
+   - name: run the app
+     command: 'forever start main.js start'
+     args:
+       chdir: '{{dir}}'
+   
+   - name: clean tmp directory
+     shell: 'rm -rf *'
+     args:
+       chdir: '/tmp/'
+     become: yes
+  
+   - name: Security Check
+     pacman: 
+       name: ['bash', 'openssl', 'openssh']
+       state: latest
+     become: yes
