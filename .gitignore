@@ -5,3 +5,6 @@ npm-debug.log
 .vscode
 file.yml
 node_modules
+resources/cookies
+tmp/*
+
