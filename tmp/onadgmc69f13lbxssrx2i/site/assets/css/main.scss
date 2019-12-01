@@ -1,8 +1,0 @@
----
----
-
-@charset "utf-8";
-
-$theme-color: {{ site.theme_color | default: '#42A8C0' }};
-
-@import "default";
