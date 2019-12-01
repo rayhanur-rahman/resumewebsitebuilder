@@ -4,3 +4,4 @@ npm-debug.log
 /*.env
 .vscode
 resources/cookies
+tmp/*
