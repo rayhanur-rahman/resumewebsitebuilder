@@ -6,25 +6,29 @@ Our bot has been deployed at https://app.slack.com/client/TNEF1FW9W/DPJ0ZN02J
 
 ## Use-Case #1: Initiate a session with a resumebot
 #### Instructions: 
-* The user has to say ``'start'`` to start a conversation with the resumebot.
-* The bot will reply any one of the following:
-    1. > Welcome! This bot will help you build your one page resume website. Please say 'I am ready' when you have your linkedin and dblp public url along with your github username. If you do not have any of this, bot can generate an empty website for you! 
+* The user has to say ``'start'`` to start a conversation with the resumebot. To this, the bot can respond by any one of the following messages:
+    1. **Response i:**
+    > Welcome! This bot will help you build your one page resume website. Please say 'I am ready' when you have your linkedin and dblp public url along with your github username. If you do not have any of this, bot can generate an empty website for you!
+    2. **Response ii:**
+    > A session is already going on. Do you want to start a new session [y/n]?
     
-    2. In this case, the user needs to reply 'I am ready' to start the conversation.
-    3. If the user types in anything other than 'I am ready' the bot handles the unexpected input in the following way: 
-    4. >Sorry I did not understand. You can start a new session by saying 'start'
-    5. Hence, the user types in start to reinitiate the conversation.
-
- * Or, 
-    1. > A session is already going on. Do you want to start a new session [y/n]?
-    
-    2. In this case, the user needs to reply 'y/n'. If 'y' is the reply, the bot will reply:
+    The following gives the rationale behind both of the responses and flow of conversation after each of them.
+    * **Response i:** This occurs when the bot is ready for a new session. This can occur if a previous session was terminated, or a user wanted to reinitiate a new session in the middle of an ongoing one. Next, the following happens.
+        1. The user responds with ``I am ready`` to start the conversation.
         
-    3. > Please say 'start' to start a new session.
+        2. If the user types in anything other than ``I am ready``, the bot responds: 
+        >Sorry I did not understand. You can start a new session by saying 'start'
+        
+        Hence, the user types in ``start`` to reinitiate the conversation.
 
-    4. Then the user needs to type 'start'. Then the conversation referred to in the first conversation flow is prompted and user needs to say 'I am ready' to initiate the conversation.
+    * **Response ii:** This occurs when the bot is in the middle of an ongoing session. Next, the following happens.
+    
+        1. If the user types in `y` to **Response ii**, the bot responds with the message:
+        > Please say 'start' to start a new session.
 
-    5. If the bot replies **n** to the question asked in 1, then, the last conversation session level is retained. 
+        The user types in ``start`` and the bot responds to this with **Response i** to initiate a new session again.
+
+        2. If the user types in `n` to **Response ii**, the bot preserves the state of its last conversation so that the user can resume to the session that was already going on. 
 
 ## Use-Case #2: Gather Information from the user
 #### Instructions
