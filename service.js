@@ -283,7 +283,7 @@ async function mergeAllInfo(userId) {
         }
     });
     MongoHelper.closeConnection();
-    fse.removeSync('./tmp/*');
+    fse.removeSync(`./tmp/*`);
     return link;
 }
 

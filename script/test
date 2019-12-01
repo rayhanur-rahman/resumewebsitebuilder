@@ -1,2 +1,2 @@
 #!/bin/sh
-./node_modules/.bin/mocha ./test/sum.js
+./node_modules/.bin/mocha ./test/unit_tests.js --timeout 50000
