@@ -6,7 +6,7 @@ Our bot has been deployed at https://app.slack.com/client/TNEF1FW9W/DPJ0ZN02J
 
 ## Login credentials for TAs
 1. Join the slack workspace at https://northcarolina-s8o7157.slack.com with the following email address and password:
-    1. id: ``nkasera@ncsu.edu``
+    1. email: ``nkasera@ncsu.edu``
     2. password: ``ncsu123456``
 2. Next, from the ``Apps`` section in the left panel, click on the ``resumebot``. This is our designed bot that is deployed on the server.
 
