@@ -3,78 +3,12 @@ var request = require('request');
 var crypto = require('crypto');
 var walk = require('walk');
 
-
-
-
 const gitHubUrl = "https://api.github.com";
-const linkedinUrl = "https://api.linkedin.com/v2";
-const dblpUrl = "https://dblp.org"
 
 require('dotenv').config();
 
 
 // Retrieve
-var MongoClient = require('mongodb').MongoClient;
-
-
-// Connect to the db
-function connectToMongo() {
-    return MongoClient.connect(process.env.MONGODB_URI, {
-        useUnifiedTopology: true
-    }).then(client => {
-        console.log('mongo connection establised');
-        return client;
-
-    }).catch(err => {
-        console.log(err);
-    });
-}
-
-function selectDb(client) {
-    var dbo = client.db(process.env.DBNAME);
-    console.log('db selected');
-    return dbo;
-}
-
-function createCollection(dbo) {
-    return dbo.createCollection('dogs').then(result => {
-        console.log('collection created!');
-    }).catch(err => {
-        console.log('error');
-    });
-}
-
-function insert(dbo) {
-    var collection = dbo.collection('dogs');
-    return collection.insertOne({
-        name: 'Darth',
-        id: 3
-    }).then(res => console.log('inserted')).catch(err => console.log(err));
-}
-
-function find(dbo) {
-    var collection = dbo.collection('dogs');
-    return collection.findOne({
-        name: 'kkk'
-    }).then(res => {
-        return res;
-    }).catch(err => console.log(err));
-}
-
-async function dosth() {
-    var client = await connectToMongo();
-    var dbo = await selectDb(client);
-    await createCollection(dbo);
-    await insert(dbo);
-    console.log(await find(dbo));
-    console.log('xxx');
-}
-
-// dosth();
-// console.log('fff');
-
-
-// get GitHub data from username
 
 
 async function createRepo(repo, token) {
@@ -104,145 +38,16 @@ async function createRepo(repo, token) {
                     reject(error);
                     return; // Terminate execution.
                 }
-                console.log(body.name);
+                console.log(response.body.name)
                 resolve(body.name);
             });
     });
 }
-//Function to read file from directory and convert it to Base-64 format
-async function ReadFileAndConvertToBase_64(pathName) {
-    return new Promise(function (resolve, reject) {
-        fs.readFile(pathName, function (err, data) {
-            if (err) {
-                return console.error(err);
-            }
-            //console.log(data.toString());
-            //var b = new Buffer(data.toString());
-            var base_64_format_file = data.toString('base64');
-            resolve(base_64_format_file);
-        });
-    });
-}
-//Function to push files into github repo
-async function PushFileToGithub(username, RepoName, token, absolutePath, relativePath) {
-    var endpoint = "/repos/" + username + "/" + RepoName + `/contents/${relativePath}`;
-    var contents = await ReadFileAndConvertToBase_64(absolutePath);
-    var shaValue = await getSha1(absolutePath);
-
-    return new Promise(function (resolve, reject) {
-        request({
-                url: gitHubUrl + endpoint,
-                method: "PUT",
-                headers: {
-                    "User-Agent": "CSC510-REST-WORKSHOP",
-                    "content-type": "application/json",
-                    "Authorization": `token ${token}`
-                },
-                json: {
-                    "message": `added ${relativePath}`,
-                    "content": contents,
-                    'sha': shaValue
-                }
-            },
-            function (error, response, body) {
-                if (error) {
-                    console.log(chalk.red(error));
-                    reject(error);
-                    return; // Terminate execution.
-                }
-                // console.log(response.statusCode);
-                var message = (response.statusCode == 201) ? true : false;
-                resolve(message);
-            });
-    });
-}
-
-
-async function getDir(dir) {
-    var files = [];
-    var walker = walk.walk(dir, {
-        followLinks: false
-    });
-
-    return new Promise((resolve, reject) => {
-        walker.on('file', function (root, stat, next) {
-            // console.log(root);
-            files.push({
-                absolute: root + '/' + stat.name,
-                leaf: stat.name,
-                relative: (root + '/' + stat.name).substring(dir.length + 1)
-            });
-            next();
-        });
-
-        walker.on('end', function () {
-            resolve(files);
-        });
-    });
-}
-
-async function pushDir(userName, repoName, token, dir) {
-    var listoffiles = await getDir(dir);
-    // console.log(listoffiles);
-    var GithubRepoName = await createRepo(repoName, token);
-
-    for (i = 0; i < listoffiles.length; i++) {
-        item = listoffiles[i];
-        console.log('pushing ' + item)
-        var content = await PushFileToGithub(userName, GithubRepoName, token, item.absolute, item.relative);
-        console.log('pushed');
-
-    }
-
-}
-
-
-async function getSha1(path) {
-    return new Promise((r, e) => {
-        var algo = 'sha1';
-        var shasum = crypto.createHash(algo);
-        var s = fs.ReadStream(path);
-        s.on('data', function (d) {
-            shasum.update(d);
-        });
-
-        s.on('end', function () {
-            var d = shasum.digest('hex');
-            r(d);
-        });
-    });
-}
-
-const validateSchema = require('yaml-schema-validator')
-
-function verifyYMLContent(path) {
-    var errors = validateSchema(path, {
-        schemaPath: './schema.yaml' ,
-        logLevel: 'verbose'
-    });
-    console.log(errors)
-    // return (errors.length == 0) ? true : false;
-}
-
-// verifyYMLContent('/home/rr/Desktop/hh.yaml');
-
-const scrapedin = require('scrapedin')
-
-const cookies = fs.readFileSync('./resources/cookies')
-const options = {
-  cookies: JSON.parse(cookies)
-}
 
 async function foo(){
-    const profileScraper = await scrapedin(options)
-    const profile = profileScraper('https://www.linkedin.com/in/rayhanur-rahman/')
-    return profile
+    var x = await createRepo('tedst1', '4ea3724f70b3227f0839a2209d094e39a3b921d3')
+    if (x != undefined) console.log('pass')
+    else console.log('fail')
 }
 
-async function bar(){
-    var x = await foo()
-    console.log(x)
-}
-
-bar()
-
+foo()

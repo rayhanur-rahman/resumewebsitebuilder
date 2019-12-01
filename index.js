@@ -146,7 +146,7 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                 }
             }, {}, 'default');
 
-            convo.addQuestion('Please provide your LinkedIn Profile Url in the form [http|https]://[your public linkedin url]', [{
+            convo.addQuestion('Please provide your LinkedIn Profile Url in the form https://linkedin.com/in/<username>', [{
                     pattern: /.*/,
                     callback: async function (response, convo) {
                         console.log(response.text);
@@ -160,7 +160,7 @@ controller.hears('I am ready', 'direct_message', async function (bot, message) {
                             }
                         }
                         catch(ex){
-                            bot.reply(message, 'Sorry! Something went wrong...')
+                            bot.reply(message, 'Sorry! We have hit rate limiting. Please try again later')
                             convo.gotoThread('default');
                         }
                         
@@ -431,7 +431,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                 }
             ], {}, 'github_thread_username');
 
-            convo.addQuestion('Token?', [{
+            convo.addQuestion('Make sure your token has appropriate permissions. Now input the token?', [{
                     pattern: /.*/,
                     callback: async function (response, convo) {
                         bot.reply(message, 'Pushing items to your github. This might take a while...')
@@ -457,6 +457,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                                 convo.gotoThread('bad_at_repoCreation')
                             }
                         } catch(ex){
+                            console.log(ex)
                             bot.reply(message, 'Something went wrong')
                             convo.gotoThread('bad_at_repoCreation')
                         }

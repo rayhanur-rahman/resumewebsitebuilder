@@ -41,11 +41,15 @@ async function prepareTempData(userId, path, zip){
 
 async function prepareRepoForResume(userId, username, token, path, zip){
     var randomTmpFolderName = await prepareTempData(userId, path, zip);
-    await pushDataToGitHub(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)
-    console.log('complete')
-    // fse.removeSync('./tmp/*');
-    rmrf.sync('./tmp/*')
-    return true;
+    if(await pushDataToGitHub(username, `${username}.github.io`, token, `./tmp/${randomTmpFolderName}/site`)){
+        console.log('complete')
+        rmrf.sync('./tmp/*')
+        return true;
+    }
+    else{
+        console.log('repo creation failed')
+        return false;
+    }
 }
 
 
@@ -154,23 +158,29 @@ async function createRepo(repo, token) {
             function (error, response, body) {
                 if (error) {
                     console.log(chalk.red(error));
-                    reject(error);
+                    reject(false);
                     return; // Terminate execution.
                 }
-                console.log(body.name);
-                resolve(body.name);
+                if (body.name != undefined)
+                    resolve(true);
+                else 
+                    resolve(false);
             });
     });
 }
 
 async function pushDataToGitHub(userName, repoName, token, dir) {
     var listoffiles = await getDir(dir);
-    // console.log(listoffiles);
-    var GithubRepoName = await createRepo(repoName, token);
-
-    for (i = 0; i < listoffiles.length; i++) {
-        item = listoffiles[i];
-        var content = await PushFileToGithub(userName, GithubRepoName, token, item.absolute, item.relative);
+    var response = await createRepo(repoName, token)
+    if (response) {
+        for (i = 0; i < listoffiles.length; i++) {
+            item = listoffiles[i];
+            var content = await PushFileToGithub(userName, repoName, token, item.absolute, item.relative);
+        }
+        return true
+    }
+    else {
+        return false
     }
 
 }
@@ -340,5 +350,6 @@ module.exports = {
     mergeDblpData : mergeDblpData,
     mergeGitHubData : mergeGitHubData,
     getDblpData : getDblpData,
-    getGitHubData : getGitHubData
+    getGitHubData : getGitHubData,
+    createRepo: createRepo
 }
