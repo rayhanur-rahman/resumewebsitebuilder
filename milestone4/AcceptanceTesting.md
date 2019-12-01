@@ -5,10 +5,12 @@ The purpose of our resumebot is to generate a homepage based on the information 
 Our bot has been deployed at https://app.slack.com/client/TNEF1FW9W/DPJ0ZN02J
 
 ## Login credentials for TAs
-1. One can join the slack workspace at https://northcarolina-s8o7157.slack.com with the following email address and password:
+1. Join the slack workspace at https://northcarolina-s8o7157.slack.com with the following email address and password:
     1. id: ``nkasera@ncsu.edu``
     2. password: ``ncsu123456``
-2. Next, from the ``Apps`` section in the left panel, one can click on the ``resumebot``. This is our designed bot that is deployed on the server.
+2. Next, from the ``Apps`` section in the left panel, click on the ``resumebot``. This is our designed bot that is deployed on the server.
+
+3. Follow the acceptance tests in the following to start, continue, and terminate a conversation with the bot.
 ## Use-Case #1: Initiate a session with a resumebot
 #### Instructions: 
 * The user has to say ``'start'`` to start a conversation with the resumebot. To this, the bot can respond by any one of the following messages:
