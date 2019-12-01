@@ -16,7 +16,7 @@
     dir: '/root/resumeslackbot'
 
   tasks:
-   - name: setup latest nodejs package repo step 1
+   - name: setup latest nodejs package repo
      shell: "curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
    
    - name: Install nodejs
@@ -58,5 +58,6 @@
      command: 'forever start -o out.log -e err.log index.js'
      args:
        chdir: '{{dir}}'
+
 
 # ansible-playbook -i inventory task.yml -e "githubuser=***" -e "githubpassword=***"
