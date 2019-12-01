@@ -11,7 +11,7 @@ Our bot has been deployed at https://app.slack.com/client/TNEF1FW9W/DPJ0ZN02J
 2. Next, from the ``Apps`` section in the left panel, click on the ``resumebot``. This is our designed bot that is deployed on the server.
 
 3. Follow the acceptance test instructions in the following to start, continue, and terminate conversations with our bot.
-
+# Acceptace test instructions
 ## Use-Case #1: Initiate a session with a resumebot
 #### Instructions: 
 * The user has to say ``'start'`` to start a conversation with the resumebot. To this, the bot can respond by any one of the following messages:
