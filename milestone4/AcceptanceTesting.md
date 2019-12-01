@@ -104,8 +104,7 @@ Once we have reached the state in the previous use-case, we need to download the
     * >Sorry I did not understand.
     * The bot redirects the conversation to question again.
 ## Use Case # 4: Terminate a session with the resumebot
-At any point, the user can terminate a session. This option is independent of any use cases or 
-states the user/bot is at the moment. 
+Except for the cases where the bot expects any URL from the user, the user can terminate a session by typing in ``terminate`` at any point. The user must provide with a valid URL in the cases where the bot asks for a URL. If anything other than a valid URL (e.g., any invalid URL or any commands, even ``terminate``) is given, it winds back and will ask for a valid URL again.
 
 * As the user types in `terminate`, the bot terminates the session.
 * > Session terminated! You can start a new session by saying 'start'
