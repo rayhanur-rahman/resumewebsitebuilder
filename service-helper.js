@@ -285,7 +285,7 @@ async function retryGettingLinkedInData(profileLink){
     })
     .then((profile) => {
         return profile;
-    }).catch(err => {console.log('could not parse linkedin profile, try again later'); return null;});
+    }).catch(err => {console.log('could not parse linkedin profile, please try again later'); return null;});
 }
 
 async function getLinkedInData(profileLink) {
