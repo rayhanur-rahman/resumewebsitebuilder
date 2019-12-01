@@ -34,10 +34,10 @@
        repo: 'https://{{ githubuser | urlencode }}:{{ githubpassword | urlencode }}@github.ncsu.edu/csc510-fall2019/CSC510-20.git'
        dest: '{{dir}}'
    
-   - name: Install nodejs
-     shell: 'git checkout experimental'
-     args:
-       chdir: "{{dir}}"
+  #  - name: Install nodejs
+  #    shell: 'git checkout experimental'
+  #    args:
+  #      chdir: "{{dir}}"
      
    - name: npm install
      command: 'npm install --save'
