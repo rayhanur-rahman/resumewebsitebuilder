@@ -457,6 +457,7 @@ controller.hears('verify', 'direct_message', async function (bot, message) {
                                 convo.gotoThread('bad_at_repoCreation')
                             }
                         } catch(ex){
+                            console.log(ex)
                             bot.reply(message, 'Something went wrong')
                             convo.gotoThread('bad_at_repoCreation')
                         }

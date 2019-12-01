@@ -1,0 +1,114 @@
+---
+  intro: 
+    name: "..."
+    title: "..."
+    avatar: 
+      display: true
+      path: "..."
+  contact: 
+    email: "johndoe@unknowndomain.com"
+    phone: "+19998880000"
+    wechat: null
+    telegram: null
+    website: null
+    linkedin: "test"
+    github: "test"
+    gitlab: null
+    bitbucket: null
+    twitter: null
+    stackoverflow: null
+    codewars: null
+    goodreads: null
+    googlescholar: "..."
+    researchgate: "..."
+    resume: "..."
+  languages: 
+    display: false
+    title: "Languages"
+    items: 
+      - 
+        idiom: "English"
+        level: "Professional"
+  interests: 
+    display: true
+    title: "Interests"
+    items: 
+      - 
+        item: "Coding"
+      - 
+        item: "Reading"
+  profile: 
+    display: false
+    title: "Profile"
+    details: "It's your career profile, you can wirte markdown format text.\n+ First\n+ Second\n"
+  education: 
+    display: true
+    title: "Education"
+    items: 
+      - 
+        university: "[University of ..."
+        time: "2xxx-2xxx"
+        major: "..."
+        degree: "..."
+        details: "..."
+      - 
+        university: "[University of ..."
+        time: "2xxx-2xxx"
+        major: "..."
+        degree: "..."
+        details: "..."
+  experiences: 
+    display: true
+    title: "Experiences"
+    items: 
+      - 
+        role: "designation"
+        time: "2xxx-2xxx"
+        company: "..."
+        location: "..."
+        details: "..."
+      - 
+        role: "designation"
+        time: "2xxx-2xxx"
+        company: "..."
+        location: "..."
+        details: "..."
+  projects: 
+    display: true
+    title: "Projects"
+    intro: "these are my projects..."
+    items: 
+      - 
+        name: "p1"
+        link: "..."
+        details: "..."
+      - 
+        name: "p2"
+        link: "..."
+        details: "..."
+  publications: 
+    display: true
+    title: "Publications"
+    intro: "these are my papers..."
+    items: 
+      - 
+        title: "paper title"
+        authors: "mr x, mr y"
+        conference: "conf name"
+        link: "..."
+      - 
+        title: "paper title"
+        authors: "mr x, mr y"
+        conference: "conf name"
+        link: "..."
+  skills: 
+    display: true
+    title: "Skills"
+    details: "here is my skills a b c..."
+  evaluation: 
+    display: false
+    title: "Self-evaluation"
+    details: "Here is my self evaluation..."
+  footer: 
+    display: true
+  close: "please contact me at "

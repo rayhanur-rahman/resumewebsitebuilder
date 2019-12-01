@@ -171,11 +171,11 @@ async function createRepo(repo, token) {
 
 async function pushDataToGitHub(userName, repoName, token, dir) {
     var listoffiles = await getDir(dir);
-
-    if (await createRepo(repoName, token)) {
+    var response = await createRepo(repoName, token)
+    if (response) {
         for (i = 0; i < listoffiles.length; i++) {
             item = listoffiles[i];
-            var content = await PushFileToGithub(userName, GithubRepoName, token, item.absolute, item.relative);
+            var content = await PushFileToGithub(userName, repoName, token, item.absolute, item.relative);
         }
         return true
     }
@@ -350,5 +350,6 @@ module.exports = {
     mergeDblpData : mergeDblpData,
     mergeGitHubData : mergeGitHubData,
     getDblpData : getDblpData,
-    getGitHubData : getGitHubData
+    getGitHubData : getGitHubData,
+    createRepo: createRepo
 }
