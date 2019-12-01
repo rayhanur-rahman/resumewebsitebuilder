@@ -1,5 +1,12 @@
 ---
-- hosts: all
+- hosts: jenkins
+  tasks:
+   - name: 'copy cookies'
+     copy:
+       src: '/home/cookies'
+       dest : '/home/'
+
+- hosts: web
   vars: 
     dir: '/root/resumeslackbot'
 
@@ -39,8 +46,8 @@
        
    - name: 'copy cookies'
      copy:
-       src: '/home/rr/Workspace/csc510-20/resources/cookies'
-       dest : '{{dir}}/resources/'
+       src: '/home/cookies'
+       dest : '/home/'
    
    - name: run the app
      command: 'forever start -o out.log -e err.log index.js'
