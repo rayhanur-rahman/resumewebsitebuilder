@@ -1,0 +1,176 @@
+---
+  intro: 
+    name: "Mohammad Maruful Haque"
+    title: "Graduate Assistant at North Carolina State University"
+    avatar: 
+      display: true
+      path: "..."
+  contact: 
+    email: "johndoe@unknowndomain.com"
+    phone: "+19998880000"
+    wechat: null
+    telegram: null
+    website: null
+    linkedin: "in"
+    github: "marufhaque3"
+    gitlab: null
+    bitbucket: null
+    twitter: null
+    stackoverflow: null
+    codewars: null
+    goodreads: null
+    googlescholar: "..."
+    researchgate: "..."
+    resume: "..."
+  languages: 
+    display: false
+    title: "Languages"
+    items: 
+      - 
+        idiom: "English"
+        level: "Professional"
+  interests: 
+    display: true
+    title: "Interests"
+    items: 
+      - 
+        item: "Coding"
+      - 
+        item: "Reading"
+  profile: 
+    display: false
+    title: "Profile"
+    details: "An enthusiastic and passionate software developer, eager to learn new concepts and technologies. Have immense desire to make revolutionary contributions in the world of computing."
+  education: 
+    display: true
+    title: "Education"
+    items: 
+      - 
+        university: "University of Dhaka"
+        time: "2008 - 2013"
+        major: "Computer Science"
+        degree: "Bachelor of Science - BS"
+        details: null
+      - 
+        university: "Notre Dame College"
+        time: "2005 - 2007"
+        major: null
+        degree: "Higher Secondary School"
+        details: null
+  experiences: 
+    display: true
+    title: "Experiences"
+    items: 
+      - 
+        role: "Graduate Assistant"
+        time: "Aug 2018 – Present"
+        company: "North Carolina State University"
+        location: "Raleigh-Durham, North Carolina Area"
+        details: null
+      - 
+        role: "Kona Software Lab Ltd."
+        time: "Jan 2017 – Jul 2018"
+        company: null
+        location: null
+        details: null
+      - 
+        role: "Title\nSenior Software Engineer"
+        time: "Jan 2017 – Jul 2018"
+        company: null
+        location: null
+        details: null
+      - 
+        role: "Title\nSoftware Engineer"
+        time: "Mar 2014 – Dec 2016"
+        company: null
+        location: null
+        details: null
+      - 
+        role: "Title\nJunior Software Engineer"
+        time: "May 2013 – Feb 2014"
+        company: null
+        location: null
+        details: null
+  projects: 
+    display: true
+    title: "Projects"
+    intro: "these are my projects..."
+    items: 
+      - 
+        name: "aws-key-exposure"
+        link: "https://github.com/marufhaque3/aws-key-exposure"
+        details: null
+      - 
+        name: "Course"
+        link: "https://github.com/marufhaque3/Course"
+        details: null
+      - 
+        name: "Dummy"
+        link: "https://github.com/marufhaque3/Dummy"
+        details: null
+      - 
+        name: "EngineeringBasics"
+        link: "https://github.com/marufhaque3/EngineeringBasics"
+        details: null
+      - 
+        name: "GraphPlan"
+        link: "https://github.com/marufhaque3/GraphPlan"
+        details: "Java implementation of Graph Plan Algorithm in Artificial Intelligence"
+      - 
+        name: "key-leakage-check"
+        link: "https://github.com/marufhaque3/key-leakage-check"
+        details: null
+      - 
+        name: "mac-ansible"
+        link: "https://github.com/marufhaque3/mac-ansible"
+        details: ":cow2: Configuring my mac with Ansible"
+      - 
+        name: "npm-check-without-package"
+        link: "https://github.com/marufhaque3/npm-check-without-package"
+        details: null
+      - 
+        name: "npm-vulnerability-check"
+        link: "https://github.com/marufhaque3/npm-vulnerability-check"
+        details: null
+      - 
+        name: "python-zhmcclient"
+        link: "https://github.com/marufhaque3/python-zhmcclient"
+        details: "A pure Python client library for the IBM Z HMC Web Services API."
+      - 
+        name: "test-HW1-510"
+        link: "https://github.com/marufhaque3/test-HW1-510"
+        details: "This is a test repository"
+      - 
+        name: "vulnerability-mail-check"
+        link: "https://github.com/marufhaque3/vulnerability-mail-check"
+        details: null
+      - 
+        name: "vulnerability_notification"
+        link: "https://github.com/marufhaque3/vulnerability_notification"
+        details: null
+  publications: 
+    display: true
+    title: "Publications"
+    intro: "these are my papers..."
+    items: 
+      - 
+        title: "Sliding Local Planners for Sampling-Based Path Planning."
+        authors: "S. M. Rayhan Rahman, Sue Whitesides"
+        conference: "IRC"
+        link: "https://dblp.org/db/conf/irc/irc2017.html#RahmanW17"
+      - 
+        title: "The Range Beacon Placement Problem for Robot Navigation."
+        authors: "River Allen, Neil MacMillan, Dimitri Marinakis, Rahnuma Islam Nishat, Rayhan Rahman, Sue Whitesides"
+        conference: "CRV"
+        link: "https://dblp.org/db/conf/crv/crv2014.html#AllenMMNRW14"
+  skills: 
+    display: true
+    title: "Skills"
+    details: " | C++ | Java | C | OOP | Algorithms | Programming | Software Engineering | MySQL | Spring Framework | Hibernate | Jenkins | Git | Public Key Cryptography | PKCS#11 | DLL | Jasper Reports | Pattern Design | Gradle | PKCS#15"
+  evaluation: 
+    display: false
+    title: "Self-evaluation"
+    details: "Here is my self evaluation..."
+  footer: 
+    display: true
+  close: "please contact me at "

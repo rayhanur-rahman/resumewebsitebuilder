@@ -13,6 +13,9 @@ const helper = require('./bot-helper.js')
 const gitHubUrl = "https://api.github.com";
 const dblpUrl = "https://dblp.org";
 
+var config = {};
+require('dotenv').config();
+
 var retryCount = 2;
 
 
@@ -263,7 +266,7 @@ async function getDblpData(userName) {
 }
 
 async function retryGettingLinkedInData(profileLink){
-    const cookies = fs.readFileSync('./resources/cookies')
+    const cookies = fs.readFileSync(process.env.COOKIE)
     return scrapedin({
         cookies: JSON.parse(cookies),
         hasToLog: true,
@@ -287,7 +290,7 @@ async function retryGettingLinkedInData(profileLink){
 
 async function getLinkedInData(profileLink) {
 	console.log(profileLink);
-	const cookies = fs.readFileSync('./resources/cookies')
+	const cookies = fs.readFileSync(process.env.COOKIE)
     return scrapedin({
         cookies: JSON.parse(cookies),
         hasToLog: true,
