@@ -4,6 +4,11 @@ The purpose of our resumebot is to generate a homepage based on the information 
 ## Slack Channel
 Our bot has been deployed at https://app.slack.com/client/TNEF1FW9W/DPJ0ZN02J
 
+## TA credentials
+One can join the slack workspace at https://app.slack.com/client/TNEF1FW9W/CNEF1G2U8 with the followings:
+1. id: ``nkasera@ncsu.edu``
+2. password: ``ncsu123456``
+
 ## Use-Case #1: Initiate a session with a resumebot
 #### Instructions: 
 * The user has to say ``'start'`` to start a conversation with the resumebot. To this, the bot can respond by any one of the following messages:
