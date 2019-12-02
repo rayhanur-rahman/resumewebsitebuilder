@@ -86,20 +86,22 @@ Once we are done taking gathering info about the DBLP profile, the bot ask for t
     * > Sorry! The github info is wrong
 
  Once the steps of collecting data from LinkedIn, DBLP and Github are done, the bot will upload the merged data and provide us the link. For example: 
-* >Based on the information provided, I was able to generate a file. The file is uploaded at https://0x0.st/zI__.yml
+* >Based on the information provided, I was able to generate a file. The file is uploaded at https://0x0.st/<filename>
 . Go to this link and check the yml file. Please edit your email and phone number. Please also fill in if there are any other missing fields. You must comply with the yaml syntax editing and you cannot change the yaml schema that is already provided. Type in 'verify' to upload any revisions. 
 
 ### Use Case 3: Validate the Information from the User and provide the CV
 
 Once we have reached the state in the previous use-case, we need to download the yaml file uploaded in the link provided by the bot. Once we download the yml file the user needs to fill in other missing information in the yml file that the bot has missed while gathering the data. The user may also leave out information that he/she does not want to include in his/her homepage. Once the yaml file is ready, the user must type in `'verify'` and then the bot will ask for the link at which the verified yaml file has been uploaded.
-* > Please give me a shareable link of the yml file in the form of [http|https]://[any file sharing website url] 
+* > Please give me a shareable link of the yml file in the form of [http|https]://[any file sharing website url]. You can use 0x0.st or transfer.sh for this purpose. We tested our bot with link sharing from 0x0.st 
 * Then the user must upload the edited or verified file in file sharing website 0x0.st. The user has to upload the file using curl and provide the link to the bot. The bot will then reply:
 * > Data verified. Do you want your CV in industrial or academic format?[i/a]
 * The user must reply `i/a`. If the reply is `i` the bot will generate a industrial CV and likewise if the reply is `a` the bot will generate an academic CV. If anything other than `i/a` is input by the user, the bot does not accept it and prompts for the answer once again. Hence the bot will continue to ask the user for preferences. 
 * > Do you want your CV in Github.io or in zipped format?[github/zip].
 * If the user replies `zip`, the bot will prepare the homepage files and reply.
-    * > Thanks. The zipped CV has been uploaded successfully at https://0x0.st/zI_M.zip
+    * > Thanks. The zipped CV has been uploaded successfully at https://0x0.st/<filename>
     * > Please say 'terminate' to terminate the session
+    * > Uznip the file, go to the directory and execute ```$jekyll serve```. The app will run in localhost.
+    * > Then, in the directory, you will find a folder named ```_site```. You can host the content in any ```http``` server and your website will be running.
     * The user downloads the zip file and says **terminate** to end the session.
 * If the user replies `github`, the bot will prompt for more information about the github profile of the user.
     * >Make sure your Github does not have a repository named <username>.github.io. Now your Github username?
