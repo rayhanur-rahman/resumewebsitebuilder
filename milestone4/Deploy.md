@@ -18,6 +18,7 @@ The purpose of our resumebot is to generate a homepage based on the information 
 2. Next, from the ``Apps`` section in the left panel, click on the ``resumebot``. This is our designed bot that is deployed on the server.
 
 3. Follow the acceptance test instructions in the following to start, continue, and terminate conversations with our bot.
+    Apart from this, we have also invited both our TAs to join the slack channel. The can accept the invitation and test it from their       account as well.
 ### Acceptace test instructions
 ### Use-Case #1: Initiate a session with a resumebot
 #### Instructions: 
