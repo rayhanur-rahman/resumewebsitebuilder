@@ -97,7 +97,7 @@ Once we have reached the state in the previous use-case, we need to download the
     1. Go to the terminal and `cd` to the directory where the yaml file (say `xyz.yml`) downloaded.
     2. Type in the command `curl -F'url=http://example.com/image.jpg' http://0x0.st`
     3. If `curl` is installed properly to the user's OS, the command will generate a link where `xyz.yml` was uploaded.
-
+    4. User says `verify` to the bot, gets prompted to type in the yaml file link and types in the link generated at step iii.
     Next, The bot will reply:
 * > Data verified. Do you want your CV in industrial or academic format?[i/a]
 * The user must reply `i/a`. If the reply is `i` the bot will generate a industrial CV and likewise if the reply is `a` the bot will generate an academic CV. If anything other than `i/a` is input by the user, the bot does not accept it and prompts for the answer once again. Hence the bot will continue to ask the user for preferences. 
