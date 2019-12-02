@@ -19,7 +19,7 @@ The purpose of our resumebot is to generate a homepage based on the information 
 
 3. Follow the acceptance test instructions in the following to start, continue, and terminate conversations with our bot.
 
-    Apart from this, we have also invited both our TAs to join the slack channel. They can accept the invitation and test the bot from       their account as well.
+    Apart from this, we have also invited both our TAs to join the slack channel. They can accept the invitation and test the bot from       their accounts as well.
 ### Acceptace test instructions
 ### Use-Case #1: Initiate a session with a resumebot
 #### Instructions: 
