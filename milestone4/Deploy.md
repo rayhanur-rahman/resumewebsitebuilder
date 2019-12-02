@@ -16,7 +16,7 @@ go to this link http://142.93.202.21:3000/login. Then click "Allow". It should r
 
 3. Follow the acceptance test instructions in the following to start, continue, and terminate conversations with our bot.
 ### Acceptace test instructions
-#### Use-Case #1: Initiate a session with a resumebot
+### Use-Case #1: Initiate a session with a resumebot
 #### Instructions: 
 * The user has to say ``'start'`` to start a conversation with the resumebot. To this, the bot can respond by any one of the following messages:
     1. **Response i:**
@@ -86,7 +86,7 @@ Once we are done taking gathering info about the DBLP profile, the bot ask for t
 * >Based on the information provided, I was able to generate a file. The file is uploaded at https://0x0.st/zI__.yml
 . Go to this link and check the yml file. Please edit your email and phone number. Please also fill in if there are any other missing fields. You must comply with the yaml syntax editing and you cannot change the yaml schema that is already provided. Type in 'verify' to upload any revisions. 
 
-## Use Case 3: Validate the Information from the User and provide the CV
+### Use Case 3: Validate the Information from the User and provide the CV
 
 Once we have reached the state in the previous use-case, we need to download the yaml file uploaded in the link provided by the bot. Once we download the yml file the user needs to fill in other missing information in the yml file that the bot has missed while gathering the data. The user may also leave out information that he/she does not want to include in his/her homepage. Once the yaml file is ready, the user must type in `'verify'` and then the bot will ask for the link at which the verified yaml file has been uploaded.
 * > Please give me a shareable link of the yml file in the form of [http|https]://[any file sharing website url] 
