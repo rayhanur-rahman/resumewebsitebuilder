@@ -96,7 +96,7 @@ Once we have reached the state in the previous use-case, we need to download the
 * Then the user must upload the edited or verified file in file sharing website 0x0.st. The user has to upload the file using curl and provide the link to the bot following these few steps.
     1. Go to the terminal and `cd` to the directory where the yaml file (say `xyz.yml`) is downloaded.
     2. Type in the command `curl -F'file=@xyz.yml' http://0x0.st`
-    3. If `curl` is installed properly to the user's machine, the command will generate a link where `xyz.yml` has been just uploaded.
+    3. If `curl` is installed properly to the user's machine, the command will generate a link where `xyz.yml` will have been uploaded.
     4. User says `verify` to the bot, gets prompted by the bot to give the link to the url where the yaml file is uploaded, and finally types in the link generated at step iii.
     Next, The bot will reply:
 * > Data verified. Do you want your CV in industrial or academic format?[i/a]
