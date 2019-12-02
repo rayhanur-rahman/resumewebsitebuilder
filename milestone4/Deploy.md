@@ -60,7 +60,7 @@ When the conversation has been successfully initiated, the bot will prompt for m
     
     * > Sorry! The Url is wrong...
 
-Once we are done taking gathering info about the LinkedIn profile, the bot ask for the DBLP data from user.
+Once we are done gathering info about the LinkedIn profile, the bot ask for the DBLP data from user.
 * > Please tell me if you have a DBLP account?[yes/no]
 
     * If the user replies **no** the bot will move forward to the next step. If the user replies **yes**, then the bot will prompt for a valid DBLP profile link. 
@@ -91,9 +91,14 @@ Once we are done taking gathering info about the DBLP profile, the bot ask for t
 
 ### Use Case 3: Validate the Information from the User and provide the CV
 
-Once we have reached the state in the previous use-case, we need to download the yaml file uploaded in the link provided by the bot. Once we download the yml file the user needs to fill in other missing information in the yml file that the bot has missed while gathering the data. The user may also leave out information that he/she does not want to include in his/her homepage. Once the yaml file is ready, the user must type in `'verify'` and then the bot will ask for the link at which the verified yaml file has been uploaded.
+Once we have reached the state in the previous use-case, we need to download the yaml file uploaded in the link provided by the bot. Once we download the yaml file the user needs to fill in other missing information in the yml file that the bot has missed while gathering the data. The user may also leave out information that he/she does not want to include in his/her homepage. One should note that the email and the phone number in the generated yaml is by default an arbitrary one. The bot warns about this issue when it responds with the yaml file. Once the yaml file is ready, the user must type in `'verify'` and then the bot will ask for the link at which the verified yaml file has been uploaded.
 * > Please give me a shareable link of the yml file in the form of [http|https]://[any file sharing website url]. You can use 0x0.st or transfer.sh for this purpose. We tested our bot with link sharing from 0x0.st 
-* Then the user must upload the edited or verified file in file sharing website 0x0.st. The user has to upload the file using curl and provide the link to the bot. The bot will then reply:
+* Then the user must upload the edited or verified file in file sharing website 0x0.st. The user has to upload the file using curl and provide the link to the bot following these few steps.
+    1. Go to the terminal and `cd` to the directory where the yaml file (say `xyz.yml`) downloaded.
+    2. Type in the command `curl -F'url=http://example.com/image.jpg' http://0x0.st`
+    3. If `curl` is installed properly to the user's OS, the command will generate a link where `xyz.yml` was uploaded.
+
+    Next, The bot will reply:
 * > Data verified. Do you want your CV in industrial or academic format?[i/a]
 * The user must reply `i/a`. If the reply is `i` the bot will generate a industrial CV and likewise if the reply is `a` the bot will generate an academic CV. If anything other than `i/a` is input by the user, the bot does not accept it and prompts for the answer once again. Hence the bot will continue to ask the user for preferences. 
 * > Do you want your CV in Github.io or in zipped format?[github/zip].
