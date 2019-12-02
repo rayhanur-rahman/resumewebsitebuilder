@@ -94,10 +94,10 @@ Once we are done taking gathering info about the DBLP profile, the bot ask for t
 Once we have reached the state in the previous use-case, we need to download the yaml file uploaded in the link provided by the bot. Once we download the yaml file the user needs to fill in other missing information in the yml file that the bot has missed while gathering the data. The user may also leave out information that he/she does not want to include in his/her homepage. One should note that the email and the phone number in the generated yaml is by default an arbitrary one. The bot warns about this issue when it responds with the yaml file. Once the yaml file is ready, the user must type in `'verify'` and then the bot will ask for the link at which the verified yaml file has been uploaded.
 * > Please give me a shareable link of the yml file in the form of [http|https]://[any file sharing website url]. You can use 0x0.st or transfer.sh for this purpose. We tested our bot with link sharing from 0x0.st 
 * Then the user must upload the edited or verified file in file sharing website 0x0.st. The user has to upload the file using curl and provide the link to the bot following these few steps.
-    1. Go to the terminal and `cd` to the directory where the yaml file (say `xyz.yml`) downloaded.
+    1. Go to the terminal and `cd` to the directory where the yaml file (say `xyz.yml`) is downloaded.
     2. Type in the command `curl -F'file=@xyz.yml' http://0x0.st`
-    3. If `curl` is installed properly to the user's OS, the command will generate a link where `xyz.yml` was uploaded.
-    4. User says `verify` to the bot, gets prompted by the bot to give the link to the url where the yaml file was uploaded, and finally types in the link generated at step iii.
+    3. If `curl` is installed properly to the user's machine, the command will generate a link where `xyz.yml` has been just uploaded.
+    4. User says `verify` to the bot, gets prompted by the bot to give the link to the url where the yaml file is uploaded, and finally types in the link generated at step iii.
     Next, The bot will reply:
 * > Data verified. Do you want your CV in industrial or academic format?[i/a]
 * The user must reply `i/a`. If the reply is `i` the bot will generate a industrial CV and likewise if the reply is `a` the bot will generate an academic CV. If anything other than `i/a` is input by the user, the bot does not accept it and prompts for the answer once again. Hence the bot will continue to ask the user for preferences. 
@@ -121,7 +121,7 @@ Once we have reached the state in the previous use-case, we need to download the
     * >Sorry I did not understand.
     * The bot redirects the conversation to question again.
 ### Use Case # 4: Terminate a session with the resumebot
-Except for the cases where the bot expects any URL, github username, github token from the user, the user can terminate a session by typing in ``terminate`` at any point. The user must provide with a valid URL in the cases where the bot asks for a URL (e.g., link to one's LinkedIn, DBLP, or GitHub profiles, or link to the updated .yml file). If anything other than a valid URL (e.g., any invalid URL or any commands, even ``terminate``) is given, it winds back and will ask for a valid URL again.
+Except for the cases where the bot expects any URL, github username, and github token from the user, the user can terminate a session by typing in ``terminate`` at any other point. The user must provide with a valid URL, valid profile name, or valid toke for the cases where the bot asks for them (e.g., link to one's LinkedIn, DBLP, or updated yaml file, GitHub profiles name, or any tokens). If user provides anything invalid in such cases, the bot will wind back and will ask for a valid URL, profile name, or token again.
 
 * For the cases other than asking for a URL, if the user types in `terminate`, the bot terminates the session with the following message:
 * > Session terminated! You can start a new session by saying 'start'
