@@ -1,19 +1,22 @@
+## Deployment Scripts
+
+
 ## Acceptance Tests
 The purpose of our resumebot is to generate a homepage based on the information that we provide. 
 
-## Installation Instructions
+### Installation Instructions
 To install resumebot into your slackApp,
 go to this link http://142.93.202.21:3000/login. Then click "Allow". It should return a page that says "Success!". 
 
-## Login credentials for TAs
+### Login credentials for TAs
 1. Join the slack workspace at https://northcarolina-s8o7157.slack.com with the following email address and password:
     1. email: ``nkasera@ncsu.edu``
     2. password: ``ncsu123456``
 2. Next, from the ``Apps`` section in the left panel, click on the ``resumebot``. This is our designed bot that is deployed on the server.
 
 3. Follow the acceptance test instructions in the following to start, continue, and terminate conversations with our bot.
-# Acceptace test instructions
-## Use-Case #1: Initiate a session with a resumebot
+### Acceptace test instructions
+#### Use-Case #1: Initiate a session with a resumebot
 #### Instructions: 
 * The user has to say ``'start'`` to start a conversation with the resumebot. To this, the bot can respond by any one of the following messages:
     1. **Response i:**
@@ -39,7 +42,7 @@ go to this link http://142.93.202.21:3000/login. Then click "Allow". It should r
 
         2. If the user types in `n` to **Response ii**, the bot preserves the state of its last conversation so that the user can resume to the session that was already going on. 
 
-## Use-Case #2: Gather Information from the user
+### Use-Case #2: Gather Information from the user
 #### Instructions
 When the conversation has been successfully initiated, the bot will prompt for more information. It will start off by saying. 
 * > Please tell me if you have a LinkedIn account?[yes/no]
@@ -102,13 +105,19 @@ Once we have reached the state in the previous use-case, we need to download the
     * The user needs to provide a valid token for the corresponding username. The bot then continues with the rest of the conversation.
     * >website has been published at \<username\>.github.io
     * > Please say 'terminate' to terminate the session
-    * It must be noted that the github pushing takes a significant amount of time owing to the fact that each push accounts for only one file.
+    * It must be noted that the github pushing takes a significant amount of time for the industrial template owing to the fact that each push accounts for only one file and the industrial templates contain a lot of files.
     * The user visits the address that is provided and says **terminate** to end the session.
 * If the user answers anything other than github/zip, the bot replies: 
     * >Sorry I did not understand.
     * The bot redirects the conversation to question again.
-## Use Case # 4: Terminate a session with the resumebot
+### Use Case # 4: Terminate a session with the resumebot
 Except for the cases where the bot expects any URL, github username, github token from the user, the user can terminate a session by typing in ``terminate`` at any point. The user must provide with a valid URL in the cases where the bot asks for a URL (e.g., link to one's LinkedIn, DBLP, or GitHub profiles, or link to the updated .yml file). If anything other than a valid URL (e.g., any invalid URL or any commands, even ``terminate``) is given, it winds back and will ask for a valid URL again.
 
 * For the cases other than asking for a URL, if the user types in `terminate`, the bot terminates the session with the following message:
 * > Session terminated! You can start a new session by saying 'start'
+
+## Final Code   
+The final code is in the **master** branch
+
+## Screencast for continuous integration server
+
