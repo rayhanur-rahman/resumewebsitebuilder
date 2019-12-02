@@ -5,12 +5,11 @@ We have used two droplets from DigitalOcean to host our bot and jenkins server. 
 - transfering the secret files
 - starting the process
 
+### Installation Instructions
+To install resumebot into your slackApp, go to this link http://142.93.202.21:3000/login. Then click "Allow". It should return a page that says "Success!". 
+
 ## Acceptance Tests
 The purpose of our resumebot is to generate a homepage based on the information that we provide. 
-
-### Installation Instructions
-To install resumebot into your slackApp,
-go to this link http://142.93.202.21:3000/login. Then click "Allow". It should return a page that says "Success!". 
 
 ### Login credentials for TAs
 1. Join the slack workspace at https://northcarolina-s8o7157.slack.com with the following email address and password:
