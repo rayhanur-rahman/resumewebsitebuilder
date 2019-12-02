@@ -90,7 +90,7 @@ Once we are done taking gathering info about the DBLP profile, the bot ask for t
 
 Once we have reached the state in the previous use-case, we need to download the yaml file uploaded in the link provided by the bot. Once we download the yml file the user needs to fill in other missing information in the yml file that the bot has missed while gathering the data. The user may also leave out information that he/she does not want to include in his/her homepage. Once the yaml file is ready, the user must type in `'verify'` and then the bot will ask for the link at which the verified yaml file has been uploaded.
 * > Please give me a shareable link of the yml file in the form of [http|https]://[any file sharing website url] 
-* Then the user must upload the edited or verified file in any file sharing website such as transfer.sh,0x0.st,etc and provide the link to the bot. The bot will then reply:
+* Then the user must upload the edited or verified file in file sharing website 0x0.st. The user has to upload the file using curl and provide the link to the bot. The bot will then reply:
 * > Data verified. Do you want your CV in industrial or academic format?[i/a]
 * The user must reply `i/a`. If the reply is `i` the bot will generate a industrial CV and likewise if the reply is `a` the bot will generate an academic CV. If anything other than `i/a` is input by the user, the bot does not accept it and prompts for the answer once again. Hence the bot will continue to ask the user for preferences. 
 * > Do you want your CV in Github.io or in zipped format?[github/zip].
