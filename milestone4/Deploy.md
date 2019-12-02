@@ -1,5 +1,9 @@
 ## Deployment Scripts
-
+We have used two droplets from DigitalOcean to host our bot and jenkins server. We deployed all our code with Ansible playbooks. In the ```playbooks``` folder, all the ansible tasks are available. In the playbooks we performed
+- installing the dependencies
+- pulling the git repo
+- transfering the secret files
+- starting the process
 
 ## Acceptance Tests
 The purpose of our resumebot is to generate a homepage based on the information that we provide. 
@@ -119,5 +123,9 @@ Except for the cases where the bot expects any URL, github username, github toke
 ## Final Code   
 The final code is in the **master** branch
 
-## Screencast for continuous integration server
+## Screencasts
+- Bot Demonstration: https://drive.google.com/open?id=1VU__Nvqzm7XEpKNaIWTh6vHd2n91XG7n and https://drive.google.com/open?id=1ZZvQamLwlM4VW1f8wd6Kpb-9Qleb4CZC
+- Ansible Playbooks: https://drive.google.com/open?id=10d9U4YeqXZRAjiTnFGgyMRWtIXrefoy7 and https://drive.google.com/open?id=1xkK7HmaSzI-5xxNpIq-sPi_4c3iJLfml
+- Jenkins Build: https://drive.google.com/open?id=1wtaOTemoRwGU8AYbaEiLxcq1PakpOp3I
+
 
