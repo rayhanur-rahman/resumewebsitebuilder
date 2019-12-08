@@ -6,6 +6,7 @@
 - [Bot](milestone2/BOT.md)
 - [Process](milestone3/PROCESS.md)
 - [Deploy](milestone4/Deploy.md)
+- [Report](Report/Report.md)
 
 ## Team Members
 - Saad Mohammad Abrar(sabrar)
