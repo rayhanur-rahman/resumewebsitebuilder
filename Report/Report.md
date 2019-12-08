@@ -63,7 +63,9 @@ In the future projects, I intend to assure necessary level of analysis before go
 24. Prioritization on demand that provides insight into the ideal work planning process should always provide the team with the best thing to work on next. Hence, I intend to implement this practice in my future projects.
 
 ## Any limitations and future work.
-
+1. Our current bot does not provide a large array of templates as option to the user. In the future, we would like to add sufficient choices of templates and look-and-feel for the user.
+2. In the future, we would like to add additional public profiles other than GitHub, LinkedIn and DBLP to mine the information of the user. Hence, we will be able to create a more elaborate and thorough picture of the portfolio of the user.
+3. The conversation with the bot is clunky as of now. In the future, we would like to beautify the conversation with the bot, with our bot providing visualizations, options to pick from,etc. There are also options to refactor the conversation further. 
 ## Project Demo
 
 The link to the demo of the project is provided [here](
