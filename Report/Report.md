@@ -6,9 +6,9 @@ In a competitive academic and job industry, having a resume like personal webpag
 ### Primary features
 1. The Resume builder bot is a Slack based interactive conversational bot which simplifies the mundane (in the sense that it handles the formatting and ornamentation) task of buidling a resume website.
 2. The bot provides the user various alternatives to start their new resume website with different templates according to the user's taste and need.
-3. The bot will continue with the conversation bringing out important information that it needs from the user.
-4. Hence, with the necessary information, it will extract user profile information such as the publication list, projects, employment history, skillsets, etc from sites like LinkedIn, DBLP index, Github, etc. If a user does not maintain any profile in the aforementioned services, bot will provide a template where user can put all the information.
-5. Once the bot completes its task, it will reply in Slack with a link to the homepage within which the CV is also availiable if user opts to host the site in github.io or provide a static webpage files that can be used to publish the site in any host.
+3. The bot continues with the conversation bringing out important information that it needs from the user.
+4. Hence, with the necessary information, it extracts user profile information such as the publication list, projects, employment history, skillsets, etc from sites like LinkedIn, DBLP index, Github, etc. If a user does not maintain any profile in the aforementioned services, bot provides a template where user can put all the information.
+5. Once the bot completes its task, it replies in Slack with a link to the homepage within which the CV is also availiable if user opts to host the site in github.io or provide a static webpage files that can be used to publish the site in any host.
 
 Here are some of the glimpses of our bot in action.
 
