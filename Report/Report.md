@@ -66,12 +66,12 @@ In the future projects, we intend to assure necessary level of analysis before g
 1. Our current bot does not provide a large array of templates as option to the user. In the future, we would like to add sufficient choices of templates and look-and-feel for the user.
 2. In the future, we would like to add additional public profiles other than GitHub, LinkedIn and DBLP to mine the information of the user. Hence, we will be able to create a more elaborate and thorough picture of the portfolio of the user.
 3. The conversation with the bot is clunky as of now. In the future, we would like to beautify the conversation with the bot, with our bot providing visualizations, options to pick from,etc. There are also options to refactor the conversation further. 
-4. Botkit.ai version 4.0 could be used in the place of 0.7.0
-5. Skype, Snapchat e kaj korano jabe.
-6. Multiple conversations at a time
-7. LinkedIn er API implement korata difficult chilo, so web scrapping kore data antesilam. Linked API ta aro better use korar chesta korbo
-8. Github pushing very bad. 
-9. Github token er jaigay web hooks diye authentication kora jaito.
+4. For the implementation of our conversation pipeline, we have made use of BotKit.Ai version 0.7.0. In the future, we intend to use version 4.0 which provides more advanced options in conversation.
+5. As of now, our bot is in action in the slack platform. However, our work can also be extended to platforms like Snapchat,Skype,etc.
+6. We intend to handle multiple conversations with the bot in the future.
+7. Implementing the LinkedIn Api was difficult to implement and also time consuming. Rather we used web scrapping to eke out the data from LinkedIn. In the future, we would like to leverage the LinkedIn API to mine the data.
+8. Pushing the resume website files into GitHub for deployment is currently clunky in the sense that it pushes one file at a time. Hence it takes time to push the files especially when we request the industry template. In the future, we intend to mke the implementation of GitHub pushing more robust using the ideas of references. 
+9. We have performed authentication in GitHub using tokens from time to time. In the future, webhooks could be implemented to perform authentication.
 ## Project Demo
 
 The link to the demo of the project is provided [here](
