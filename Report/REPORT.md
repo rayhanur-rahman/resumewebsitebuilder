@@ -25,7 +25,7 @@ User requiring the files to be deployed on github.
 The resume website published in github.io
 ![](UseCase3_Zip.png)
 User requiring the zip file in use case 3.
-![](Output_zip.png)
+![](Output_Zip.png)
 The resume website built by the bot that is published using `jekyll serve`
 
 ## Our reflection on the development process and project.
