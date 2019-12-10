@@ -15,7 +15,9 @@ Here are some of the glimpses of our bot in action.
 ![](UseCase1.png)
 Use Case 1 in action.
 
-![](UseCase2.png)
+![](LinkedIn.png)
+![](DBLP.png)
+![](Github.png)
 Use Case 2 in action.
 ![](UseCase3_Github.png)
 User requiring the files to be deployed on github.
